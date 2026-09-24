@@ -2,9 +2,8 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "epstar-algerie",
   "main": "dist/server/index.js",
-  "compatibility_date": "2026-05-15",
-  "compatibility_flags": ["nodejs_compat"],
-  "assets": {
+"compatibility_date": "2026-05-15",
+"assets": {
     "directory": "dist/client"
   }
 }
