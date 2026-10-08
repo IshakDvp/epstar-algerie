@@ -1,21 +1,23 @@
-# EPSTAR — نشر الموقع على Cloudflare
+# EPSTAR Cloudflare deployment
 
-هذه الحزمة هي مصدر الموقع، وليست ملفات ثابتة فقط.
+## First upload to GitHub
 
-## 1. ارفع المصدر إلى GitHub
+1. Extract this ZIP file.
+2. Open the extracted folder, select all contents (including hidden files if present), then upload them to the `epstar-algerie` GitHub repository.
+3. Replace files with the same names and commit to the `main` branch.
 
-1. فك ضغط الحزمة.
-2. أنشئ مستودعًا جديدًا في GitHub باسم `epstar-algerie`.
-3. ارفع محتويات المجلد مباشرة إلى المستودع (لا ترفع ملف ZIP داخله).
+## Cloudflare Workers build settings
 
-## 2. اربط GitHub بـ Cloudflare
+- Build command: `npm run build`
+- Deploy command: `npx wrangler deploy`
+- Root directory: `/`
+- Production branch: `main`
 
-1. في Cloudflare اختر **Create an app**.
-2. اختر **Connect GitHub**، ثم اختر مستودع `epstar-algerie`.
-3. اختر إعداد **Workers**، وليس رفع ملفات ثابتة أو Pages drag-and-drop.
-4. اجعل أمر البناء: `npm run build`.
-5. اضغط Deploy.
+## Every future update
 
-بعد النشر يعطيك Cloudflare رابطًا ينتهي بـ `workers.dev`، ويمكنك ربط دومين EPSTAR الرسمي لاحقًا من إعدادات المشروع.
+1. Edit the project locally.
+2. Run `npm run build` and confirm that it completes.
+3. Push the changed files to GitHub main.
+4. Cloudflare deploys the new version automatically.
 
-المحتوى الحالي تجريبي: المنتجات والمشاريع معلمة كـ Demo، وطلبات واتساب تستخدم +213551984778.
+Do not add `nodejs_compat` anywhere in Cloudflare settings: it is already set once in `wrangler.jsonc`.
