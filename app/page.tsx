@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import QuoteForm from "./components/quote-form";
-import {useQuoteCart} from "./components/use-quote-cart";
 import SiteHeader from "./components/site-header";
+import SiteFooter from "./components/site-footer";
 import { catalog, metaFor, type Lang } from "./catalogue/data";
 
 type Theme = "light" | "dark";
@@ -69,7 +69,6 @@ export default function Home(){
   const [theme,setTheme]=useState<Theme>("light");
   const [active,setActive]=useState(0);
   const [paused,setPaused]=useState(false);
-  const {cart,setCart}=useQuoteCart();
   
   const t=data[lang]; const rtl=lang==="ar";
   const sectors=useMemo(()=>t.sectors.map((s,i)=>({title:s[0],short:s[1],heading:s[2],text:s[3],image:images[i],model:models[i],icon:icons[i]})),[t]);
@@ -84,13 +83,10 @@ export default function Home(){
   const showcaseText=lang==="ar"?"كل مجال له احتياجاته. اختر النشاط لتشاهد تصورًا بصريًا وحلًا مصممًا حول طريقة استخدام المساحة.":lang==="fr"?"Chaque métier a ses exigences. Sélectionnez un univers pour découvrir une réponse visuelle pensée autour de son usage.":"Every sector has its own needs. Select one to see a visual direction designed around how the space works.";
   const selectedLabel=lang==="ar"?"الحل المختار":lang==="fr"?"Solution sélectionnée":"Selected solution";
   const br=(x:string)=>x.split("\n").map((v,i)=><span key={i}>{v}{i<x.split("\n").length-1&&<br/>}</span>);
-  const shopCopy=lang==="ar"?{tag:"مختارات EPSTAR",title:"قطع مصممة للمساحة.\nوليست مأخوذة من كتالوج جاهز.",text:"استكشف نماذج من تجهيزاتنا. أضف ما يناسبك إلى طلب عرض السعر وسنخصص المقاسات والخامات والتشطيب لمشروعك.",all:"عرض الكتالوج",add:"أضف إلى الطلب",added:"تمت الإضافة",cart:"طلب عرض السعر",empty:"لم تضف أي منتج بعد",send:"إكمال طلب السعر",remove:"حذف",demo:"منتجات تجريبية"}:lang==="fr"?{tag:"SÉLECTION EPSTAR",title:"Des pièces pensées pour l’espace.\nJamais sorties d’un catalogue standard.",text:"Découvrez une sélection de nos solutions. Ajoutez vos références à la demande de devis; dimensions, matières et finitions seront adaptées à votre projet.",all:"Voir le catalogue",add:"Ajouter à la demande",added:"Ajouté",cart:"Demande de devis",empty:"Votre sélection est vide",send:"Finaliser la demande",remove:"Retirer",demo:"Produits de démonstration"}:{tag:"EPSTAR SELECTION",title:"Pieces designed for the space.\nNever pulled from a standard catalogue.",text:"Explore a selection of our solutions. Add references to your quote request; dimensions, materials and finishes will be tailored to your project.",all:"View catalogue",add:"Add to request",added:"Added",cart:"Quote request",empty:"Your selection is empty",send:"Complete request",remove:"Remove",demo:"Demo products"};
   const start=lang==="ar"?{eyebrow:"ابدأ من هنا",ask:"اختر المسار الذي يناسبك",hint:"لا تحتاج إلى تسجيل. اختر طريقًا واحدًا للانطلاق.",product:"أبحث عن منتجات وتجهيزات",productDesc:"تصفح نماذج الكتالوج، ثم أضف ما يناسب مشروعك إلى الطلب.",project:"أحتاج تجهيز مساحة كاملة",projectDesc:"اختر نوع المساحة واطلب دراسة لمشروع صيدلية أو مكتب أو محل.",productStep:"1. تصفح المنتجات",projectStep:"1. اختر نوع المساحة"}:lang==="fr"?{eyebrow:"COMMENCEZ ICI",ask:"Choisissez le parcours qui vous convient",hint:"Aucune inscription nécessaire. Choisissez simplement votre point de départ.",product:"Je cherche des produits",productDesc:"Parcourez les modèles du catalogue puis ajoutez ceux qui vous intéressent à la demande.",project:"Je souhaite aménager un espace",projectDesc:"Choisissez votre type d’espace et demandez une étude pour votre projet.",productStep:"1. Parcourir les produits",projectStep:"1. Choisir l’espace"}:{eyebrow:"START HERE",ask:"Choose the path that fits your need",hint:"No sign-up required. Simply choose where to begin.",product:"I’m looking for products",productDesc:"Browse catalogue examples, then add the pieces that suit your project.",project:"I need a complete fit-out",projectDesc:"Choose your space type and request an initial project study.",productStep:"1. Browse products",projectStep:"1. Choose your space"};
-  const selectedProducts=catalog.filter(p=>cart.includes(p.id));
   const featuredProduct=catalog.find(p=>metaFor(p).featured)??catalog[0];
   const bestProducts=catalog.filter(p=>metaFor(p).bestseller).slice(0,3);
   const productHighlights=lang==="ar"?{eyebrow:"مختارات الكتالوج",featured:"منتج مختار",featuredText:"نموذج مميز يمكنك البدء منه وتخصيصه حسب المساحة والخامات والتشطيب.",best:"الأكثر مبيعًا",bestText:"نماذج يختارها العملاء كثيرًا كنقطة انطلاق لمشاريعهم.",offer:"عرض متوفر",details:"عرض المنتج"}:lang==="fr"?{eyebrow:"SÉLECTION CATALOGUE",featured:"Produit à découvrir",featuredText:"Une référence phare à adapter aux dimensions, matières et finitions de votre projet.",best:"Les plus demandés",bestText:"Des références souvent choisies comme point de départ pour les projets EPSTAR.",offer:"Offre en cours",details:"Voir le produit"}:{eyebrow:"CATALOGUE HIGHLIGHTS",featured:"Featured product",featuredText:"A signature reference to tailor to your space, materials and finish requirements.",best:"Most requested",bestText:"References frequently chosen as a starting point for EPSTAR projects.",offer:"Current offer",details:"View product"};
-  const toggleCart=(id:string)=>setCart(v=>v.includes(id)?v.filter(x=>x!==id):[...v,id]);
   return <main dir={rtl?"rtl":"ltr"} className={`${rtl?"rtl ":""}${theme==="dark"?"dark":""}`}>
     <SiteHeader lang={lang} setLang={setLang} theme={theme} setTheme={setTheme}/>
     <section id="accueil" className="hero-shell premium-hero" onMouseEnter={()=>setPaused(true)} onMouseLeave={()=>setPaused(false)}>
@@ -110,10 +106,6 @@ export default function Home(){
       </div>
       <div className="sector-tabs premium-tabs" role="tablist" aria-label={t.choose}>{sectors.map((s,i)=><button key={s.title} role="tab" aria-selected={active===i} className={active===i?"active":""} onClick={()=>setActive(i)}><i>0{i+1}</i><span className="tab-icon">{s.icon}</span><span><b>{s.title}</b><small>{s.short}</small></span><em>↗</em></button>)}</div>
     </section>
-    <section id="catalogue" className="catalogue-section section-pad">
-      <div className="catalogue-head"><div><small>{shopCopy.tag}</small><h2>{br(shopCopy.title)}</h2></div><div><p>{shopCopy.text}</p><a href="/catalogue">{shopCopy.all} <span>↗</span></a></div></div>
-      <div className="catalogue-grid">{catalog.slice(0,4).map((product,i)=>{const added=cart.includes(product.id);return <article className="catalogue-card" key={product.id}><a className="catalogue-image" href={`/catalogue/${product.slug}`}><span>0{i+1}</span><img src={product.image} alt={product.name[lang]}/><small>{shopCopy.demo}</small></a><div className="catalogue-info"><small>{product.category[lang]} · {product.id.toUpperCase()}</small><h3>{product.name[lang]}</h3><p>{product.detail[lang]}</p><button className={added?"added":""} type="button" onClick={()=>toggleCart(product.id)}>{added?shopCopy.added:shopCopy.add}<span>{added?"✓":"+"}</span></button></div></article>})}</div>
-    </section>
     <section className="product-highlights section-pad">
       <div className="highlight-heading"><small>{productHighlights.eyebrow}</small><h2>{productHighlights.best}</h2><p>{productHighlights.bestText}</p></div>
       <div className="featured-product"><a href={`/catalogue/${featuredProduct.slug}`}><div className="featured-copy"><small>{productHighlights.featured} · {featuredProduct.id.toUpperCase()}</small><h3>{featuredProduct.name[lang]}</h3><p>{productHighlights.featuredText}</p>{metaFor(featuredProduct).promotion&&<b>{productHighlights.offer} — {metaFor(featuredProduct).promotion?.[lang]}</b>}<span>{productHighlights.details} ↗</span></div><div className="featured-visual"><img src={featuredProduct.image} alt={featuredProduct.name[lang]}/></div></a></div>
@@ -132,7 +124,7 @@ export default function Home(){
     <section id="projets" className="projects premium-projects section-pad"><div className="section-title"><div><small>{t.works}</small><h2>{br(t.worksTitle)}</h2></div><div className="projects-intro"><p>{t.worksText}</p><a href="/projects">{lang==="ar"?"عرض كل المشاريع":lang==="fr"?"Voir tous les projets":"View all projects"} ↗</a></div></div><div className="project-cards editorial-projects">{sectors.slice(0,3).map((s,i)=><a href={`/projects/${["pharmacy-algiers","executive-office","premium-boutique"][i]}`} key={s.title}><article><img src={s.image} alt={s.title}/><span className="project-no">0{i+1}</span><div><small>{t.project} · {s.short}</small><h3>{s.title}</h3><p>{s.text}</p><span>{t.view} ↗</span></div></article></a>)}</div></section>
     <section className="testimonial"><div className="testimonial-photo"><img src="/images/office.png" alt={sectors[1].title}/></div><blockquote><small>{t.review}</small><p>“{t.reviewText}”</p><footer><b>{t.client}</b><span>{t.clientType}</span></footer></blockquote></section>
     <section className="final-cta"><small>{t.ctaTag}</small><h2>{br(t.ctaTitle)}</h2><p>{t.ctaText}</p><a href="#contact">{t.study}<span>↗</span></a></section>
-    <footer className="footer"><div><img src="/epstar-logo.png" alt="EPSTAR"/><p>{t.footerText}</p></div><div><h4>{t.navigation}</h4>{t.nav.slice(0,4).map((n,i)=><a key={n} href={["#accueil","#apropos","#services","#projets"][i]}>{n}</a>)}</div><div><h4>{t.nav[4]}</h4><a href="https://wa.me/213551984778" target="_blank" rel="noreferrer">WhatsApp +213 551 984 778</a><small>{t.temp}</small></div><p className="copyright">© 2026 EPSTAR — {t.copy}</p></footer>
+    <SiteFooter lang={lang}/>
 
   </main>
 }
