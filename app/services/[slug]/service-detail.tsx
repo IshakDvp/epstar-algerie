@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import QuoteForm from "../../components/quote-form";
+import SiteHeader from "../../components/site-header";
 
 type Lang = "fr" | "ar" | "en";
 type Theme = "light" | "dark";
@@ -44,7 +45,7 @@ export default function ServiceDetail({slug}:{slug:string}){
   useEffect(()=>{document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr"},[lang]);
   const t=copy[lang], item=t.items[key], rtl=lang==="ar";
   return <main className={`service-page ${rtl?"rtl ":""}${theme==="dark"?"dark":""}`} dir={rtl?"rtl":"ltr"}>
-    <header className="site-header"><a className="logo" href="/"><img src="/epstar-logo.png" alt="EPSTAR Design"/></a><nav>{t.nav.map((n,i)=><a key={n} href={["/","/about","/#services","/projects","/#contact"][i]}>{n}</a>)}</nav><div className="header-tools"><button className="theme-toggle" onClick={()=>setTheme(v=>v==="dark"?"light":"dark")} aria-label="Theme">{theme==="dark"?"☀":"☾"}</button><div className="lang-switch">{(["ar","fr","en"] as Lang[]).map(l=><button key={l} className={lang===l?"active":""} onClick={()=>setLang(l)}>{l.toUpperCase()}</button>)}</div><a className="header-cta" href="#devis">{t.quote}<span>↗</span></a></div></header>
+    <SiteHeader lang={lang} setLang={setLang} theme={theme} setTheme={setTheme}/>
     <section className="detail-hero"><div className="detail-copy"><a className="back-link" href="/#services">← {t.back}</a><small>{t.eyebrow}</small><h1>{item.headline}</h1><p>{item.text}</p><a className="primary-btn" href="#devis">{t.contact}</a></div><div className="detail-model"><span/><img src={base[key].model} alt={item.title}/><b>{base[key].icon}</b></div></section>
     <section className="detail-includes"><div><small>EPSTAR / {String(order.indexOf(key as typeof order[number])+1).padStart(2,"0")}</small><h2>{t.includes}</h2><p>{t.includesText}</p></div><ul>{item.list.map((x,i)=><li key={x}><b>0{i+1}</b><span>{x}</span></li>)}</ul></section>
     <section className="detail-process"><div className="center-title"><small>{t.process}</small><h2>{t.processTitle}</h2><p>{t.intro}</p></div><div className="detail-steps">{t.steps.map((s,i)=><article key={s[0]}><b>0{i+1}</b><h3>{s[0]}</h3><p>{s[1]}</p></article>)}</div></section>

@@ -5,6 +5,13 @@ export type Product = {
   intro:Record<Lang,string>; materials:Record<Lang,string[]>; options:Record<Lang,string[]>;
 };
 
+export type ProductMeta = {
+  subcategory:string;
+  bestseller?:boolean;
+  promotion?:Record<Lang,string>;
+  featured?:boolean;
+};
+
 const p=(id:string,slug:string,group:Product["group"],image:string,category:Product["category"],name:Product["name"],detail:Product["detail"],intro:Product["intro"],materials:Product["materials"],options:Product["options"]):Product=>({id,slug,group,image,category,name,detail,intro,materials,options});
 
 export const catalog:Product[]=[
@@ -21,3 +28,27 @@ export const catalog:Product[]=[
 export const groups:Record<Product["group"],Record<Lang,string>>={
   pharmacy:{fr:"Pharmacies",ar:"الصيدليات",en:"Pharmacies"}, office:{fr:"Bureaux",ar:"المكاتب",en:"Offices"}, retail:{fr:"Commerces",ar:"المحلات",en:"Retail"}, interiors:{fr:"Intérieurs",ar:"الأثاث الداخلي",en:"Interiors"}
 };
+
+export const subcategories:Record<string,{group:Product["group"];label:Record<Lang,string>}>={
+  "pharmacy-vip":{group:"pharmacy",label:{fr:"Pharmacie VIP",ar:"صيدليات VIP",en:"VIP Pharmacies"}},
+  "pharmacy-luxe":{group:"pharmacy",label:{fr:"Pharmacie Luxe",ar:"صيدليات فاخرة",en:"Luxury Pharmacies"}},
+  "office-direction":{group:"office",label:{fr:"Bureaux direction",ar:"مكاتب إدارية",en:"Executive offices"}},
+  "office-reception":{group:"office",label:{fr:"Accueil & réception",ar:"استقبال ومكاتب أمامية",en:"Reception areas"}},
+  "retail-display":{group:"retail",label:{fr:"Présentation produit",ar:"وحدات عرض المنتجات",en:"Product displays"}},
+  "retail-cash":{group:"retail",label:{fr:"Comptoirs de vente",ar:"كاونترات البيع",en:"Sales counters"}},
+  "interior-dressing":{group:"interiors",label:{fr:"Dressings",ar:"دواليب وخزائن",en:"Wardrobes"}},
+  "interior-bedroom":{group:"interiors",label:{fr:"Chambres",ar:"غرف النوم",en:"Bedrooms"}}
+};
+
+export const productMeta:Record<string,ProductMeta>={
+  "ph-c01":{subcategory:"pharmacy-vip",bestseller:true,featured:true,promotion:{fr:"Offre lancement",ar:"عرض إطلاق",en:"Launch offer"}},
+  "ph-r05":{subcategory:"pharmacy-luxe",bestseller:true},
+  "of-d02":{subcategory:"office-direction",bestseller:true},
+  "of-r07":{subcategory:"office-reception",promotion:{fr:"Finition LED offerte",ar:"إضاءة LED ضمن العرض",en:"Complimentary LED finish"}},
+  "rt-v03":{subcategory:"retail-display",bestseller:true},
+  "rt-c08":{subcategory:"retail-cash",promotion:{fr:"Offre projet commerce",ar:"عرض تجهيز محل",en:"Retail project offer"}},
+  "in-w04":{subcategory:"interior-dressing",bestseller:true},
+  "in-b09":{subcategory:"interior-bedroom"}
+};
+
+export const metaFor=(product:Product)=>productMeta[product.id];

@@ -1,12 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { projectCopy, projectMedia, projectOrder, ProjectLang } from "./data";
+import SiteHeader from "../components/site-header";
 
 type Theme="light"|"dark";
 export function ProjectHeader({lang,setLang,theme,setTheme}:{lang:ProjectLang,setLang:(l:ProjectLang)=>void,theme:Theme,setTheme:(t:Theme)=>void}){
-  const nav=lang==="ar"?["الرئيسية","من نحن","خدماتنا","مشاريعنا","اتصل بنا"]:lang==="fr"?["Accueil","À propos","Services","Projets","Contact"]:["Home","About","Services","Projects","Contact"];
-  const quote=lang==="ar"?"اطلب عرض سعر":lang==="fr"?"Demander un devis":"Request a quote";
-  return <header className="site-header"><a className="logo" href="/"><img src="/epstar-logo.png" alt="EPSTAR Design"/></a><nav>{nav.map((n,i)=><a key={n} href={["/","/about","/#services","/projects","/#contact"][i]}>{n}</a>)}</nav><div className="header-tools"><button className="theme-toggle" onClick={()=>setTheme(theme==="dark"?"light":"dark")} aria-label="Theme">{theme==="dark"?"☀":"☾"}</button><div className="lang-switch">{(["ar","fr","en"] as ProjectLang[]).map(l=><button key={l} className={lang===l?"active":""} onClick={()=>setLang(l)}>{l.toUpperCase()}</button>)}</div><a className="header-cta" href="/#contact">{quote}<span>↗</span></a></div></header>
+  return <SiteHeader lang={lang} setLang={setLang} theme={theme} setTheme={setTheme}/>;
 }
 export function useProjectUi(){
   const [lang,setLang]=useState<ProjectLang>("fr"),[theme,setTheme]=useState<Theme>("light");
