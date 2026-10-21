@@ -6,6 +6,9 @@ interface Env {
   ASSETS: Fetcher;
   DB: D1Database;
   BUCKET: R2Bucket;
+  RESEND_API_KEY?: string;
+  MAIL_FROM?: string;
+  INITIAL_ADMIN_EMAIL?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -25,6 +28,40 @@ function json(data: unknown, status = 200) {
 
 function cleanFileName(name: string) {
   return name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-120) || "attachment";
+}
+
+const encoder = new TextEncoder();
+const hashToken = async (value: string) => Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", encoder.encode(value)))).map((x) => x.toString(16).padStart(2, "0")).join("");
+const randomToken = () => Array.from(crypto.getRandomValues(new Uint8Array(32))).map((x) => x.toString(16).padStart(2, "0")).join("");
+
+async function requestMagicLink(request: Request, env: Env) {
+  const body = await request.json().catch(() => ({})) as { email?: string };
+  const email = String(body.email || "").trim().toLowerCase();
+  const accepted = json({ ok: true, message: "Si cette adresse est autorisée, un lien de connexion vient d’être envoyé." });
+  if (!/^\S+@\S+\.\S+$/.test(email) || !env.RESEND_API_KEY || !env.MAIL_FROM) return accepted;
+  let user = await env.DB.prepare("SELECT id, name, role FROM users WHERE email = ? AND active = 1").bind(email).first<{ id:string; name:string; role:string }>();
+  if (!user && env.INITIAL_ADMIN_EMAIL?.toLowerCase() === email) {
+    const now = new Date().toISOString(); const id = crypto.randomUUID();
+    await env.DB.prepare("INSERT INTO users (id, email, name, role, active, created_at, updated_at) VALUES (?, ?, ?, 'admin', 1, ?, ?)").bind(id, email, email.split("@")[0], now, now).run();
+    user = { id, name: email.split("@")[0], role: "admin" };
+  }
+  if (!user) return accepted;
+  const token = randomToken(), tokenHash = await hashToken(token), now = new Date(), expires = new Date(now.getTime() + 15 * 60 * 1000).toISOString();
+  await env.DB.prepare("INSERT INTO auth_tokens (id, user_id, token_hash, expires_at, created_at) VALUES (?, ?, ?, ?, ?)").bind(crypto.randomUUID(), user.id, tokenHash, expires, now.toISOString()).run();
+  const link = new URL("/api/admin/verify", request.url); link.searchParams.set("token", token);
+  await fetch("https://api.resend.com/emails", { method:"POST", headers:{ Authorization:`Bearer ${env.RESEND_API_KEY}`, "content-type":"application/json" }, body:JSON.stringify({ from:env.MAIL_FROM, to:[email], subject:"EPSTAR — lien de connexion", html:`<p>Bonjour ${user.name},</p><p>Utilisez ce lien pour accéder au tableau de bord EPSTAR. Il expire dans 15 minutes.</p><p><a href="${link.href}">Accéder au tableau de bord</a></p>` }) });
+  return accepted;
+}
+
+async function verifyMagicLink(request: Request, env: Env) {
+  const token = new URL(request.url).searchParams.get("token") || ""; if (!token) return new Response("Invalid link", { status:400 });
+  const tokenHash = await hashToken(token), now = new Date().toISOString();
+  const record = await env.DB.prepare("SELECT id, user_id FROM auth_tokens WHERE token_hash = ? AND used_at IS NULL AND expires_at > ?").bind(tokenHash, now).first<{ id:string; user_id:string }>();
+  if (!record) return new Response("This sign-in link has expired or was already used.", { status:401 });
+  await env.DB.prepare("UPDATE auth_tokens SET used_at = ? WHERE id = ?").bind(now, record.id).run();
+  const session = randomToken(), sessionHash = await hashToken(session), expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  await env.DB.prepare("INSERT INTO admin_sessions (id, user_id, token_hash, expires_at, created_at) VALUES (?, ?, ?, ?, ?)").bind(crypto.randomUUID(), record.user_id, sessionHash, expires, now).run();
+  return new Response(null, { status:302, headers:{ location:"/admin", "set-cookie":`epstar_admin=${session}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800` } });
 }
 
 async function createQuoteRequest(request: Request, env: Env): Promise<Response> {
@@ -102,6 +139,8 @@ const worker = {
       if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
       return createQuoteRequest(request, env);
     }
+    if (url.pathname === "/api/admin/request-link" && request.method === "POST") return requestMagicLink(request, env);
+    if (url.pathname === "/api/admin/verify" && request.method === "GET") return verifyMagicLink(request, env);
 
     return handler.fetch(request, env, ctx);
   },

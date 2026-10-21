@@ -16,6 +16,23 @@ export const users = sqliteTable("users", {
   updatedAt: text("updated_at").notNull(),
 }, (table) => [uniqueIndex("users_email_unique").on(table.email)]);
 
+export const authTokens = sqliteTable("auth_tokens", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tokenHash: text("token_hash").notNull(),
+  expiresAt: text("expires_at").notNull(),
+  usedAt: text("used_at"),
+  createdAt: text("created_at").notNull(),
+}, (table) => [uniqueIndex("auth_tokens_hash_unique").on(table.tokenHash), index("auth_tokens_user_index").on(table.userId)]);
+
+export const adminSessions = sqliteTable("admin_sessions", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tokenHash: text("token_hash").notNull(),
+  expiresAt: text("expires_at").notNull(),
+  createdAt: text("created_at").notNull(),
+}, (table) => [uniqueIndex("admin_sessions_hash_unique").on(table.tokenHash), index("admin_sessions_user_index").on(table.userId)]);
+
 export const categories = sqliteTable("categories", {
   id: text("id").primaryKey(),
   parentId: text("parent_id"),
