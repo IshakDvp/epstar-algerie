@@ -64,6 +64,19 @@ async function verifyMagicLink(request: Request, env: Env) {
   return new Response(null, { status:302, headers:{ location:"/admin", "set-cookie":`epstar_admin=${session}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800` } });
 }
 
+function cookieValue(request: Request, name: string) { return request.headers.get("cookie")?.split(";").map((part) => part.trim()).find((part) => part.startsWith(`${name}=`))?.slice(name.length + 1) || ""; }
+async function adminUser(request: Request, env: Env) {
+  const token = cookieValue(request, "epstar_admin"); if (!token) return null;
+  const hash = await hashToken(token), now = new Date().toISOString();
+  return env.DB.prepare("SELECT users.id, users.name, users.email, users.role FROM admin_sessions JOIN users ON users.id = admin_sessions.user_id WHERE admin_sessions.token_hash = ? AND admin_sessions.expires_at > ? AND users.active = 1").bind(hash, now).first<{id:string;name:string;email:string;role:string}>();
+}
+async function adminOverview(request: Request, env: Env) {
+  const user = await adminUser(request, env); if (!user) return json({ error:"Unauthorized" }, 401);
+  const count = await env.DB.prepare("SELECT COUNT(*) AS total FROM quote_requests WHERE status = 'new'").first<{total:number}>();
+  const recent = await env.DB.prepare("SELECT request_number AS requestNumber, full_name AS fullName, company_name AS companyName, project_type AS projectType, status, created_at AS createdAt FROM quote_requests ORDER BY created_at DESC LIMIT 10").all();
+  return json({ user, newRequests:count?.total || 0, recent:recent.results || [] });
+}
+
 async function createQuoteRequest(request: Request, env: Env): Promise<Response> {
   if (!env.DB || !env.BUCKET) return json({ error: "Service de demandes indisponible." }, 503);
   const form = await request.formData();
@@ -141,6 +154,7 @@ const worker = {
     }
     if (url.pathname === "/api/admin/request-link" && request.method === "POST") return requestMagicLink(request, env);
     if (url.pathname === "/api/admin/verify" && request.method === "GET") return verifyMagicLink(request, env);
+    if (url.pathname === "/api/admin/overview" && request.method === "GET") return adminOverview(request, env);
 
     return handler.fetch(request, env, ctx);
   },
