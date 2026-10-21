@@ -9,9 +9,9 @@ type Theme = "light" | "dark";
 type Props = { lang: Lang; setLang: (lang: Lang) => void; theme: Theme; setTheme: (theme: Theme) => void };
 
 const copy = {
-  ar: { home: "الرئيسية", products: "المنتجات", fitout: "التجهيز الكامل", offers: "عروضنا", projects: "المشاريع", request: "طلبي", menu: "القائمة", badge: "جديد" },
-  fr: { home: "Accueil", products: "Produits", fitout: "Aménagement", offers: "Nos offres", projects: "Projets", request: "Ma demande", menu: "Menu", badge: "NOUVEAU" },
-  en: { home: "Home", products: "Products", fitout: "Fit-out", offers: "Offers", projects: "Projects", request: "My request", menu: "Menu", badge: "NEW" },
+  ar: { home: "الرئيسية", products: "المنتجات", fitout: "التجهيز الكامل", offers: "عروضنا", projects: "إنجازاتنا", request: "طلبي", menu: "القائمة", badge: "جديد" },
+  fr: { home: "Accueil", products: "Produits", fitout: "Aménagement", offers: "Nos offres", projects: "Nos réalisations", request: "Ma demande", menu: "Menu", badge: "NOUVEAU" },
+  en: { home: "Home", products: "Products", fitout: "Fit-out", offers: "Offers", projects: "Our work", request: "My request", menu: "Menu", badge: "NEW" },
 };
 
 export default function SiteHeader({ lang, setLang, theme, setTheme }: Props) {
