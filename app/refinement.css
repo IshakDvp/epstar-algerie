@@ -240,6 +240,7 @@ main.dark .catalogue-section{background:#0b1013}main.dark .catalogue-image{backg
 .smart-quote .quote-selection>div{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #ffffff30;font-size:16px}
 .smart-quote .quote-selection small{display:block;font-size:13px}
 .smart-quote .quote-selection button{width:auto;flex-shrink:0;padding:8px 12px;font-size:14px;cursor:pointer}
+.enhanced-quote .selected-product{display:grid!important;grid-template-columns:84px 1fr 74px auto;align-items:center;gap:14px;padding:12px 0;border-top:1px solid #ffffff30}.enhanced-quote .selected-product img{width:84px;height:64px;object-fit:cover;border-radius:4px}.enhanced-quote .selected-product strong,.enhanced-quote .selected-product small{display:block}.enhanced-quote .selected-product small{margin-top:4px}.enhanced-quote .selected-product label{font-size:12px!important}.enhanced-quote .selected-product input{min-height:38px;padding:7px!important;margin-top:4px}.enhanced-quote .installation{border:1px solid #ffffff55;border-radius:5px;padding:9px 12px;display:flex!important;align-items:center;gap:16px;min-height:43px}.enhanced-quote .installation legend{padding:0 4px;font-size:14px;color:#fff}.enhanced-quote .installation label{font-size:14px!important;display:flex!important;align-items:center;gap:5px}.enhanced-quote input[type=file]{padding:9px!important;font-size:14px!important}.enhanced-quote .field small{font-size:12px;color:#ffffffc7}
 .smart-quote .quote-message-preview{grid-column:1/-1;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start;font-size:16px;line-height:1.6;padding:16px;background:#0002}
 .catalogue-nav .catalogue-count{display:inline-block!important;font-size:14px}
 
@@ -254,6 +255,7 @@ html[data-theme="dark"] img[src="/epstar-logo.png"]{content:url("/epstar-logo-da
 @media(max-width:650px){.journey-nav{gap:8px 16px;padding:8px}.journey-nav a{font-size:14px}.journey-notice{bottom:12px;inset-inline-end:16px}.request-page{padding:24px 16px}.quote-band.request-form{padding:20px}.request-heading h1{font-size:28px}.header-request{display:none}.catalogue-hero h1{font-size:34px}}
 
 .quote-empty,.smart-quote .quote-guidance{grid-column:1/-1;font-size:16px;line-height:1.7}.quote-empty{padding:20px;border:1px solid #ffffff60}.quote-empty h3{font-size:20px;margin:0}.quote-empty p{font-size:16px!important}.quote-empty a{display:inline-block;padding:10px 16px;background:#17262c;color:white;font-size:16px}.smart-quote .quote-guidance{margin:8px 0}.smart-quote label{font-size:16px!important}.smart-quote input:focus-visible,.smart-quote select:focus-visible,.smart-quote textarea:focus-visible{outline:2px solid white;outline-offset:3px}
+@media(max-width:560px){.enhanced-quote .selected-product{grid-template-columns:64px 1fr;gap:10px}.enhanced-quote .selected-product img{width:64px;height:54px}.enhanced-quote .installation{flex-wrap:wrap}}
 
 /* Catalogue cards: keep every product as one readable, compact unit. */
 .catalogue-main .catalogue-full-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;align-items:stretch}

@@ -1,49 +1,49 @@
 "use client";
 
-import { FormEvent, useState, useEffect, useId } from "react";
+import { FormEvent, useId, useState } from "react";
+import { catalog } from "../catalogue/data";
+import { useQuoteCart } from "./use-quote-cart";
 
-import {catalog} from "../catalogue/data";
-import {useQuoteCart} from "./use-quote-cart";
+type Lang = "fr" | "ar" | "en";
 
-type Lang="fr"|"ar"|"en";
-
-const labels={
-  fr:{name:"Nom complet",phone:"Téléphone",sector:"Type de projet",location:"Wilaya / Ville",budget:"Budget estimatif",message:"Décrivez votre besoin",choose:"Sélectionner",sectors:["Pharmacies","Bureaux","Commerces","Chambres"],budgets:["À définir","Moins de 500 000 DA","500 000 – 1 500 000 DA","1 500 000 – 3 000 000 DA","Plus de 3 000 000 DA"],whatsapp:"Envoyer à EPSTAR sur WhatsApp",required:"Veuillez compléter les champs obligatoires.",ready:"Votre demande est prête à être envoyée à EPSTAR."},
-  ar:{name:"الاسم الكامل",phone:"رقم الهاتف",sector:"نوع المشروع",location:"الولاية / المدينة",budget:"الميزانية التقديرية",message:"صف لنا احتياجاتك",choose:"اختر",sectors:["الصيدليات","المكاتب","المحلات","غرف النوم"],budgets:["تحدد لاحقًا","أقل من 500,000 دج","500,000 – 1,500,000 دج","1,500,000 – 3,000,000 دج","أكثر من 3,000,000 دج"],whatsapp:"إرسال إلى EPSTAR عبر واتساب",required:"يرجى إكمال الحقول المطلوبة.",ready:"طلبك جاهز للإرسال مباشرة إلى EPSTAR."},
-  en:{name:"Full name",phone:"Phone",sector:"Project type",location:"Province / City",budget:"Estimated budget",message:"Describe your requirements",choose:"Select",sectors:["Pharmacies","Offices","Retail","Bedrooms"],budgets:["To be defined","Under DZD 500,000","DZD 500,000 – 1,500,000","DZD 1,500,000 – 3,000,000","Above DZD 3,000,000"],whatsapp:"Send to EPSTAR on WhatsApp",required:"Please complete the required fields.",ready:"Your request is ready to send directly to EPSTAR."}
+const copy = {
+  fr: { selected:"Produits sélectionnés", remove:"Retirer", noProducts:"Aucun produit sélectionné", noProductsText:"Vous pouvez demander l’aménagement complet d’un espace, même sans produit présélectionné.", browse:"Parcourir les produits", guidance:"Les champs marqués d’un * sont obligatoires. Nous utiliserons ces informations pour préparer une offre adaptée.", name:"Nom complet", phone:"Téléphone", email:"E-mail", company:"Entreprise / organisme", role:"Fonction", project:"Type de projet", wilaya:"Wilaya / Ville", address:"Commune / adresse de livraison", installation:"Livraison et montage sur site", yes:"Oui", no:"Non", budget:"Budget estimatif", customBudget:"Autre budget (DA)", urgency:"Délai souhaité", message:"Besoins spécifiques", files:"Plans, photos ou cahier des charges", filesHelp:"PDF, JPG, PNG ou DWG — jusqu’à 5 fichiers.", send:"Continuer vers l’envoi", ready:"Votre demande est prête. Choisissez le canal d’envoi.", whatsapp:"Envoyer sur WhatsApp", emailSend:"Préparer l’e-mail", emailSubject:"Demande de devis EPSTAR", quantity:"Quantité", reference:"Référence", dimensions:"Dimensions", finish:"Coloris / finition", madeToMeasure:"Sur mesure", choose:"Sélectionner", sectors:["Pharmacie","Bureaux","Commerce","Espace résidentiel","Autre"], budgets:["1 000 000 – 1 500 000 DA","1 500 000 – 2 000 000 DA","2 000 000 – 3 000 000 DA","3 000 000 DA et plus","À définir"], urgencyItems:["Besoin immédiat","Sous 15 jours","Projet à 1–3 mois","Plus de 3 mois"] },
+  ar: { selected:"المنتجات المختارة", remove:"حذف", noProducts:"لم تختر منتجات بعد", noProductsText:"يمكنك طلب تجهيز مساحة كاملة حتى بدون اختيار منتج مسبقًا.", browse:"تصفح المنتجات", guidance:"الحقول التي عليها * مطلوبة. نستخدم هذه المعلومات لإعداد عرض مناسب بدقة.", name:"الاسم الكامل", phone:"رقم الهاتف", email:"البريد الإلكتروني", company:"اسم الشركة / المؤسسة", role:"الوظيفة", project:"نوع المشروع", wilaya:"الولاية / المدينة", address:"البلدية / عنوان التسليم", installation:"التوصيل والتركيب في الموقع", yes:"نعم", no:"لا", budget:"الميزانية التقديرية", customBudget:"ميزانية أخرى (دج)", urgency:"المدة المطلوبة", message:"الاحتياجات أو ملاحظات إضافية", files:"مخططات، صور أو دفتر الشروط", filesHelp:"PDF، JPG، PNG أو DWG — حتى 5 ملفات.", send:"المتابعة نحو الإرسال", ready:"طلبك جاهز. اختر طريقة الإرسال.", whatsapp:"إرسال عبر واتساب", emailSend:"تحضير البريد الإلكتروني", emailSubject:"طلب عرض سعر EPSTAR", quantity:"الكمية", reference:"المرجع", dimensions:"الأبعاد", finish:"اللون / التشطيب", madeToMeasure:"حسب الطلب", choose:"اختر", sectors:["صيدلية","مكاتب","محل تجاري","مساحة سكنية","أخرى"], budgets:["1,000,000 – 1,500,000 دج","1,500,000 – 2,000,000 دج","2,000,000 – 3,000,000 دج","3,000,000 دج وأكثر","تحدد لاحقًا"], urgencyItems:["احتياج فوري","خلال 15 يومًا","مشروع خلال 1–3 أشهر","أكثر من 3 أشهر"] },
+  en: { selected:"Selected products", remove:"Remove", noProducts:"No products selected", noProductsText:"You can request a complete fit-out without pre-selecting a product.", browse:"Browse products", guidance:"Fields marked * are required. We use these details to prepare an appropriate proposal.", name:"Full name", phone:"Phone", email:"Email", company:"Company / organisation", role:"Role", project:"Project type", wilaya:"Province / city", address:"District / delivery address", installation:"Delivery and installation on site", yes:"Yes", no:"No", budget:"Estimated budget", customBudget:"Other budget (DZD)", urgency:"Preferred timing", message:"Specific requirements", files:"Plans, photos or brief", filesHelp:"PDF, JPG, PNG or DWG — up to 5 files.", send:"Continue to sending", ready:"Your request is ready. Choose a sending channel.", whatsapp:"Send via WhatsApp", emailSend:"Prepare email", emailSubject:"EPSTAR quote request", quantity:"Quantity", reference:"Reference", dimensions:"Dimensions", finish:"Colour / finish", madeToMeasure:"Made to measure", choose:"Select", sectors:["Pharmacy","Offices","Retail","Residential space","Other"], budgets:["DZD 1,000,000 – 1,500,000","DZD 1,500,000 – 2,000,000","DZD 2,000,000 – 3,000,000","DZD 3,000,000 and above","To be defined"], urgencyItems:["Immediate need","Within 15 days","Project in 1–3 months","Over 3 months"] }
 };
 
-export default function QuoteForm({lang,defaultSector=""}:{lang:Lang,defaultSector?:string}){
-  const t=labels[lang];
-  const formId=useId();
-  const {cart,setCart}=useQuoteCart();
-  const selected=catalog.filter(p=>cart.includes(p.id));
-  const selectionTitle=lang==="ar"?"المنتجات المختارة":lang==="fr"?"Produits sélectionnés":"Selected products";
-  const removeLabel=lang==="ar"?"حذف":lang==="fr"?"Retirer":"Remove";
-  const sectorIndex=["pharmacies","bureaux","commerces","chambres"].indexOf(defaultSector);
-  const [notice,setNotice]=useState("");
-  const [payload,setPayload]=useState("");
-  useEffect(()=>{setPayload("");setNotice("")},[lang,cart.join("|")]);
-  function prepare(e:FormEvent<HTMLFormElement>){
-    e.preventDefault();const fd=new FormData(e.currentTarget);
-    const name=String(fd.get("name")||"").trim(),phone=String(fd.get("phone")||"").trim(),sector=t.sectors[Number(fd.get("sector"))]||"",location=String(fd.get("location")||"").trim(),budget=fd.get("budget")===""?"":t.budgets[Number(fd.get("budget"))]||"",message=String(fd.get("message")||"");
-    if(!name||!phone||!sector||!location){setNotice(t.required);setPayload("");return}
-    let body=lang==="ar"?`طلب عرض سعر جديد — EPSTAR\n\nالاسم: ${name}\nالهاتف: ${phone}\nالمشروع: ${sector}\nالموقع: ${location}\nالميزانية: ${budget||"غير محددة"}\nالتفاصيل: ${message||"—"}`:`New quote request — EPSTAR\n\nName: ${name}\nPhone: ${phone}\nProject: ${sector}\nLocation: ${location}\nBudget: ${budget||"Not specified"}\nDetails: ${message||"—"}`;
-    if(lang==="fr")body=`Demande de devis — EPSTAR\n\nNom: ${name}\nTéléphone: ${phone}\nProjet: ${sector}\nLieu: ${location}\nBudget: ${budget||"À définir"}\nDétails: ${message||"—"}`;
-    if(selected.length)body+="\n\n"+selectionTitle+":\n"+selected.map(p=>"- "+p.name[lang]+" ["+p.id.toUpperCase()+"]").join("\n");
-    setPayload(body);setNotice(t.ready);
+export default function QuoteForm({ lang, defaultSector = "" }: { lang: Lang; defaultSector?: string }) {
+  const t = copy[lang], id = useId();
+  const { cart, setCart } = useQuoteCart();
+  const selected = catalog.filter((p) => cart.includes(p.id));
+  const initialProject = ["pharmacies", "bureaux", "commerces", "chambres"].indexOf(defaultSector);
+  const [payload, setPayload] = useState("");
+  const [notice, setNotice] = useState("");
+
+  function buildRequest(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const get = (key: string) => String(form.get(key) || "").trim();
+    const required = ["name", "phone", "email", "project", "wilaya"];
+    if (required.some((key) => !get(key))) { setNotice(lang === "ar" ? "يرجى إكمال الحقول المطلوبة." : lang === "fr" ? "Veuillez compléter les champs obligatoires." : "Please complete the required fields."); return; }
+    const productLines = selected.map((p) => `• ${p.name[lang]} — ${t.reference}: ${p.id.toUpperCase()} — ${t.quantity}: ${get(`quantity-${p.id}`) || "1"}`).join("\n");
+    const files = form.getAll("attachments").filter((file): file is File => file instanceof File && file.size > 0).map((file) => file.name).join(", ");
+    const body = ["DEMANDE DE DEVIS — EPSTAR", "", `${t.name}: ${get("name")}`, `${t.phone}: ${get("phone")}`, `${t.email}: ${get("email")}`, `${t.company}: ${get("company") || "—"}`, `${t.role}: ${get("role") || "—"}`, "", `${t.project}: ${t.sectors[Number(get("project"))] || get("project")}`, `${t.budget}: ${t.budgets[Number(get("budget"))] || get("budget") || "—"}`, `${t.urgency}: ${t.urgencyItems[Number(get("urgency"))] || get("urgency") || "—"}`, `${t.wilaya}: ${get("wilaya")}`, `${t.address}: ${get("address") || "—"}`, `${t.installation}: ${get("installation") === "yes" ? t.yes : t.no}`, "", selected.length ? `${t.selected}:\n${productLines}` : `${t.selected}: ${lang === "ar" ? "تجهيز مساحة كاملة" : "Aménagement complet"}`, `${t.files}: ${files || "—"}`, "", `${t.message}: ${get("message") || "—"}`].join("\n");
+    setPayload(body); setNotice(t.ready);
   }
-  return <form className="smart-quote" onSubmit={prepare} onChange={()=>{setPayload("");setNotice("")}}>
-    {selected.length>0&&<section className="quote-selection"><h3>{selectionTitle} ({selected.length})</h3>{selected.map(p=><div key={p.id}><span>{p.name[lang]} <small>{p.id.toUpperCase()}</small></span><button type="button" onClick={()=>setCart(c=>c.filter(id=>id!==p.id))}>{removeLabel}</button></div>)}</section>}
-    {!selected.length&&<div className="quote-empty"><h3>{lang==="ar"?"لم تختر منتجات بعد":lang==="fr"?"Aucun produit sélectionné":"No products selected yet"}</h3><p>{lang==="ar"?"تصفح المنتجات لإضافتها، أو أكمل النموذج أدناه لطلب تجهيز مساحة كاملة.":lang==="fr"?"Ajoutez des produits ou remplissez le formulaire pour un agencement complet.":"Browse products to add them, or complete the form below for a full fit-out."}</p><a href="/catalogue">{lang==="ar"?"تصفح المنتجات":lang==="fr"?"Parcourir les produits":"Browse products"}</a></div>}
-    <p className="quote-guidance">{lang==="ar"?"الحقول بعلامة * مطلوبة. تجهيز الطلب يعرض الرسالة ولا يرسلها تلقائيًا.":lang==="fr"?"Les champs * sont obligatoires. Préparer la demande affiche le message sans l’envoyer.":"Fields marked * are required. Preparing your request displays the message without sending it."}</p>
-    <div className="field"><label htmlFor={formId+"-name"}>{t.name} *</label><input id={formId+"-name"} name="name" autoComplete="name" required/></div>
-    <div className="field"><label htmlFor={formId+"-phone"}>{t.phone} *</label><input id={formId+"-phone"} name="phone" type="tel" autoComplete="tel" required/></div>
-    <div className="field"><label htmlFor={formId+"-sector"}>{t.sector} *</label><select id={formId+"-sector"} name="sector" defaultValue={sectorIndex>=0?String(sectorIndex):""} required><option value="" disabled>{t.choose}</option>{t.sectors.map((x,i)=><option value={i} key={i}>{x}</option>)}</select></div>
-    <div className="field"><label htmlFor={formId+"-location"}>{t.location} *</label><input id={formId+"-location"} name="location" autoComplete="address-level1" required/></div>
-    <div className="field full"><label htmlFor={formId+"-budget"}>{t.budget}</label><select id={formId+"-budget"} name="budget" defaultValue=""><option value="" disabled>{t.choose}</option>{t.budgets.map((x,i)=><option value={i} key={i}>{x}</option>)}</select></div>
-    <div className="field full"><label htmlFor={formId+"-message"}>{t.message}</label><textarea id={formId+"-message"} name="message" rows={3}/></div>
-    {!payload?<button className="prepare-btn" type="submit">{lang==="ar"?"تجهيز الطلب":lang==="fr"?"Préparer la demande":"Prepare request"}<span>→</span></button>:<div className="send-options"><p className="quote-message-preview">{payload}</p><p className="quote-guidance">{lang==="ar"?"راجع الرسالة ثم أرسلها مباشرة إلى EPSTAR عبر واتساب.":lang==="fr"?"Vérifiez le message, puis envoyez-le directement à EPSTAR sur WhatsApp.":"Review the message, then send it directly to EPSTAR on WhatsApp."}</p><a className="whatsapp-btn" href={`https://wa.me/213551984778?text=${encodeURIComponent(payload)}`} target="_blank" rel="noreferrer">{t.whatsapp}<span>↗</span></a></div>}
-    {notice&&<p className={`form-notice ${payload?"success":"error"}`} role="status">{notice}</p>}
-  </form>
+
+  return <form className="smart-quote enhanced-quote" onSubmit={buildRequest} onChange={() => { setPayload(""); setNotice(""); }}>
+    {selected.length > 0 && <section className="quote-selection"><h3>{t.selected} ({selected.length})</h3>{selected.map((p) => <article className="selected-product" key={p.id}><img src={p.image} alt="" /><div><strong>{p.name[lang]}</strong><small>{t.reference}: {p.id.toUpperCase()}</small><small>{t.dimensions}: {t.madeToMeasure} · {t.finish}: {t.madeToMeasure}</small></div><label>{t.quantity}<input name={`quantity-${p.id}`} type="number" min="1" defaultValue="1" /></label><button type="button" onClick={() => setCart((items) => items.filter((item) => item !== p.id))}>{t.remove}</button></article>)}</section>}
+    {!selected.length && <div className="quote-empty"><h3>{t.noProducts}</h3><p>{t.noProductsText}</p><a href="/catalogue">{t.browse}</a></div>}
+    <p className="quote-guidance">{t.guidance}</p>
+    <div className="field"><label htmlFor={`${id}-name`}>{t.name} *</label><input id={`${id}-name`} name="name" autoComplete="name" required /></div><div className="field"><label htmlFor={`${id}-phone`}>{t.phone} *</label><input id={`${id}-phone`} name="phone" type="tel" autoComplete="tel" required /></div>
+    <div className="field"><label htmlFor={`${id}-email`}>{t.email} *</label><input id={`${id}-email`} name="email" type="email" autoComplete="email" required /></div><div className="field"><label htmlFor={`${id}-company`}>{t.company}</label><input id={`${id}-company`} name="company" autoComplete="organization" /></div>
+    <div className="field"><label htmlFor={`${id}-role`}>{t.role}</label><input id={`${id}-role`} name="role" /></div><div className="field"><label htmlFor={`${id}-project`}>{t.project} *</label><select id={`${id}-project`} name="project" defaultValue={initialProject >= 0 ? String(initialProject) : ""} required><option value="" disabled>{t.choose}</option>{t.sectors.map((item, i) => <option value={i} key={item}>{item}</option>)}</select></div>
+    <div className="field"><label htmlFor={`${id}-wilaya`}>{t.wilaya} *</label><input id={`${id}-wilaya`} name="wilaya" autoComplete="address-level1" required /></div><div className="field"><label htmlFor={`${id}-address`}>{t.address}</label><input id={`${id}-address`} name="address" autoComplete="street-address" /></div>
+    <div className="field"><label htmlFor={`${id}-budget`}>{t.budget}</label><select id={`${id}-budget`} name="budget" defaultValue=""><option value="" disabled>{t.choose}</option>{t.budgets.map((item, i) => <option value={i} key={item}>{item}</option>)}</select></div><div className="field"><label htmlFor={`${id}-custom-budget`}>{t.customBudget}</label><input id={`${id}-custom-budget`} name="customBudget" inputMode="numeric" /></div>
+    <div className="field"><label htmlFor={`${id}-urgency`}>{t.urgency}</label><select id={`${id}-urgency`} name="urgency" defaultValue=""><option value="" disabled>{t.choose}</option>{t.urgencyItems.map((item, i) => <option value={i} key={item}>{item}</option>)}</select></div><fieldset className="field installation"><legend>{t.installation}</legend><label><input name="installation" type="radio" value="yes" defaultChecked /> {t.yes}</label><label><input name="installation" type="radio" value="no" /> {t.no}</label></fieldset>
+    <div className="field full"><label htmlFor={`${id}-files`}>{t.files}</label><input id={`${id}-files`} name="attachments" type="file" accept=".pdf,.jpg,.jpeg,.png,.dwg" multiple /><small>{t.filesHelp}</small></div><div className="field full"><label htmlFor={`${id}-message`}>{t.message}</label><textarea id={`${id}-message`} name="message" rows={4} /></div>
+    {!payload ? <button className="prepare-btn" type="submit">{t.send}<span>→</span></button> : <div className="send-options"><p className="quote-message-preview">{payload}</p><a className="whatsapp-btn" href={`https://wa.me/213551984778?text=${encodeURIComponent(payload)}`} target="_blank" rel="noreferrer">{t.whatsapp}<span>↗</span></a><a className="email-btn" href={`mailto:?subject=${encodeURIComponent(t.emailSubject)}&body=${encodeURIComponent(payload)}`}>{t.emailSend}<span>↗</span></a></div>}
+    {notice && <p className={`form-notice ${payload ? "success" : "error"}`} role="status">{notice}</p>}
+  </form>;
 }
