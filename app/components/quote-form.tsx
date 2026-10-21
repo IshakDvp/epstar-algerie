@@ -20,7 +20,7 @@ export default function QuoteForm({ lang, defaultSector = "" }: { lang: Lang; de
   const [payload, setPayload] = useState("");
   const [notice, setNotice] = useState("");
 
-  function buildRequest(event: FormEvent<HTMLFormElement>) {
+  async function buildRequest(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const get = (key: string) => String(form.get(key) || "").trim();
@@ -29,7 +29,14 @@ export default function QuoteForm({ lang, defaultSector = "" }: { lang: Lang; de
     const productLines = selected.map((p) => `• ${p.name[lang]} — ${t.reference}: ${p.id.toUpperCase()} — ${t.quantity}: ${get(`quantity-${p.id}`) || "1"}`).join("\n");
     const files = form.getAll("attachments").filter((file): file is File => file instanceof File && file.size > 0).map((file) => file.name).join(", ");
     const body = ["DEMANDE DE DEVIS — EPSTAR", "", `${t.name}: ${get("name")}`, `${t.phone}: ${get("phone")}`, `${t.email}: ${get("email")}`, `${t.company}: ${get("company") || "—"}`, `${t.role}: ${get("role") || "—"}`, "", `${t.project}: ${t.sectors[Number(get("project"))] || get("project")}`, `${t.budget}: ${t.budgets[Number(get("budget"))] || get("budget") || "—"}`, `${t.urgency}: ${t.urgencyItems[Number(get("urgency"))] || get("urgency") || "—"}`, `${t.wilaya}: ${get("wilaya")}`, `${t.address}: ${get("address") || "—"}`, `${t.installation}: ${get("installation") === "yes" ? t.yes : t.no}`, "", selected.length ? `${t.selected}:\n${productLines}` : `${t.selected}: ${lang === "ar" ? "تجهيز مساحة كاملة" : "Aménagement complet"}`, `${t.files}: ${files || "—"}`, "", `${t.message}: ${get("message") || "—"}`].join("\n");
-    setPayload(body); setNotice(t.ready);
+    form.set("language", lang);
+    form.set("items", JSON.stringify(selected.map((p) => ({ id:p.id, name:p.name[lang], reference:p.id.toUpperCase(), thumbnail:p.image, dimensions:t.madeToMeasure, finish:t.madeToMeasure, quantity:Number(get(`quantity-${p.id}`)) || 1 }))));
+    try {
+      const response = await fetch("/api/quote", { method:"POST", body:form });
+      const result = await response.json() as { ok?: boolean; requestNumber?: string; error?: string };
+      if (!response.ok || !result.ok) { setNotice(result.error || "Une erreur est survenue."); return; }
+      setPayload(`${body}\n\n${lang === "ar" ? "رقم الطلب" : "N° de demande"}: ${result.requestNumber}`); setNotice(t.ready);
+    } catch { setNotice(lang === "ar" ? "تعذر حفظ الطلب. حاول مرة أخرى." : lang === "fr" ? "Impossible d’enregistrer la demande. Réessayez." : "Unable to save the request. Please try again."); }
   }
 
   return <form className="smart-quote enhanced-quote" onSubmit={buildRequest} onChange={() => { setPayload(""); setNotice(""); }}>
