@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useId, useState } from "react";
 
 import type { ManagedCatalogueProduct } from "../catalogue/managed";
+import {useContent} from "./use-content";
 import { useQuoteCart } from "./use-quote-cart";
 
 type Lang = "fr" | "ar" | "en";
@@ -13,12 +14,13 @@ const copy = {
   en: { selected:"Selected products", remove:"Remove", noProducts:"No products selected", noProductsText:"You can request a complete fit-out without pre-selecting a product.", browse:"Browse products", guidance:"Fields marked * are required. We use these details to prepare an appropriate proposal.", name:"Full name", phone:"Phone", email:"Email", company:"Company / organisation", role:"Role", project:"Project type", wilaya:"Province / city", address:"District / delivery address", installation:"Delivery and installation on site", yes:"Yes", no:"No", budget:"Estimated budget", customBudget:"Other budget (DZD)", urgency:"Preferred timing", message:"Specific requirements", files:"Plans, photos or brief", filesHelp:"PDF, JPG, PNG or DWG — up to 5 files.", send:"Continue to sending", ready:"Your request is ready. Choose a sending channel.", whatsapp:"Send via WhatsApp", emailSend:"Prepare email", emailSubject:"EPSTAR quote request", quantity:"Quantity", reference:"Reference", dimensions:"Dimensions", finish:"Colour / finish", madeToMeasure:"Made to measure", choose:"Select", sectors:["Pharmacy","Offices","Retail","Residential space","Other"], budgets:["DZD 1,000,000 – 1,500,000","DZD 1,500,000 – 2,000,000","DZD 2,000,000 – 3,000,000","DZD 3,000,000 and above","To be defined"], urgencyItems:["Immediate need","Within 15 days","Project in 1–3 months","Over 3 months"] }
 };
 
-export default function QuoteForm({ lang, defaultSector = "" }: { lang: Lang; defaultSector?: string }) {
+export default function QuoteForm({ lang, defaultSector = "", defaultOffer = "" }: { lang: Lang; defaultSector?: string; defaultOffer?:string }) {
   const t = copy[lang], id = useId();
   const { cart, setCart } = useQuoteCart();
   const [managed,setManaged]=useState<ManagedCatalogueProduct[]>([]);
   useEffect(()=>{if(!cart.length){setManaged([]);return}fetch(`/api/catalogue?ids=${encodeURIComponent(cart.join(","))}`).then(r=>r.ok?r.json():null).then(data=>setManaged(data?.products||[])).catch(()=>setManaged([]))},[cart]);
   const selected = [...managed.map(p=>({id:p.id,name:{fr:p.nameFr,ar:p.nameAr,en:p.nameEn},image:p.imageUrl||"",reference:p.reference,dimensions:p.dimensions,finish:""}))];
+  const {contact}=useContent();
   const initialProject = ["pharmacies", "bureaux", "commerces", "chambres"].indexOf(defaultSector);
   const [payload, setPayload] = useState("");
   const [notice, setNotice] = useState("");
@@ -52,8 +54,8 @@ export default function QuoteForm({ lang, defaultSector = "" }: { lang: Lang; de
     <div className="field"><label htmlFor={`${id}-wilaya`}>{t.wilaya} *</label><input id={`${id}-wilaya`} name="wilaya" autoComplete="address-level1" required /></div><div className="field"><label htmlFor={`${id}-address`}>{t.address}</label><input id={`${id}-address`} name="address" autoComplete="street-address" /></div>
     <div className="field"><label htmlFor={`${id}-budget`}>{t.budget}</label><select id={`${id}-budget`} name="budget" defaultValue=""><option value="" disabled>{t.choose}</option>{t.budgets.map((item, i) => <option value={i} key={item}>{item}</option>)}</select></div><div className="field"><label htmlFor={`${id}-custom-budget`}>{t.customBudget}</label><input id={`${id}-custom-budget`} name="customBudget" inputMode="numeric" /></div>
     <div className="field"><label htmlFor={`${id}-urgency`}>{t.urgency}</label><select id={`${id}-urgency`} name="urgency" defaultValue=""><option value="" disabled>{t.choose}</option>{t.urgencyItems.map((item, i) => <option value={i} key={item}>{item}</option>)}</select></div><fieldset className="field installation"><legend>{t.installation}</legend><label><input name="installation" type="radio" value="yes" defaultChecked /> {t.yes}</label><label><input name="installation" type="radio" value="no" /> {t.no}</label></fieldset>
-    <div className="field full"><label htmlFor={`${id}-files`}>{t.files}</label><input id={`${id}-files`} name="attachments" type="file" accept=".pdf,.jpg,.jpeg,.png,.dwg" multiple /><small>{t.filesHelp}</small></div><div className="field full"><label htmlFor={`${id}-message`}>{t.message}</label><textarea id={`${id}-message`} name="message" rows={4} /></div>
-    {!payload ? <button className="prepare-btn" type="submit">{t.send}<span>→</span></button> : <div className="send-options"><p className="quote-message-preview">{payload}</p><a className="whatsapp-btn" href={`https://wa.me/213551984778?text=${encodeURIComponent(payload)}`} target="_blank" rel="noreferrer">{t.whatsapp}<span>↗</span></a><a className="email-btn" href={`mailto:?subject=${encodeURIComponent(t.emailSubject)}&body=${encodeURIComponent(payload)}`}>{t.emailSend}<span>↗</span></a></div>}
+    <div className="field full"><label htmlFor={`${id}-files`}>{t.files}</label><input id={`${id}-files`} name="attachments" type="file" accept=".pdf,.jpg,.jpeg,.png,.dwg" multiple /><small>{t.filesHelp}</small></div><div className="field full"><label htmlFor={`${id}-message`}>{t.message}</label><textarea id={`${id}-message`} name="message" rows={4} defaultValue={defaultOffer?`Offre : ${defaultOffer}`:""} /></div>
+    {!payload ? <button className="prepare-btn" type="submit">{t.send}<span>→</span></button> : <div className="send-options"><p className="quote-message-preview">{payload}</p><a className="whatsapp-btn" href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(payload)}`} target="_blank" rel="noreferrer">{t.whatsapp}<span>↗</span></a><a className="email-btn" href={`mailto:${contact.email}?subject=${encodeURIComponent(t.emailSubject)}&body=${encodeURIComponent(payload)}`}>{t.emailSend}<span>↗</span></a></div>}
     {notice && <p className={`form-notice ${payload ? "success" : "error"}`} role="status">{notice}</p>}
   </form>;
 }

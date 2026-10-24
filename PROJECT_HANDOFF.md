@@ -1,22 +1,22 @@
 # EPSTAR Algeria — Technical Handoff
 
-## Current source and stopping point — 24 October 2026
+## Current source and stopping point — 24 October 2026, v5
 
-Confirmed production blocker from screenshot `image(20261024-193838).png`: first product ph-c01 fails because env.ASSETS is undefined. Generated Wrangler assets config previously had only directory, no binding. Fix: `assets: { binding: "ASSETS" }` in localBindingConfig of vite.config.ts. Verify generated dist/server/wrangler.json retains binding, deploy config overlay and retry admin import. No production DB or R2 writes performed by this fix.
+Production v4 confirmed successful by user: demo import added 13 and skipped existing D02; follow-up filter/edit test reported passed. Earlier ASSETS blocker is resolved.
 
-Latest checkpoint: user deployed v2 and clicked import; screenshot `image(20261024-193256).png` reports generic import interruption. Added admin-only error detail and candidate ID, with URL redaction. Deploy diagnostic overlay, retry import, collect exact message. Existing imported records are preserved; production cause remains unknown. Previous SQLite mock test does not verify actual production schema/bindings.
+Active source: /workspace/scratch/b8c9077386e2/restore/source/epstar-algerie-main. The old epstar-algerie checkout is stale. User deploys through existing GitHub Desktop repository; do not create a new Cloudflare or Sites project. No executor push credentials.
 
-Active source: `/workspace/scratch/b8c9077386e2/restore/source/epstar-algerie-main`, restored from Library file `libfile_22cc07094d848191affa47ec68859704`. Older checkout is stale.
+v5 implemented locally, not yet deployed: admin offers/contact/custom pages, public managed offers and /pages/:slug, shared footer contact and published nested page links, quote WhatsApp/email recipients and selected-offer message. New APIs require admin role; public content excludes drafts and children of hidden parents. Two page levels only; parent delete blocked while children exist. Content is plain text rendered by React, never HTML.
 
-This update replaces catalogue/project filters with shared root+child state, fixes All (including uncategorised products), removes visible labels and follows AR RTL / FR-EN LTR alignment. Both public lists/details use DB records; existing homepage/offers presentation remains unchanged. Quote selection no longer doubles seeded product IDs.
+Persistence uses existing site_settings: contact plus cms:offers:<id> / cms:pages:<id> JSON records. No schema migration. R2 cms/<uuid> for offer uploads (JPG/PNG/WEBP, 8 MiB). Demo offer import is explicit and idempotent. Existing images are retained on replace/delete; orphan cleanup deferred.
 
-`worker/import-demo.ts` and protected GET/POST `/api/admin/import-demo` import one allowlisted item per POST. Admin overview button sequentially imports 8 products and 6 projects. ASSETS images copy to R2, D1 records/images use batch. Existing slug/reference matches and category slug/name+parent matches are reused without replacing user data. Retry skips saved records and preserves edits. No schema changes. D02 may be skipped because already present.
+Entry points: worker/content.ts, app/content-model.ts, app/admin/content-manager.tsx + CSS, app/components/use-content.ts, app/offers/managed-offers.tsx, app/pages/[slug]/page.tsx. API: GET /api/content; GET/POST/PUT/DELETE /api/admin/content/{offers,pages}[/:id]; POST /api/admin/content/offers/import; GET/PUT /api/admin/content/contact; POST /api/admin/content/media; GET /api/content/media/:id. Admin authentication wrapper is in worker/index.ts.
 
-Validation: `npm run build` and `node --test tests/demo-import.test.mjs` passed. Production import and browser verification pending. Deploy overlay through GitHub Desktop, wait for Ready, admin overview → Importer les produits et réalisations démo; keep tab open until Terminé. Then verify All/parent/child in catalogue and projects, imported dashboard records, images and an edit. Do not claim production migration complete until verified.
+Build passed and 7 node tests passed, including actual built Worker 401/403 and offers/page HTML route checks. Full tsc remains blocked by baseline Cloudflare types and quote/start-project tuple errors (no claim of a clean typecheck). Browser QA unavailable: managed preview failed with vite not found. Production test pending. See PROJECT_STATUS.md for Arabic deployment/test checklist and known limitations. New pages are client-rendered with an unavailable state, not HTTP404; SEO and rich text are deferred. Homepage product/project sections still static.
 
 ## Repository and deployment
 
-- Local repo: `/workspace/scratch/b8c9077386e2/epstar-algerie`
+- Active local source: `/workspace/scratch/b8c9077386e2/restore/source/epstar-algerie-main` (older checkout is stale).
 - Remote: `https://github.com/IshakDvp/epstar-algerie.git`
 - Worker: `epstar-algerie`
 - Production URL: `https://epstar-algerie.ishakdib-contact.workers.dev`
@@ -70,4 +70,4 @@ The executor itself still has no GitHub credentials; use the user's GitHub Deskt
 
 ## Exact next action
 
-The catalogue and realisation pages now render dashboard categories hierarchically: parent categories only in the first row and their child categories only after selecting the parent. Commit and push this correction, then verify `Pharmacies` → `Pharmacie Luxe` → `Aménagement Pharmacie El Amal`.
+Copy v5 overlay into the existing GitHub Desktop clone, commit and push; wait for Cloudflare success. Admin → Nos offres → import demo offers. Then verify an offer edit/photo/hide, contact footer/quote links, main page + child publish/hide, and FR/AR/EN mobile. Record results in PROJECT_STATUS.md. No new project, migration or credential change required.

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import QuoteForm from "../../components/quote-form";
+import SiteFooter from "../../components/site-footer";
 import SiteHeader from "../../components/site-header";
 
 type Lang = "fr" | "ar" | "en";
@@ -52,6 +53,6 @@ export default function ServiceDetail({slug}:{slug:string}){
     <section className="detail-gallery"><div className="detail-photo"><img src={base[key].photo} alt={item.title}/></div><div><small>{t.gallery}</small><h2>{t.galleryTitle}</h2><p>{item.text}</p><div className="material-chips"><span>3D</span><span>Sur mesure</span><span>EPSTAR</span></div></div></section>
     <section id="devis" className="detail-quote"><div><small>EPSTAR ALGÉRIE</small><h2>{t.cta}</h2><p>{t.ctaText}</p></div><QuoteForm lang={lang} defaultSector={slug}/></section>
     <section className="other-services"><small>{t.other}</small><div>{order.filter(x=>x!==key).map(x=><a key={x} href={`/services/${x}`}><span>{base[x].icon}</span><b>{t.items[x].title}</b><i>↗</i></a>)}</div></section>
-    <footer className="footer"><div><img src="/epstar-logo.png" alt="EPSTAR"/><p>{t.footer}</p></div><div><h4>EPSTAR</h4><a href="/">{t.nav[0]}</a><a href="/#services">{t.nav[2]}</a></div><div><h4>{t.nav[4]}</h4><a href="https://wa.me/213551984778" target="_blank" rel="noreferrer">WhatsApp +213 551 984 778</a></div><p className="copyright">© 2026 EPSTAR</p></footer>
+    <SiteFooter lang={lang}/>
   </main>
 }

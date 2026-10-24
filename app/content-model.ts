@@ -1,0 +1,12 @@
+export type LocalText={fr:string;ar:string;en:string};
+export type ContentItem={id:string;slug:string;title:LocalText;body:LocalText;subtitle:LocalText;image:string;parentId:string|null;visible:boolean;sortOrder:number};
+export type ContactInfo={phone:string;whatsapp:string;email:string;address:LocalText;hours:LocalText;facebook:string;instagram:string};
+export const defaultContact:ContactInfo={phone:"+213551984778",whatsapp:"213551984778",email:"ishakdib.contact@gmail.com",address:{fr:"",ar:"",en:""},hours:{fr:"",ar:"",en:""},facebook:"",instagram:""};
+const text=(fr:string,ar:string,en:string)=>({fr,ar,en});
+export const defaultOffers:ContentItem[]=[
+ {id:"pharmacy",slug:"pharmacy",title:text("Offre lancement pharmacie","عرض انطلاقة الصيدلية","Pharmacy launch offer"),subtitle:text("Comptoir + rayonnages + rangement intégré","كاونتر استقبال + رفوف عرض + تخزين مدمج","Reception counter + shelving + storage"),body:text("Une offre à adapter aux dimensions et à l’identité de votre pharmacie.","حل قابل للتخصيص بحسب قياسات الصيدلية وهويتها.","Tailored to your pharmacy dimensions and identity."),image:"/images/pharmacy-3d.png",parentId:null,visible:true,sortOrder:0},
+ {id:"office",slug:"office",title:text("Offre bureau de direction","عرض مكتب الإدارة","Executive office offer"),subtitle:text("Bureau + bibliothèque + rangement","مكتب مدير + مكتبة خلفية + تخزين","Desk + library + storage"),body:text("Une composition pour un espace exécutif clair et fonctionnel.","تكوين لمساحة تنفيذية واضحة وعملية.","A composition for a functional executive workspace."),image:"/images/office-3d.png",parentId:null,visible:true,sortOrder:1},
+ {id:"retail",slug:"retail",title:text("Offre commerce essentiel","عرض المحل الأساسي","Retail essentials offer"),subtitle:text("Modules d’exposition + caisse + éclairage","وحدات عرض + كاشير + إضاءة","Display units + cash desk + lighting"),body:text("Un point de départ pour aménager votre commerce.","نقطة انطلاق لتجهيز متجر وعرض المنتجات.","A starting point for fitting out your retail space."),image:"/images/shop-3d.png",parentId:null,visible:true,sortOrder:2}
+];
+export function publicItems(items:ContentItem[]){const visible=new Set(items.filter(i=>i.visible).map(i=>i.id));return items.filter(i=>i.visible&&(!i.parentId||visible.has(i.parentId))).sort((a,b)=>a.sortOrder-b.sortOrder);}
+export function validWebLink(value:string){return !value||/^https:\/\/[^\s]+$/i.test(value);}

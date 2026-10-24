@@ -1,16 +1,13 @@
 # EPSTAR Algeria — Project Roadmap
 
-## 24 October 2026 — current delivery
+## 24 October 2026 — current delivery v5
 
-- Import failure confirmed: production had no ASSETS binding (`Cannot read properties of undefined (reading 'fetch')`). Added explicit `assets.binding = ASSETS` in Vite Cloudflare configuration. Await deployment and retry; existing DB content remains unchanged.
-
-- Production import reported interrupted with a generic error. Root cause unconfirmed. Admin-only diagnostics now include allowlisted item ID and bounded error detail (URLs redacted). Await production retry message; do not claim import success.
-
-- Restored source from the user's GitHub ZIP after the earlier temporary download disappeared.
-- Shared parent/child filters in catalogue and projects; All fixed; visible headings removed; language-direction alignment applied.
-- Catalogue/project public listings and detail routes use database records, without static demo fallback. Existing home/offers presentation remains unchanged.
-- Admin overview has a protected, retryable demo-import button: 8 product candidates and 6 project candidates; existing references/slugs are skipped. Packaged images are copied to R2.
-- Build and SQLite tests passed. Production changes/import have NOT been executed. Next: deploy via GitHub Desktop, wait for Ready, then admin overview → Importer les produits et réalisations démo.
+- Previous import/filter phase: production passed, confirmed by user. 13 added, 1 existing record skipped. ASSETS fix resolved.
+- Implemented locally: offers management and explicit import of three demo offers; contact settings integrated into shared footer and quote sending; multilingual main/subpages, visibility/order and safe hierarchy; initial dashboard content navigation and responsive forms.
+- No new migration; existing D1 site_settings and R2 are used.
+- Build and 7 automated tests passed. Full tsc has existing baseline issues; local browser preview unavailable. v5 deployment and production tests pending.
+- Start here for continuity and exact tests: PROJECT_STATUS.md, then PROJECT_HANDOFF.md.
+- Next after production verification: broader dashboard UX, managed homepage sections, team/roles, rich page editing/SEO and AI assistant.
 
 ## Completed
 
@@ -33,6 +30,6 @@
 
 ## Next
 
-1. Push and verify the corrected realisation hierarchy: main category first, then its live subcategories.
-2. Retire demo entries progressively as EPSTAR adds its genuine catalogue and projects.
-3. Add team members/roles and later the AI quote assistant.
+1. Push v5 and verify offers, contact and published main/subpages (PROJECT_STATUS.md checklist).
+2. Improve dashboard UX, migrate remaining homepage sections and rich page editing/SEO.
+3. Retire demo entries progressively, add team roles and the AI quote assistant.

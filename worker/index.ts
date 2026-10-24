@@ -2,6 +2,7 @@
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
 import {demoItems,importDemoItem} from "./import-demo";
+import {adminContent,publicContent,contentMedia} from "./content";
 
 interface Env {
   ASSETS: Fetcher;
@@ -358,6 +359,14 @@ const worker = {
     }
     if (url.pathname === "/api/admin/request-link" && request.method === "POST") return requestMagicLink(request, env);
     if (url.pathname === "/api/admin/verify" && request.method === "GET") return verifyMagicLink(request, env);
+    if (url.pathname === "/api/content" && request.method === "GET") return publicContent(env);
+    const cmsMedia=url.pathname.match(/^\/api\/content\/media\/([a-z0-9-]+)$/);
+    if(cmsMedia&&request.method==="GET")return contentMedia(env,cmsMedia[1]);
+    if(url.pathname.startsWith("/api/admin/content/")){
+      const user=await adminUser(request,env);if(!user)return json({error:"Unauthorized"},401);
+      if(user.role!=="admin")return json({error:"Admin only"},403);
+      return adminContent(request,env);
+    }
     if (url.pathname === "/api/admin/overview" && request.method === "GET") return adminOverview(request, env);
     if (url.pathname === "/api/admin/requests" && request.method === "GET") return adminRequests(request, env);
     const requestMatch = url.pathname.match(/^\/api\/admin\/requests\/([^/]+)$/);
