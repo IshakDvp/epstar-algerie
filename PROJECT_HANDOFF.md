@@ -50,9 +50,10 @@ The executor itself still has no GitHub credentials; use the user's GitHub Deskt
 ## Validation
 
 - `npm run build` passed after client-logo management and the public trust-section implementation.
+- Production client-logo lifecycle passed on 24 October 2026: test logo `Tijaro` uploaded, listed with visibility controls, and displayed on the home page.
 - Do not add/delete the untracked user file: `public/images/.shop-3d.png.EXMD9g`.
 - Do not add/delete the untracked generated file `.epstar-project-language-footer.tar.gz.L9hrSy`.
 
 ## Exact next action
 
-Commit the current client-logo update, push with GitHub Desktop, wait for the Cloudflare build, then open Dashboard → `Références`, upload a test JPG/PNG/WEBP logo and verify it appears on the homepage section `Ils nous font confiance` / `عملاؤنا وشركاؤنا`.
+The catalogue and realisation pages now render visible dashboard categories as live filters, while keeping demo filters/content available until EPSTAR replaces them. Commit and push this update, then verify `Pharmacie Luxe` filters `Bureau Direction D02` in the catalogue and `Aménagement Pharmacie El Amal` in realisations.

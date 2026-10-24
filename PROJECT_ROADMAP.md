@@ -17,11 +17,10 @@
 
 ## Current
 
-- Client-logo management and the public trust/references section are implemented locally and build-tested.
+- Client-logo management and the public trust/references section are live and verified. Test logo `Tijaro` was uploaded, listed in the dashboard, and displayed on the homepage.
 
 ## Next
 
-1. Commit and push the client-logo management update from GitHub Desktop.
-2. In production, add one test logo from `Références` and verify it appears in the homepage trust section.
-3. Improve catalogue and realisation filters to use live dashboard categories only, then retire demo entries as EPSTAR provides content.
-4. Add team members/roles and later the AI quote assistant.
+1. Push and verify the live-category filter update in catalogue and realisations.
+2. Retire demo entries progressively as EPSTAR adds its genuine catalogue and projects.
+3. Add team members/roles and later the AI quote assistant.
