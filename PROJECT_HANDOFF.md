@@ -1,6 +1,18 @@
 # EPSTAR Algeria — Technical Handoff
 
-## Current source and stopping point — 24 October 2026, v5
+## Current source and stopping point — 25 October 2026, v6
+
+Latest checkpoint supersedes the v5 deployment state below: user screenshots confirm v5 deployed and sections visible, but asks corrections before CRUD testing. v6 implemented locally, awaiting GitHub Desktop overlay/push and production tests. No external writes/deploy performed by executor.
+
+v6 changes: one admin-main-menu with all 8 permitted views; admin-account-area contains separate account/role and locale picker. No cms-shortcuts navigation remains in JSX. Responsive single menu can wrap under brand/account on smaller screens. AdminI18nProvider/useAdminI18n, messages.ts (over 200 FR-source/AR/EN entries), epstar-admin-language persisted separately from public language; Arabic dir rtl, locale dates, labels/status/known notices translated. Content translations remain editable in all 3 languages regardless of UI locale. Locale switching does not key/remount forms.
+
+Offers no longer require manual import: ContentManager load POSTs /api/admin/content/offers/bootstrap, then GETs list. Legacy /import aliases the same one-shot operation. A transactional D1 batch conditionally inserts 3 original bundled offers and cms-meta:offers-initialized marker. Existing keys/slugs are preserved; later edits/deletes are never overwritten/resurrected. Public and admin GET remain read-only. Marker is outside cms:offers: prefix. No migration.
+
+Validation: build passed; 11 automated tests passed (content, bootstrap preservation/deletion, i18n coverage, menu structure, Worker auth/render, demo import/filter). Browser preview http://terminal.local:4173/admin: FR → AR → reload (dir rtl, lang ar retained) → EN passed; Arabic screenshot visually checked. Authenticated admin header/forms not browser-tested because preview has no signed-in session. Full tsc still has known baseline Cloudflare/quote page typing failures. See PROJECT_STATUS.md for exact production checks.
+
+Source reconstructed from original GitHub ZIP plus v2/v3/v4/v5 Library overlays after workspace maintenance, then dependencies restored with npm run install:ci. New files app/admin/i18n.tsx, app/admin/messages.ts, tests/admin-i18n.test.mjs. Changed admin/page, content-manager+CSS, components/import-demo, worker/content, tests/content. Do not use an old checkout. Deliverable EPSTAR_dashboard_menu_languages_v6.zip is an overlay atop deployed v5. No full repository or secrets in ZIP.
+
+## Previous checkpoint — 24 October 2026, v5 (historical)
 
 Production v4 confirmed successful by user: demo import added 13 and skipped existing D02; follow-up filter/edit test reported passed. Earlier ASSETS blocker is resolved.
 
@@ -70,4 +82,4 @@ The executor itself still has no GitHub credentials; use the user's GitHub Deskt
 
 ## Exact next action
 
-Copy v5 overlay into the existing GitHub Desktop clone, commit and push; wait for Cloudflare success. Admin → Nos offres → import demo offers. Then verify an offer edit/photo/hide, contact footer/quote links, main page + child publish/hide, and FR/AR/EN mobile. Record results in PROJECT_STATUS.md. No new project, migration or credential change required.
+Copy v6 overlay into the existing GitHub Desktop clone already containing v5. Commit `fix: unify dashboard navigation languages and offers bootstrap`, push, wait for Cloudflare success. Verify a single menu and separate account, all 3 dashboard languages and persistence, then Nos offres automatic population. Continue offer edit/photo/hide, contact footer/quote links and main/subpage publish/hide tests from PROJECT_STATUS.md. Do not click a manual offer import button: it was removed. No new project, migration or credential change required.

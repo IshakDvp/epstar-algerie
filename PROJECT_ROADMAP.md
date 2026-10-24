@@ -1,6 +1,14 @@
 # EPSTAR Algeria — Project Roadmap
 
-## 24 October 2026 — current delivery v5
+## 25 October 2026 — v6 correction, local validation passed / deployment pending
+
+- User screenshots confirm v5 deployed; before CRUD tests requested a unified menu, separate user/role, dashboard languages, and existing offers populated automatically.
+- Implemented one responsive navigation with all 8 sections and a separate account + language selector. FR/AR/EN interface translation, RTL, locale dates and persisted admin-only language preference. Content itself is not automatically translated or rewritten.
+- Offers bootstrap now automatic on opening admin offers; explicit protected POST and transactional one-time marker preserve records, edits and deliberate deletion. No public GET writes, no schema migration.
+- Build and 11 tests pass; local login language switching/RTL/reload persistence passed in browser. Authenticated admin production checks pending; full tsc baseline issues remain documented.
+- Deliver v6 overlay through existing GitHub Desktop → Cloudflare. Then follow PROJECT_STATUS.md checklist before further work.
+
+## 24 October 2026 — historical delivery v5 (deployed, see v6 above)
 
 - Previous import/filter phase: production passed, confirmed by user. 13 added, 1 existing record skipped. ASSETS fix resolved.
 - Implemented locally: offers management and explicit import of three demo offers; contact settings integrated into shared footer and quote sending; multilingual main/subpages, visibility/order and safe hierarchy; initial dashboard content navigation and responsive forms.
@@ -30,6 +38,6 @@
 
 ## Next
 
-1. Push v5 and verify offers, contact and published main/subpages (PROJECT_STATUS.md checklist).
+1. Push v6, verify unified menu/languages/automatic offers, then contact and main/subpages (PROJECT_STATUS.md checklist).
 2. Improve dashboard UX, migrate remaining homepage sections and rich page editing/SEO.
 3. Retire demo entries progressively, add team roles and the AI quote assistant.

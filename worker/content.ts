@@ -31,7 +31,14 @@ export async function adminContent(request:Request,env:Store){
  if(kind!=="offers"&&kind!=="pages")return response({error:"Not found"},404);
  const items=await records(env,kind);
  if(request.method==="GET")return response({items:items.sort((a,b)=>a.sortOrder-b.sortOrder)});
- if(id==="import"&&kind==="offers"&&request.method==="POST"){let added=0;for(const item of defaultOffers){if(items.some(i=>i.id===item.id||i.slug===item.slug))continue;const result=await env.DB.prepare("INSERT OR IGNORE INTO site_settings(key,value,updated_at) VALUES(?,?,?)").bind(prefix(kind)+item.id,JSON.stringify(item),new Date().toISOString()).run();added+=result.meta.changes||0;}return response({added});}
+ if((id==="bootstrap"||id==="import")&&kind==="offers"&&request.method==="POST"){
+  // A single transactional batch: concurrent visits cannot duplicate offers,
+  // and later visits must never resurrect a deliberately deleted offer.
+  const marker="cms-meta:offers-initialized",now=new Date().toISOString();
+  const statements=defaultOffers.map(item=>env.DB.prepare("INSERT OR IGNORE INTO site_settings(key,value,updated_at) SELECT ?,?,? WHERE NOT EXISTS (SELECT 1 FROM site_settings WHERE key=?) AND NOT EXISTS (SELECT 1 FROM site_settings WHERE key LIKE 'cms:offers:%' AND json_extract(value,'$.slug')=?)").bind(prefix(kind)+item.id,JSON.stringify(item),now,marker,item.slug));
+  statements.push(env.DB.prepare("INSERT OR IGNORE INTO site_settings(key,value,updated_at) VALUES(?,?,?)").bind(marker,"true",now));
+  const results=await env.DB.batch(statements);return response({added:results.slice(0,defaultOffers.length).reduce((n:number,r:{meta:{changes?:number}})=>n+(r.meta.changes||0),0)});
+ }
  if(request.method==="DELETE"&&id){if(!items.some(i=>i.id===id))return response({error:"Not found"},404);if(items.some(i=>i.parentId===id))return response({error:"Déplacez ou supprimez d’abord les sous-pages."},409);await env.DB.prepare("DELETE FROM site_settings WHERE key=?").bind(prefix(kind)+id).run();return response({ok:true});}
  if(request.method!=="POST"&&request.method!=="PUT")return response({error:"Method not allowed"},405);
  if(request.method==="PUT"&&!items.some(i=>i.id===id))return response({error:"Not found"},404);

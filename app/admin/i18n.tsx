@@ -1,0 +1,7 @@
+"use client";
+import {createContext,useContext,useEffect,useState,type ReactNode} from "react";
+import {translateAdmin,type AdminLang} from "./messages";
+const AdminContext=createContext({lang:"fr" as AdminLang,setLang:(_lang:AdminLang)=>{},t:(key:string,values?:Record<string,string|number>)=>key});
+export function AdminI18nProvider({children}:{children:ReactNode}){const [lang,setLang]=useState<AdminLang>("fr"),[ready,setReady]=useState(false);useEffect(()=>{const saved=localStorage.getItem("epstar-admin-language")||localStorage.getItem("epstar-language");if(saved==="fr"||saved==="ar"||saved==="en")setLang(saved);setReady(true);},[]);useEffect(()=>{if(!ready)return;localStorage.setItem("epstar-admin-language",lang);document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";},[lang,ready]);return <AdminContext.Provider value={{lang,setLang,t:(key,values)=>translateAdmin(key,lang,values)}}><div className="admin-locale-root" dir={lang==="ar"?"rtl":"ltr"} lang={lang}>{children}</div></AdminContext.Provider>;}
+export const useAdminI18n=()=>useContext(AdminContext);
+export function AdminLanguagePicker(){const {lang,setLang,t}=useAdminI18n();return <select className="admin-language-picker" aria-label={t("Langue du tableau de bord")} value={lang} onChange={e=>setLang(e.target.value as AdminLang)}><option value="fr">Français</option><option value="ar">العربية</option><option value="en">English</option></select>;}
