@@ -12,7 +12,7 @@ export function useProjectUi(){
   const [lang,setLang]=useState<ProjectLang>("fr"),[theme,setTheme]=useState<Theme>("light");
   useEffect(()=>{const savedLang=localStorage.getItem("epstar-language");if(savedLang==="ar"||savedLang==="fr"||savedLang==="en")setLang(savedLang);const saved=localStorage.getItem("epstar-theme") as Theme|null;setTheme(saved||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"))},[]);
   useEffect(()=>{document.documentElement.dataset.theme=theme;document.documentElement.style.colorScheme=theme;localStorage.setItem("epstar-theme",theme)},[theme]);
-  useEffect(()=>{document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr"},[lang]);
+  useEffect(()=>{localStorage.setItem("epstar-language",lang);document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr"},[lang]);
   return {lang,setLang,theme,setTheme,rtl:lang==="ar"};
 }
 export function ProjectFooter({lang}:{lang:ProjectLang}){return <SiteFooter lang={lang}/>}

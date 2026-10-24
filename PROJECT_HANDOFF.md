@@ -1,5 +1,15 @@
 # EPSTAR Algeria — Technical Handoff
 
+## Current source and stopping point — 24 October 2026
+
+Active source: `/workspace/scratch/b8c9077386e2/restore/source/epstar-algerie-main`, restored from Library file `libfile_22cc07094d848191affa47ec68859704`. Older checkout is stale.
+
+This update replaces catalogue/project filters with shared root+child state, fixes All (including uncategorised products), removes visible labels and follows AR RTL / FR-EN LTR alignment. Both public lists/details use DB records; existing homepage/offers presentation remains unchanged. Quote selection no longer doubles seeded product IDs.
+
+`worker/import-demo.ts` and protected GET/POST `/api/admin/import-demo` import one allowlisted item per POST. Admin overview button sequentially imports 8 products and 6 projects. ASSETS images copy to R2, D1 records/images use batch. Existing slug/reference matches and category slug/name+parent matches are reused without replacing user data. Retry skips saved records and preserves edits. No schema changes. D02 may be skipped because already present.
+
+Validation: `npm run build` and `node --test tests/demo-import.test.mjs` passed. Production import and browser verification pending. Deploy overlay through GitHub Desktop, wait for Ready, admin overview → Importer les produits et réalisations démo; keep tab open until Terminé. Then verify All/parent/child in catalogue and projects, imported dashboard records, images and an edit. Do not claim production migration complete until verified.
+
 ## Repository and deployment
 
 - Local repo: `/workspace/scratch/b8c9077386e2/epstar-algerie`

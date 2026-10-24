@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useId, useState } from "react";
-import { catalog } from "../catalogue/data";
+
 import type { ManagedCatalogueProduct } from "../catalogue/managed";
 import { useQuoteCart } from "./use-quote-cart";
 
@@ -18,7 +18,7 @@ export default function QuoteForm({ lang, defaultSector = "" }: { lang: Lang; de
   const { cart, setCart } = useQuoteCart();
   const [managed,setManaged]=useState<ManagedCatalogueProduct[]>([]);
   useEffect(()=>{if(!cart.length){setManaged([]);return}fetch(`/api/catalogue?ids=${encodeURIComponent(cart.join(","))}`).then(r=>r.ok?r.json():null).then(data=>setManaged(data?.products||[])).catch(()=>setManaged([]))},[cart]);
-  const selected = [...catalog.filter((p) => cart.includes(p.id)).map(p=>({id:p.id,name:p.name,image:p.image,reference:p.id,dimensions:"",finish:""})),...managed.map(p=>({id:p.id,name:{fr:p.nameFr,ar:p.nameAr,en:p.nameEn},image:p.imageUrl||"",reference:p.reference,dimensions:p.dimensions,finish:""}))];
+  const selected = [...managed.map(p=>({id:p.id,name:{fr:p.nameFr,ar:p.nameAr,en:p.nameEn},image:p.imageUrl||"",reference:p.reference,dimensions:p.dimensions,finish:""}))];
   const initialProject = ["pharmacies", "bureaux", "commerces", "chambres"].indexOf(defaultSector);
   const [payload, setPayload] = useState("");
   const [notice, setNotice] = useState("");

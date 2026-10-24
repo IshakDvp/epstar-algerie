@@ -1,5 +1,13 @@
 # EPSTAR Algeria — Project Roadmap
 
+## 24 October 2026 — current delivery
+
+- Restored source from the user's GitHub ZIP after the earlier temporary download disappeared.
+- Shared parent/child filters in catalogue and projects; All fixed; visible headings removed; language-direction alignment applied.
+- Catalogue/project public listings and detail routes use database records, without static demo fallback. Existing home/offers presentation remains unchanged.
+- Admin overview has a protected, retryable demo-import button: 8 product candidates and 6 project candidates; existing references/slugs are skipped. Packaged images are copied to R2.
+- Build and SQLite tests passed. Production changes/import have NOT been executed. Next: deploy via GitHub Desktop, wait for Ready, then admin overview → Importer les produits et réalisations démo.
+
 ## Completed
 
 - Public multilingual EPSTAR website with demo catalogue and projects.

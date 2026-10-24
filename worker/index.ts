@@ -1,6 +1,7 @@
 /** Cloudflare Worker entry point for the vinext-starter template. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import {demoItems,importDemoItem} from "./import-demo";
 
 interface Env {
   ASSETS: Fetcher;
@@ -332,6 +333,12 @@ interface ExecutionContext {
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    if(url.pathname==="/api/admin/import-demo"){
+      const user=await adminUser(request,env);if(!user||user.role!=="admin")return json({error:"Unauthorized"},401);
+      if(request.method==="GET")return json({items:demoItems});
+      if(request.method!=="POST")return json({error:"Method not allowed"},405);
+      try{const body=await request.json() as {kind:string;id:string};return json({ok:true,...await importDemoItem(env,body.kind,body.id)})}catch(error){console.error("Demo import failed",error);return json({error:"Import interrompu. Les éléments enregistrés sont conservés. Réessayez."},500)}
+    }
 
     if (url.pathname === "/_vinext/image") {
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];

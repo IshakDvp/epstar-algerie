@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useQuoteCart } from "../components/use-quote-cart";
-import { catalog, metaFor, type Lang } from "./data";
+import CategoryFilters,{matchesCategory} from "../components/category-filters";
+import { type Lang } from "./data";
 import {
   label,
   type ManagedCatalogueProduct,
@@ -65,9 +66,7 @@ export default function CatalogueShell() {
     active = categories.find((c) => c.id === root),
     children = categories.filter((c) => c.parentId === root),
     shown = products.filter((p) =>
-      root === "all" || child !== "all"
-        ? p.categoryId === child
-        : p.categoryId === root || p.parentCategoryId === root,
+      matchesCategory(p,root,child),
     ),
     name = (c: ManagedCategory) =>
       lang === "ar" ? c.titleAr : lang === "en" ? c.titleEn : c.titleFr,
@@ -80,50 +79,7 @@ export default function CatalogueShell() {
     >
       <SiteHeader {...{ lang, setLang, theme, setTheme }} />
       <section className="catalogue-main">
-        <div className="filter-bar">
-          <small>{t.cat}</small>
-          <div>
-            <button
-              className={root === "all" ? "active" : ""}
-              onClick={() => {
-                setRoot("all");
-                setChild("all");
-              }}
-            >
-              {t.all}
-            </button>
-            {roots.map((c) => (
-              <button
-                key={c.id}
-                className={root === c.id ? "active" : ""}
-                onClick={() => {
-                  setRoot(c.id);
-                  setChild("all");
-                }}
-              >
-                {name(c)}
-              </button>
-            ))}
-          </div>
-        </div>
-        {children.length > 0 && (
-          <div className="sub-filter live-category-filter">
-            <small>
-              {t.sub} · {name(active!)}
-            </small>
-            <div>
-              {children.map((c) => (
-                <button
-                  key={c.id}
-                  className={child === c.id ? "active" : ""}
-                  onClick={() => setChild(c.id)}
-                >
-                  {name(c)}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        <CategoryFilters categories={categories} root={root} child={child} onRoot={id=>{setRoot(id);setChild("all")}} onChild={setChild} lang={lang}/>
         <div className="catalogue-full-grid">
           {shown.map((p, i) => {
             const added = cart.includes(p.id),
