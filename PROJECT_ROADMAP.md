@@ -2,6 +2,8 @@
 
 ## 24 October 2026 — current delivery
 
+- Production import reported interrupted with a generic error. Root cause unconfirmed. Admin-only diagnostics now include allowlisted item ID and bounded error detail (URLs redacted). Await production retry message; do not claim import success.
+
 - Restored source from the user's GitHub ZIP after the earlier temporary download disappeared.
 - Shared parent/child filters in catalogue and projects; All fixed; visible headings removed; language-direction alignment applied.
 - Catalogue/project public listings and detail routes use database records, without static demo fallback. Existing home/offers presentation remains unchanged.

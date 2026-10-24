@@ -2,6 +2,8 @@
 
 ## Current source and stopping point — 24 October 2026
 
+Latest checkpoint: user deployed v2 and clicked import; screenshot `image(20261024-193256).png` reports generic import interruption. Added admin-only error detail and candidate ID, with URL redaction. Deploy diagnostic overlay, retry import, collect exact message. Existing imported records are preserved; production cause remains unknown. Previous SQLite mock test does not verify actual production schema/bindings.
+
 Active source: `/workspace/scratch/b8c9077386e2/restore/source/epstar-algerie-main`, restored from Library file `libfile_22cc07094d848191affa47ec68859704`. Older checkout is stale.
 
 This update replaces catalogue/project filters with shared root+child state, fixes All (including uncategorised products), removes visible labels and follows AR RTL / FR-EN LTR alignment. Both public lists/details use DB records; existing homepage/offers presentation remains unchanged. Quote selection no longer doubles seeded product IDs.

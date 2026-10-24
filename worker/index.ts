@@ -337,7 +337,8 @@ const worker = {
       const user=await adminUser(request,env);if(!user||user.role!=="admin")return json({error:"Unauthorized"},401);
       if(request.method==="GET")return json({items:demoItems});
       if(request.method!=="POST")return json({error:"Method not allowed"},405);
-      try{const body=await request.json() as {kind:string;id:string};return json({ok:true,...await importDemoItem(env,body.kind,body.id)})}catch(error){console.error("Demo import failed",error);return json({error:"Import interrompu. Les éléments enregistrés sont conservés. Réessayez."},500)}
+      let item="";
+      try{const body=await request.json() as {kind:string;id:string};item=demoItems.some(x=>x.kind===body.kind&&x.id===body.id)?`${body.kind}/${body.id}`:"invalid";return json({ok:true,...await importDemoItem(env,body.kind,body.id)})}catch(error){console.error("Demo import failed",error);const message=error instanceof Error?error.message:"Unknown error";const detail=message.replace(/https?:\/\/\S+/g,"[URL]").slice(0,450);return json({error:`Import interrompu [${item}] : ${detail}. Les éléments enregistrés sont conservés.`},500)}
     }
 
     if (url.pathname === "/_vinext/image") {
