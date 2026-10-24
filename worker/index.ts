@@ -257,11 +257,13 @@ async function publicProject(request:Request,env:Env,slug:string){
 async function publicProjectImage(env:Env,id:string){const image=await env.DB.prepare("SELECT project_images.object_key AS objectKey FROM project_images JOIN projects ON projects.id=project_images.project_id WHERE project_images.id=? AND projects.is_visible=1").bind(id).first<{objectKey:string}>();if(!image)return json({error:"Not found"},404);const object=await env.BUCKET.get(image.objectKey);return object?imageResponse(object,object.httpMetadata?.contentType||"","public, max-age=86400"):json({error:"Not found"},404);}
 async function adminClientLogos(request:Request,env:Env){
   if(!await adminUser(request,env))return json({error:"Unauthorized"},401);
+  try {
   if(request.method==="GET"){const logos=await env.DB.prepare("SELECT id,name,website,sort_order AS sortOrder,is_visible AS isVisible FROM client_logos ORDER BY sort_order,created_at").all<Record<string,unknown>>();return json({logos:(logos.results||[]).map(logo=>({...logo,url:`/api/admin/client-logos/file/${logo.id}`}))});}
   const form=await request.formData(),name=String(form.get("name")||"").trim(),file=form.get("logo");
   if(!name)return json({error:"Le nom du client est requis."},400);if(!(file instanceof File)||!file.size)return json({error:"Sélectionnez un logo."},400);if(!ALLOWED_PRODUCT_IMAGE_TYPES.has(file.type)||file.size>MAX_PRODUCT_IMAGE_SIZE)return json({error:"Logo JPG, PNG ou WEBP (8 Mo maximum)."},400);
   const count=await env.DB.prepare("SELECT COUNT(*) AS total FROM client_logos").first<{total:number}>(),id=crypto.randomUUID(),now=new Date().toISOString(),key=`client-logos/${id}-${cleanFileName(file.name)}`;
   await env.BUCKET.put(key,file.stream(),{httpMetadata:{contentType:file.type}});await env.DB.prepare("INSERT INTO client_logos (id,name,object_key,website,sort_order,is_visible,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?)").bind(id,name,String(form.get("website")||"").trim()||null,count?.total||0,form.get("isVisible")==="on"?1:0,now,now).run();return json({ok:true},201);
+  } catch(error) { return json({error:`Erreur serveur : ${error instanceof Error?error.message:"inconnue"}`},500); }
 }
 async function adminClientLogo(request:Request,env:Env,id:string){
   if(!await adminUser(request,env))return json({error:"Unauthorized"},401);
