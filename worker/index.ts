@@ -262,7 +262,7 @@ async function adminClientLogos(request:Request,env:Env){
   const form=await request.formData(),name=String(form.get("name")||"").trim(),file=form.get("logo");
   if(!name)return json({error:"Le nom du client est requis."},400);if(!(file instanceof File)||!file.size)return json({error:"Sélectionnez un logo."},400);if(!ALLOWED_PRODUCT_IMAGE_TYPES.has(file.type)||file.size>MAX_PRODUCT_IMAGE_SIZE)return json({error:"Logo JPG, PNG ou WEBP (8 Mo maximum)."},400);
   const count=await env.DB.prepare("SELECT COUNT(*) AS total FROM client_logos").first<{total:number}>(),id=crypto.randomUUID(),now=new Date().toISOString(),key=`client-logos/${id}-${cleanFileName(file.name)}`;
-  await env.BUCKET.put(key,file.stream(),{httpMetadata:{contentType:file.type}});await env.DB.prepare("INSERT INTO client_logos (id,name,object_key,website,sort_order,is_visible,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?)").bind(id,name,String(form.get("website")||"").trim()||null,count?.total||0,form.get("isVisible")==="on"?1:0,now,now).run();return json({ok:true},201);
+  await env.BUCKET.put(key,file.stream(),{httpMetadata:{contentType:file.type}});await env.DB.prepare("INSERT INTO client_logos (id,name,object_key,website,sort_order,is_visible,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?)").bind(id,name,key,String(form.get("website")||"").trim()||null,count?.total||0,form.get("isVisible")==="on"?1:0,now,now).run();return json({ok:true},201);
   } catch(error) { return json({error:`Erreur serveur : ${error instanceof Error?error.message:"inconnue"}`},500); }
 }
 async function adminClientLogo(request:Request,env:Env,id:string){
