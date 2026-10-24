@@ -7,6 +7,7 @@ import SiteFooter from "./components/site-footer";
 import { catalog, metaFor, type Lang } from "./catalogue/data";
 
 type Theme = "light" | "dark";
+type ClientLogo = {id:string;name:string;website:string|null;url:string};
 
 const data = {
   fr:{
@@ -69,6 +70,7 @@ export default function Home(){
   const [theme,setTheme]=useState<Theme>("light");
   const [active,setActive]=useState(0);
   const [paused,setPaused]=useState(false);
+  const [clientLogos,setClientLogos]=useState<ClientLogo[]>([]);
   
   const t=data[lang]; const rtl=lang==="ar";
   const sectors=useMemo(()=>t.sectors.map((s,i)=>({title:s[0],short:s[1],heading:s[2],text:s[3],image:images[i],model:models[i],icon:icons[i]})),[t]);
@@ -76,6 +78,7 @@ export default function Home(){
   useEffect(()=>{document.documentElement.lang=lang;localStorage.setItem("epstar-language",lang);document.documentElement.dir=rtl?"rtl":"ltr"},[lang,rtl]);
   useEffect(()=>{const saved=localStorage.getItem("epstar-theme") as Theme|null;const preferred=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";setTheme(saved||preferred)},[]);
   useEffect(()=>{document.documentElement.dataset.theme=theme;document.documentElement.style.colorScheme=theme;localStorage.setItem("epstar-theme",theme)},[theme]);
+  useEffect(()=>{fetch("/api/client-logos").then(r=>r.ok?r.json():null).then(data=>setClientLogos(data?.logos||[])).catch(()=>{})},[]);
   useEffect(()=>{if(paused)return;const timer=setInterval(()=>setActive(v=>(v+1)%4),6500);return()=>clearInterval(timer)},[paused,active]);
   const current=sectors[active];
   const capabilities=lang==="ar"?["دراسة المساحة","تصميم ثلاثي الأبعاد","تصنيع حسب الطلب","تركيب وتسليم"]:lang==="fr"?["Étude de l’espace","Conception 3D","Fabrication sur mesure","Pose & livraison"]:["Space planning","3D design","Custom manufacturing","Installation"];
@@ -108,6 +111,7 @@ export default function Home(){
       <div className="sector-tabs premium-tabs" role="tablist" aria-label={t.choose}>{sectors.map((s,i)=><button key={s.title} role="tab" aria-selected={active===i} className={active===i?"active":""} onClick={()=>setActive(i)}><i>0{i+1}</i><span className="tab-icon">{s.icon}</span><span><b>{s.title}</b><small>{s.short}</small></span><em>↗</em></button>)}</div>
     </section>
     <section className="trust-band" aria-label={lang==="ar"?"التزامات EPSTAR":lang==="fr"?"Les engagements EPSTAR":"EPSTAR commitments"}>{trust.map(([icon,text])=><div key={text}><b>{icon}</b><span>{text}</span></div>)}</section>
+    {clientLogos.length>0&&<section className="client-references section-pad"><div><small>{lang==="ar"?"ثقة مبنية على الإنجاز":lang==="fr"?"ILS NOUS FONT CONFIANCE":"TRUSTED BY CLIENTS"}</small><h2>{lang==="ar"?"عملاؤنا وشركاؤنا":lang==="fr"?"Ils nous font confiance":"They trust us"}</h2><p>{lang==="ar"?"نفخر بثقة المؤسسات التي اختارت EPSTAR لتجهيز مساحاتها.":lang==="fr"?"Nous sommes fiers d’accompagner les organisations qui choisissent EPSTAR pour leurs espaces.":"We are proud to support organizations that choose EPSTAR for their spaces."}</p></div><div className="client-logo-grid">{clientLogos.map(logo=>{const content=<img src={logo.url} alt={logo.name}/>;return logo.website?<a key={logo.id} href={logo.website} target="_blank" rel="noreferrer" aria-label={logo.name}>{content}</a>:<div key={logo.id}>{content}</div>})}</div></section>}
     <section className="product-highlights section-pad">
       <div className="highlight-heading"><small>{productHighlights.eyebrow}</small><h2>{productHighlights.best}</h2><p>{productHighlights.bestText}</p></div>
       <div className="featured-product"><a href={`/catalogue/${featuredProduct.slug}`}><div className="featured-copy"><small>{productHighlights.featured} · {featuredProduct.id.toUpperCase()}</small><h3>{featuredProduct.name[lang]}</h3><p>{productHighlights.featuredText}</p>{metaFor(featuredProduct).promotion&&<b>{productHighlights.offer} — {metaFor(featuredProduct).promotion?.[lang]}</b>}<span>{productHighlights.details} ↗</span></div><div className="featured-visual"><img src={featuredProduct.image} alt={featuredProduct.name[lang]}/></div></a></div>

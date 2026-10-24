@@ -255,6 +255,21 @@ async function publicProject(request:Request,env:Env,slug:string){
   return json({project:{...project,images:(images.results||[]).map(image=>({...image,url:`/api/projects/images/${image.id}`}))}});
 }
 async function publicProjectImage(env:Env,id:string){const image=await env.DB.prepare("SELECT project_images.object_key AS objectKey FROM project_images JOIN projects ON projects.id=project_images.project_id WHERE project_images.id=? AND projects.is_visible=1").bind(id).first<{objectKey:string}>();if(!image)return json({error:"Not found"},404);const object=await env.BUCKET.get(image.objectKey);return object?imageResponse(object,object.httpMetadata?.contentType||"","public, max-age=86400"):json({error:"Not found"},404);}
+async function adminClientLogos(request:Request,env:Env){
+  if(!await adminUser(request,env))return json({error:"Unauthorized"},401);
+  if(request.method==="GET"){const logos=await env.DB.prepare("SELECT id,name,website,sort_order AS sortOrder,is_visible AS isVisible FROM client_logos ORDER BY sort_order,created_at").all<Record<string,unknown>>();return json({logos:(logos.results||[]).map(logo=>({...logo,url:`/api/admin/client-logos/file/${logo.id}`}))});}
+  const form=await request.formData(),name=String(form.get("name")||"").trim(),file=form.get("logo");
+  if(!name)return json({error:"Le nom du client est requis."},400);if(!(file instanceof File)||!file.size)return json({error:"Sélectionnez un logo."},400);if(!ALLOWED_PRODUCT_IMAGE_TYPES.has(file.type)||file.size>MAX_PRODUCT_IMAGE_SIZE)return json({error:"Logo JPG, PNG ou WEBP (8 Mo maximum)."},400);
+  const count=await env.DB.prepare("SELECT COUNT(*) AS total FROM client_logos").first<{total:number}>(),id=crypto.randomUUID(),now=new Date().toISOString(),key=`client-logos/${id}-${cleanFileName(file.name)}`;
+  await env.BUCKET.put(key,file.stream(),{httpMetadata:{contentType:file.type}});await env.DB.prepare("INSERT INTO client_logos (id,name,object_key,website,sort_order,is_visible,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?)").bind(id,name,String(form.get("website")||"").trim()||null,count?.total||0,form.get("isVisible")==="on"?1:0,now,now).run();return json({ok:true},201);
+}
+async function adminClientLogo(request:Request,env:Env,id:string){
+  if(!await adminUser(request,env))return json({error:"Unauthorized"},401);
+  if(request.method==="DELETE"){const logo=await env.DB.prepare("SELECT object_key AS objectKey FROM client_logos WHERE id=?").bind(id).first<{objectKey:string}>();if(!logo)return json({error:"Not found"},404);await env.DB.prepare("DELETE FROM client_logos WHERE id=?").bind(id).run();await env.BUCKET.delete(logo.objectKey);return json({ok:true});}
+  const body=await request.json().catch(()=>({})) as {name?:string;website?:string;isVisible?:boolean};const name=String(body.name||"").trim();if(!name)return json({error:"Le nom du client est requis."},400);const result=await env.DB.prepare("UPDATE client_logos SET name=?,website=?,is_visible=?,updated_at=? WHERE id=?").bind(name,String(body.website||"").trim()||null,body.isVisible?1:0,new Date().toISOString(),id).run();return result.meta.changes?json({ok:true}):json({error:"Not found"},404);
+}
+async function clientLogoFile(request:Request,env:Env,id:string,admin:boolean){if(admin&&!await adminUser(request,env))return json({error:"Unauthorized"},401);const logo=await env.DB.prepare(`SELECT object_key AS objectKey FROM client_logos WHERE id=? ${admin?"":"AND is_visible=1"}`).bind(id).first<{objectKey:string}>();if(!logo)return json({error:"Not found"},404);const object=await env.BUCKET.get(logo.objectKey);return object?imageResponse(object,object.httpMetadata?.contentType||"",admin?"private, no-store":"public, max-age=86400"):json({error:"Not found"},404);}
+async function publicClientLogos(env:Env){const logos=await env.DB.prepare("SELECT id,name,website FROM client_logos WHERE is_visible=1 ORDER BY sort_order,created_at").all<Record<string,unknown>>();return json({logos:(logos.results||[]).map(logo=>({...logo,url:`/api/client-logos/${logo.id}`}))});}
 
 async function createQuoteRequest(request: Request, env: Env): Promise<Response> {
   if (!env.DB || !env.BUCKET) return json({ error: "Service de demandes indisponible." }, 503);
@@ -356,6 +371,14 @@ const worker = {
     if (publicProductMatch && request.method === "GET") return publicProduct(request, env, publicProductMatch[1]);
     const publicImageMatch = url.pathname.match(/^\/api\/catalogue\/images\/([^/]+)$/);
     if (publicImageMatch && request.method === "GET") return publicProductImage(env, publicImageMatch[1]);
+    if (url.pathname === "/api/admin/client-logos" && (request.method === "GET" || request.method === "POST")) return adminClientLogos(request, env);
+    const adminClientLogoMatch = url.pathname.match(/^\/api\/admin\/client-logos\/([^/]+)$/);
+    if (adminClientLogoMatch && (request.method === "PATCH" || request.method === "DELETE")) return adminClientLogo(request, env, adminClientLogoMatch[1]);
+    const adminClientLogoFileMatch = url.pathname.match(/^\/api\/admin\/client-logos\/file\/([^/]+)$/);
+    if (adminClientLogoFileMatch && request.method === "GET") return clientLogoFile(request, env, adminClientLogoFileMatch[1], true);
+    if (url.pathname === "/api/client-logos" && request.method === "GET") return publicClientLogos(env);
+    const clientLogoFileMatch = url.pathname.match(/^\/api\/client-logos\/([^/]+)$/);
+    if (clientLogoFileMatch && request.method === "GET") return clientLogoFile(request, env, clientLogoFileMatch[1], false);
     if (url.pathname === "/api/admin/projects" && (request.method === "GET" || request.method === "POST")) return adminProjects(request, env);
     const projectMatch = url.pathname.match(/^\/api\/admin\/projects\/([^/]+)$/);
     if (projectMatch && (request.method === "PATCH" || request.method === "DELETE")) return adminProject(request, env, projectMatch[1]);

@@ -13,15 +13,15 @@
 - Production CRUD test passed: Pharmacy parent category, Standard/VIP/Luxe subcategories and test product `Bureau Direction D02` were saved successfully.
 - Product-image management and public catalogue integration are live and verified: JPG/PNG/WEBP uploads, primary image, secure deletion, public image delivery, managed product details and quote-cart support.
 - Realisations management is live and verified: multilingual project details, location/category, visibility, feature flag, photo upload and public cards. Test realisation: `Aménagement Pharmacie El Amal`.
+- Dashboard-managed realisation detail pages are live and verified: project card, multilingual details and ordered gallery.
 
 ## Current
 
-- Dynamic public detail pages for dashboard-managed realisations are implemented locally and build-tested. Each card will open its own gallery/detail page after the next deployment.
+- Client-logo management and the public trust/references section are implemented locally and build-tested.
 
 ## Next
 
-1. Commit and push the managed-realisation detail-page update from GitHub Desktop.
-2. In production, click `Aménagement Pharmacie El Amal` → `Voir le projet` and verify its detail page and gallery.
+1. Commit and push the client-logo management update from GitHub Desktop.
+2. In production, add one test logo from `Références` and verify it appears in the homepage trust section.
 3. Improve catalogue and realisation filters to use live dashboard categories only, then retire demo entries as EPSTAR provides content.
-4. Add client-logo management.
-5. Add team members/roles and later the AI quote assistant.
+4. Add team members/roles and later the AI quote assistant.

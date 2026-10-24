@@ -42,13 +42,17 @@ The executor itself still has no GitHub credentials; use the user's GitHub Deskt
 - `/api/admin/projects/:id/images` and `/api/admin/project-images/file/:id` — protected project photo upload/preview.
 - `/api/projects` and `/api/projects/images/:id` — public realisation feed and images.
 - `/api/projects/:slug` — public managed-realisation detail and ordered gallery images.
+- `/api/admin/client-logos` — protected client-logo list/upload; JPG, PNG or WEBP, 8 MB maximum.
+- `/api/admin/client-logos/:id` — protected visibility update/delete.
+- `/api/admin/client-logos/file/:id` and `/api/client-logos/:id` — protected preview and public logo file.
+- `/api/client-logos` — public visible client-logo list for the homepage.
 
 ## Validation
 
-- `npm run build` passed after the managed-realisation detail-page implementation.
+- `npm run build` passed after client-logo management and the public trust-section implementation.
 - Do not add/delete the untracked user file: `public/images/.shop-3d.png.EXMD9g`.
 - Do not add/delete the untracked generated file `.epstar-project-language-footer.tar.gz.L9hrSy`.
 
 ## Exact next action
 
-Commit the current dynamic-realisation-detail update, push with GitHub Desktop, wait for the Cloudflare build, then open `/projects` and click `Aménagement Pharmacie El Amal` → `Voir le projet`. Verify the title, location, uploaded gallery image and quote form load correctly.
+Commit the current client-logo update, push with GitHub Desktop, wait for the Cloudflare build, then open Dashboard → `Références`, upload a test JPG/PNG/WEBP logo and verify it appears on the homepage section `Ils nous font confiance` / `عملاؤنا وشركاؤنا`.
