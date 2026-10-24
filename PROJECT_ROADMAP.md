@@ -21,6 +21,6 @@
 
 ## Next
 
-1. Push and verify the live-category filter update in catalogue and realisations.
+1. Push and verify the corrected realisation hierarchy: main category first, then its live subcategories.
 2. Retire demo entries progressively as EPSTAR adds its genuine catalogue and projects.
 3. Add team members/roles and later the AI quote assistant.

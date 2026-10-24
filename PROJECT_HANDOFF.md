@@ -56,4 +56,4 @@ The executor itself still has no GitHub credentials; use the user's GitHub Deskt
 
 ## Exact next action
 
-The catalogue and realisation pages now render visible dashboard categories as live filters, while keeping demo filters/content available until EPSTAR replaces them. Commit and push this update, then verify `Pharmacie Luxe` filters `Bureau Direction D02` in the catalogue and `Aménagement Pharmacie El Amal` in realisations.
+The catalogue and realisation pages now render visible dashboard categories as live filters, while keeping demo filters/content available until EPSTAR replaces them. On the realisation page, the main category is shown first and its active subcategories are shown in a second row. Commit and push this correction, then verify `Pharmacies` → `Pharmacie Luxe` → `Aménagement Pharmacie El Amal`.
