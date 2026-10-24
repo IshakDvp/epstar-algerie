@@ -2,6 +2,8 @@
 
 ## Current source and stopping point — 24 October 2026
 
+Confirmed production blocker from screenshot `image(20261024-193838).png`: first product ph-c01 fails because env.ASSETS is undefined. Generated Wrangler assets config previously had only directory, no binding. Fix: `assets: { binding: "ASSETS" }` in localBindingConfig of vite.config.ts. Verify generated dist/server/wrangler.json retains binding, deploy config overlay and retry admin import. No production DB or R2 writes performed by this fix.
+
 Latest checkpoint: user deployed v2 and clicked import; screenshot `image(20261024-193256).png` reports generic import interruption. Added admin-only error detail and candidate ID, with URL redaction. Deploy diagnostic overlay, retry import, collect exact message. Existing imported records are preserved; production cause remains unknown. Previous SQLite mock test does not verify actual production schema/bindings.
 
 Active source: `/workspace/scratch/b8c9077386e2/restore/source/epstar-algerie-main`, restored from Library file `libfile_22cc07094d848191affa47ec68859704`. Older checkout is stale.
