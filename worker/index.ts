@@ -20,7 +20,10 @@ interface Env {
 
 const MAX_ATTACHMENTS = 5;
 const MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024;
+const MAX_PRODUCT_IMAGES = 8;
+const MAX_PRODUCT_IMAGE_SIZE = 8 * 1024 * 1024;
 const ALLOWED_ATTACHMENT_TYPES = new Set(["application/pdf", "image/jpeg", "image/png", "application/acad", "application/x-acad", "application/octet-stream"]);
+const ALLOWED_PRODUCT_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json; charset=utf-8" } });
@@ -107,6 +110,7 @@ async function adminAttachment(request: Request, env: Env, id: string) {
 
 type CategoryInput = { titleFr?: string; titleAr?: string; titleEn?: string; parentId?: string | null; isVisible?: boolean };
 type ProductInput = { reference?:string; nameFr?:string; nameAr?:string; nameEn?:string; categoryId?:string|null; dimensions?:string; finishes?:string; materials?:string; isFeatured?:boolean; isVisible?:boolean };
+type ProductImageRecord = { id:string; productId:string; objectKey:string; altFr:string; altAr:string; altEn:string; sortOrder:number; createdAt:string };
 async function adminCategories(request: Request, env: Env) {
   if (!await adminUser(request, env)) return json({ error:"Unauthorized" }, 401);
   if (request.method === "GET") {
@@ -149,12 +153,85 @@ async function adminProducts(request: Request, env: Env) {
 }
 async function adminProduct(request: Request, env: Env, id: string) {
   if (!await adminUser(request, env)) return json({ error:"Unauthorized" }, 401);
-  if (request.method === "DELETE") { await env.DB.prepare("DELETE FROM products WHERE id = ?").bind(id).run(); return json({ ok:true }); }
+  if (request.method === "DELETE") {
+    const images = await env.DB.prepare("SELECT object_key AS objectKey FROM product_images WHERE product_id = ?").bind(id).all<{objectKey:string}>();
+    await env.DB.prepare("DELETE FROM products WHERE id = ?").bind(id).run();
+    await Promise.all((images.results || []).map((image) => env.BUCKET.delete(image.objectKey)));
+    return json({ ok:true });
+  }
   const body = await request.json().catch(()=>({})) as ProductInput; const reference = String(body.reference || "").trim().toUpperCase(), nameFr = String(body.nameFr || "").trim();
   if (!reference || !nameFr) return json({ error:"La référence et le nom français sont requis." }, 400);
   const duplicate = await env.DB.prepare("SELECT id FROM products WHERE reference = ? AND id != ?").bind(reference, id).first(); if (duplicate) return json({ error:"Cette référence existe déjà." }, 409);
   const result = await env.DB.prepare("UPDATE products SET category_id=?, reference=?, name_fr=?, name_ar=?, name_en=?, dimensions=?, finishes=?, materials=?, is_featured=?, is_visible=?, updated_at=? WHERE id=?").bind(body.categoryId || null, reference, nameFr, String(body.nameAr || nameFr).trim(), String(body.nameEn || nameFr).trim(), String(body.dimensions || "").trim(), JSON.stringify(String(body.finishes || "").split(",").map(v=>v.trim()).filter(Boolean)), JSON.stringify(String(body.materials || "").split(",").map(v=>v.trim()).filter(Boolean)), body.isFeatured ? 1 : 0, body.isVisible === false ? 0 : 1, new Date().toISOString(), id).run();
   if (!result.meta.changes) return json({ error:"Not found" }, 404); return json({ ok:true });
+}
+
+function imageResponse(object: R2ObjectBody, contentType: string, cacheControl: string) {
+  return new Response(object.body, { headers:{ "content-type":contentType || "application/octet-stream", "cache-control":cacheControl, etag:object.httpEtag } });
+}
+async function adminProductImages(request: Request, env: Env, productId: string) {
+  if (!await adminUser(request, env)) return json({ error:"Unauthorized" }, 401);
+  const product = await env.DB.prepare("SELECT id FROM products WHERE id = ?").bind(productId).first();
+  if (!product) return json({ error:"Produit introuvable." }, 404);
+  if (request.method === "GET") {
+    const images = await env.DB.prepare("SELECT id, product_id AS productId, object_key AS objectKey, alt_fr AS altFr, alt_ar AS altAr, alt_en AS altEn, sort_order AS sortOrder, created_at AS createdAt FROM product_images WHERE product_id = ? ORDER BY sort_order, created_at").bind(productId).all<ProductImageRecord>();
+    return json({ images:(images.results || []).map((image) => ({ ...image, url:`/api/admin/product-images/file/${image.id}` })) });
+  }
+  const form = await request.formData();
+  const files = form.getAll("images").filter((entry): entry is File => entry instanceof File && entry.size > 0);
+  if (!files.length) return json({ error:"Sélectionnez au moins une image." }, 400);
+  const count = await env.DB.prepare("SELECT COUNT(*) AS total FROM product_images WHERE product_id = ?").bind(productId).first<{total:number}>();
+  if ((count?.total || 0) + files.length > MAX_PRODUCT_IMAGES) return json({ error:`Maximum ${MAX_PRODUCT_IMAGES} photos par produit.` }, 400);
+  for (const file of files) {
+    if (!ALLOWED_PRODUCT_IMAGE_TYPES.has(file.type) || file.size > MAX_PRODUCT_IMAGE_SIZE) return json({ error:"Images JPG, PNG ou WEBP uniquement (8 Mo maximum par image)." }, 400);
+  }
+  const now = new Date().toISOString(); const inserted: ProductImageRecord[] = [];
+  let sortOrder = count?.total || 0;
+  for (const file of files) {
+    const id = crypto.randomUUID(); const objectKey = `product-images/${productId}/${id}-${cleanFileName(file.name)}`;
+    await env.BUCKET.put(objectKey, file.stream(), { httpMetadata:{ contentType:file.type } });
+    await env.DB.prepare("INSERT INTO product_images (id, product_id, object_key, alt_fr, alt_ar, alt_en, sort_order, created_at) VALUES (?, ?, ?, '', '', '', ?, ?)").bind(id, productId, objectKey, sortOrder++, now).run();
+    inserted.push({ id, productId, objectKey, altFr:"", altAr:"", altEn:"", sortOrder:sortOrder - 1, createdAt:now });
+  }
+  return json({ ok:true, images:inserted.map((image) => ({ ...image, url:`/api/admin/product-images/file/${image.id}` })) }, 201);
+}
+async function adminProductImage(request: Request, env: Env, id: string) {
+  if (!await adminUser(request, env)) return json({ error:"Unauthorized" }, 401);
+  const image = await env.DB.prepare("SELECT id, product_id AS productId, object_key AS objectKey FROM product_images WHERE id = ?").bind(id).first<{id:string;productId:string;objectKey:string}>();
+  if (!image) return json({ error:"Image introuvable." }, 404);
+  if (request.method === "DELETE") { await env.DB.prepare("DELETE FROM product_images WHERE id = ?").bind(id).run(); await env.BUCKET.delete(image.objectKey); return json({ ok:true }); }
+  const first = await env.DB.prepare("SELECT id FROM product_images WHERE product_id = ? ORDER BY sort_order, created_at LIMIT 1").bind(image.productId).first<{id:string}>();
+  if (first?.id !== id) {
+    await env.DB.batch([
+      env.DB.prepare("UPDATE product_images SET sort_order = sort_order + 1 WHERE product_id = ?").bind(image.productId),
+      env.DB.prepare("UPDATE product_images SET sort_order = 0 WHERE id = ?").bind(id),
+    ]);
+  }
+  return json({ ok:true });
+}
+async function adminProductImageFile(request: Request, env: Env, id: string) {
+  if (!await adminUser(request, env)) return json({ error:"Unauthorized" }, 401);
+  const image = await env.DB.prepare("SELECT object_key AS objectKey FROM product_images WHERE id = ?").bind(id).first<{objectKey:string}>();
+  if (!image) return json({ error:"Not found" }, 404); const object = await env.BUCKET.get(image.objectKey); if (!object) return json({ error:"File not found" }, 404);
+  return imageResponse(object, object.httpMetadata?.contentType || "", "private, no-store");
+}
+async function publicCatalogue(request: Request, env: Env) {
+  const url = new URL(request.url); const ids = (url.searchParams.get("ids") || "").split(",").filter(Boolean).slice(0, 30);
+  const where = ids.length ? `AND products.id IN (${ids.map(() => "?").join(",")})` : "";
+  const products = await env.DB.prepare(`SELECT products.id, products.slug, products.reference, products.name_fr AS nameFr, products.name_ar AS nameAr, products.name_en AS nameEn, products.dimensions, products.finishes, products.materials, products.is_featured AS isFeatured, categories.id AS categoryId, categories.parent_id AS parentId, categories.title_fr AS categoryFr, categories.title_ar AS categoryAr, categories.title_en AS categoryEn, parents.id AS parentCategoryId, parents.title_fr AS parentFr, parents.title_ar AS parentAr, parents.title_en AS parentEn, (SELECT id FROM product_images WHERE product_id = products.id ORDER BY sort_order, created_at LIMIT 1) AS imageId FROM products LEFT JOIN categories ON categories.id = products.category_id LEFT JOIN categories parents ON parents.id = categories.parent_id WHERE products.is_visible = 1 ${where} ORDER BY products.is_featured DESC, products.created_at DESC`).bind(...ids).all<Record<string, unknown>>();
+  const categories = ids.length ? [] : await env.DB.prepare("SELECT id, parent_id AS parentId, slug, title_fr AS titleFr, title_ar AS titleAr, title_en AS titleEn FROM categories WHERE is_visible = 1 ORDER BY parent_id IS NOT NULL, sort_order, title_fr").all();
+  return json({ products:(products.results || []).map((product) => ({ ...product, imageUrl:product.imageId ? `/api/catalogue/images/${product.imageId}` : null })), categories:categories.results || [] });
+}
+async function publicProduct(request: Request, env: Env, slug: string) {
+  const product = await env.DB.prepare("SELECT products.id FROM products WHERE slug = ? AND is_visible = 1").bind(slug).first<{id:string}>();
+  if (!product) return json({ error:"Not found" }, 404);
+  const url = new URL(request.url); url.pathname = "/api/catalogue"; url.searchParams.set("ids", product.id);
+  return publicCatalogue(new Request(url, request), env);
+}
+async function publicProductImage(env: Env, id: string) {
+  const image = await env.DB.prepare("SELECT product_images.object_key AS objectKey FROM product_images JOIN products ON products.id = product_images.product_id WHERE product_images.id = ? AND products.is_visible = 1").bind(id).first<{objectKey:string}>();
+  if (!image) return json({ error:"Not found" }, 404); const object = await env.BUCKET.get(image.objectKey); if (!object) return json({ error:"File not found" }, 404);
+  return imageResponse(object, object.httpMetadata?.contentType || "", "public, max-age=86400");
 }
 
 async function createQuoteRequest(request: Request, env: Env): Promise<Response> {
@@ -246,6 +323,17 @@ const worker = {
     if (url.pathname === "/api/admin/products" && (request.method === "GET" || request.method === "POST")) return adminProducts(request, env);
     const productMatch = url.pathname.match(/^\/api\/admin\/products\/([^/]+)$/);
     if (productMatch && (request.method === "PATCH" || request.method === "DELETE")) return adminProduct(request, env, productMatch[1]);
+    const productImagesMatch = url.pathname.match(/^\/api\/admin\/products\/([^/]+)\/images$/);
+    if (productImagesMatch && (request.method === "GET" || request.method === "POST")) return adminProductImages(request, env, productImagesMatch[1]);
+    const productImageFileMatch = url.pathname.match(/^\/api\/admin\/product-images\/file\/([^/]+)$/);
+    if (productImageFileMatch && request.method === "GET") return adminProductImageFile(request, env, productImageFileMatch[1]);
+    const productImageMatch = url.pathname.match(/^\/api\/admin\/product-images\/([^/]+)$/);
+    if (productImageMatch && (request.method === "PATCH" || request.method === "DELETE")) return adminProductImage(request, env, productImageMatch[1]);
+    if (url.pathname === "/api/catalogue" && request.method === "GET") return publicCatalogue(request, env);
+    const publicProductMatch = url.pathname.match(/^\/api\/catalogue\/products\/([^/]+)$/);
+    if (publicProductMatch && request.method === "GET") return publicProduct(request, env, publicProductMatch[1]);
+    const publicImageMatch = url.pathname.match(/^\/api\/catalogue\/images\/([^/]+)$/);
+    if (publicImageMatch && request.method === "GET") return publicProductImage(env, publicImageMatch[1]);
 
     return handler.fetch(request, env, ctx);
   },

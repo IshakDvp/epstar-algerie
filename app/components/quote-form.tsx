@@ -1,7 +1,8 @@
 "use client";
 
-import { FormEvent, useId, useState } from "react";
+import { FormEvent, useEffect, useId, useState } from "react";
 import { catalog } from "../catalogue/data";
+import type { ManagedCatalogueProduct } from "../catalogue/managed";
 import { useQuoteCart } from "./use-quote-cart";
 
 type Lang = "fr" | "ar" | "en";
@@ -15,7 +16,9 @@ const copy = {
 export default function QuoteForm({ lang, defaultSector = "" }: { lang: Lang; defaultSector?: string }) {
   const t = copy[lang], id = useId();
   const { cart, setCart } = useQuoteCart();
-  const selected = catalog.filter((p) => cart.includes(p.id));
+  const [managed,setManaged]=useState<ManagedCatalogueProduct[]>([]);
+  useEffect(()=>{if(!cart.length){setManaged([]);return}fetch(`/api/catalogue?ids=${encodeURIComponent(cart.join(","))}`).then(r=>r.ok?r.json():null).then(data=>setManaged(data?.products||[])).catch(()=>setManaged([]))},[cart]);
+  const selected = [...catalog.filter((p) => cart.includes(p.id)).map(p=>({id:p.id,name:p.name,image:p.image,reference:p.id,dimensions:"",finish:""})),...managed.map(p=>({id:p.id,name:{fr:p.nameFr,ar:p.nameAr,en:p.nameEn},image:p.imageUrl||"",reference:p.reference,dimensions:p.dimensions,finish:""}))];
   const initialProject = ["pharmacies", "bureaux", "commerces", "chambres"].indexOf(defaultSector);
   const [payload, setPayload] = useState("");
   const [notice, setNotice] = useState("");
@@ -26,11 +29,11 @@ export default function QuoteForm({ lang, defaultSector = "" }: { lang: Lang; de
     const get = (key: string) => String(form.get(key) || "").trim();
     const required = ["name", "phone", "email", "project", "wilaya"];
     if (required.some((key) => !get(key))) { setNotice(lang === "ar" ? "يرجى إكمال الحقول المطلوبة." : lang === "fr" ? "Veuillez compléter les champs obligatoires." : "Please complete the required fields."); return; }
-    const productLines = selected.map((p) => `• ${p.name[lang]} — ${t.reference}: ${p.id.toUpperCase()} — ${t.quantity}: ${get(`quantity-${p.id}`) || "1"}`).join("\n");
+    const productLines = selected.map((p) => `• ${p.name[lang]} — ${t.reference}: ${p.reference} — ${t.quantity}: ${get(`quantity-${p.id}`) || "1"}`).join("\n");
     const files = form.getAll("attachments").filter((file): file is File => file instanceof File && file.size > 0).map((file) => file.name).join(", ");
     const body = ["DEMANDE DE DEVIS — EPSTAR", "", `${t.name}: ${get("name")}`, `${t.phone}: ${get("phone")}`, `${t.email}: ${get("email")}`, `${t.company}: ${get("company") || "—"}`, `${t.role}: ${get("role") || "—"}`, "", `${t.project}: ${t.sectors[Number(get("project"))] || get("project")}`, `${t.budget}: ${t.budgets[Number(get("budget"))] || get("budget") || "—"}`, `${t.urgency}: ${t.urgencyItems[Number(get("urgency"))] || get("urgency") || "—"}`, `${t.wilaya}: ${get("wilaya")}`, `${t.address}: ${get("address") || "—"}`, `${t.installation}: ${get("installation") === "yes" ? t.yes : t.no}`, "", selected.length ? `${t.selected}:\n${productLines}` : `${t.selected}: ${lang === "ar" ? "تجهيز مساحة كاملة" : "Aménagement complet"}`, `${t.files}: ${files || "—"}`, "", `${t.message}: ${get("message") || "—"}`].join("\n");
     form.set("language", lang);
-    form.set("items", JSON.stringify(selected.map((p) => ({ id:p.id, name:p.name[lang], reference:p.id.toUpperCase(), thumbnail:p.image, dimensions:t.madeToMeasure, finish:t.madeToMeasure, quantity:Number(get(`quantity-${p.id}`)) || 1 }))));
+    form.set("items", JSON.stringify(selected.map((p) => ({ id:p.id, name:p.name[lang], reference:p.reference, thumbnail:p.image, dimensions:p.dimensions||t.madeToMeasure, finish:p.finish||t.madeToMeasure, quantity:Number(get(`quantity-${p.id}`)) || 1 }))));
     try {
       const response = await fetch("/api/quote", { method:"POST", body:form });
       const result = await response.json() as { ok?: boolean; requestNumber?: string; error?: string };
@@ -40,7 +43,7 @@ export default function QuoteForm({ lang, defaultSector = "" }: { lang: Lang; de
   }
 
   return <form className="smart-quote enhanced-quote" onSubmit={buildRequest} onChange={() => { setPayload(""); setNotice(""); }}>
-    {selected.length > 0 && <section className="quote-selection"><h3>{t.selected} ({selected.length})</h3>{selected.map((p) => <article className="selected-product" key={p.id}><img src={p.image} alt="" /><div><strong>{p.name[lang]}</strong><small>{t.reference}: {p.id.toUpperCase()}</small><small>{t.dimensions}: {t.madeToMeasure} · {t.finish}: {t.madeToMeasure}</small></div><label>{t.quantity}<input name={`quantity-${p.id}`} type="number" min="1" defaultValue="1" /></label><button type="button" onClick={() => setCart((items) => items.filter((item) => item !== p.id))}>{t.remove}</button></article>)}</section>}
+    {selected.length > 0 && <section className="quote-selection"><h3>{t.selected} ({selected.length})</h3>{selected.map((p) => <article className="selected-product" key={p.id}>{p.image?<img src={p.image} alt="" />:<span/>}<div><strong>{p.name[lang]}</strong><small>{t.reference}: {p.reference}</small><small>{t.dimensions}: {p.dimensions||t.madeToMeasure} · {t.finish}: {p.finish||t.madeToMeasure}</small></div><label>{t.quantity}<input name={`quantity-${p.id}`} type="number" min="1" defaultValue="1" /></label><button type="button" onClick={() => setCart((items) => items.filter((item) => item !== p.id))}>{t.remove}</button></article>)}</section>}
     {!selected.length && <div className="quote-empty"><h3>{t.noProducts}</h3><p>{t.noProductsText}</p><a href="/catalogue">{t.browse}</a></div>}
     <p className="quote-guidance">{t.guidance}</p>
     <div className="field"><label htmlFor={`${id}-name`}>{t.name} *</label><input id={`${id}-name`} name="name" autoComplete="name" required /></div><div className="field"><label htmlFor={`${id}-phone`}>{t.phone} *</label><input id={`${id}-phone`} name="phone" type="tel" autoComplete="tel" required /></div>

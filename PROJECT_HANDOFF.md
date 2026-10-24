@@ -15,13 +15,12 @@
 - `RESEND_API_KEY` is a Cloudflare secret.
 - `MAIL_FROM` = `EPSTAR <onboarding@resend.dev>` (temporary sender).
 
-## Recent local commits not yet published
+## Published baseline
 
-- `ddb148c feat: add admin quote request management`
-- `66b7b66 feat: manage categories and subcategories in dashboard`
-- `cb55142 feat: manage catalogue products in dashboard`
+- Dashboard management was pushed through GitHub Desktop and Cloudflare deployed commit message `feat: EPSTAR dashboard management` successfully on 24 October 2026 (Cloudflare version `db6f18ee`).
+- Production verification passed for admin login, categories/subcategories, and the test product `Bureau Direction D02`.
 
-`git push` fails because the executor has no GitHub credentials. `npx wrangler whoami` reports unauthenticated. Do not claim these features are live until they are deployed.
+The executor itself still has no GitHub credentials; use the user's GitHub Desktop for future pushes.
 
 ## Dashboard routes
 
@@ -33,12 +32,19 @@
 - `/api/admin/categories/:id` — protected category edit/delete.
 - `/api/admin/products` — protected product list/create.
 - `/api/admin/products/:id` — protected product edit/delete.
+- `/api/admin/products/:id/images` — protected product-image list/upload (JPG, PNG, WEBP; 8 MB each; max 8).
+- `/api/admin/product-images/:id` — protected primary-image patch/delete.
+- `/api/admin/product-images/file/:id` — protected image preview.
+- `/api/catalogue` — public managed-product list, including primary image URLs; supports `?ids=id1,id2` for the quote cart.
+- `/api/catalogue/products/:slug` — public managed-product detail.
+- `/api/catalogue/images/:id` — public cached product image.
 
 ## Validation
 
-- `npm run build` passed after both dashboard features.
+- `npm run build` passed after the image upload and public catalogue integration.
 - Do not add/delete the untracked user file: `public/images/.shop-3d.png.EXMD9g`.
+- Do not add/delete the untracked generated file `.epstar-project-language-footer.tar.gz.L9hrSy`.
 
 ## Exact next action
 
-Restore an authenticated deployment path, publish the local commits, and verify `/admin` in production. Then implement product image uploads and public-catalogue data loading.
+Commit the current local image/public-catalogue change, push with GitHub Desktop, wait for the Cloudflare build, then test editing `Bureau Direction D02` → add a JPG/PNG/WEBP image → verify the image appears in `/catalogue`, `/catalogue/bureau-direction-d02`, and the quote-request selection.
