@@ -33,6 +33,7 @@ function cleanFileName(name: string) {
 const encoder = new TextEncoder();
 const hashToken = async (value: string) => Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", encoder.encode(value)))).map((x) => x.toString(16).padStart(2, "0")).join("");
 const randomToken = () => Array.from(crypto.getRandomValues(new Uint8Array(32))).map((x) => x.toString(16).padStart(2, "0")).join("");
+const slugify = (value: string) => value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 80);
 
 async function requestMagicLink(request: Request, env: Env) {
   const body = await request.json().catch(() => ({})) as { email?: string };
@@ -73,8 +74,87 @@ async function adminUser(request: Request, env: Env) {
 async function adminOverview(request: Request, env: Env) {
   const user = await adminUser(request, env); if (!user) return json({ error:"Unauthorized" }, 401);
   const count = await env.DB.prepare("SELECT COUNT(*) AS total FROM quote_requests WHERE status = 'new'").first<{total:number}>();
-  const recent = await env.DB.prepare("SELECT request_number AS requestNumber, full_name AS fullName, company_name AS companyName, project_type AS projectType, status, created_at AS createdAt FROM quote_requests ORDER BY created_at DESC LIMIT 10").all();
+  const recent = await env.DB.prepare("SELECT id, request_number AS requestNumber, full_name AS fullName, company_name AS companyName, project_type AS projectType, wilaya, status, created_at AS createdAt FROM quote_requests ORDER BY created_at DESC LIMIT 10").all();
   return json({ user, newRequests:count?.total || 0, recent:recent.results || [] });
+}
+
+async function adminRequests(request: Request, env: Env) {
+  if (!await adminUser(request, env)) return json({ error:"Unauthorized" }, 401);
+  const requests = await env.DB.prepare("SELECT id, request_number AS requestNumber, full_name AS fullName, company_name AS companyName, project_type AS projectType, wilaya, status, created_at AS createdAt FROM quote_requests ORDER BY created_at DESC").all();
+  return json({ requests: requests.results || [] });
+}
+async function adminRequestDetail(request: Request, env: Env, id: string) {
+  if (!await adminUser(request, env)) return json({ error:"Unauthorized" }, 401);
+  const record = await env.DB.prepare("SELECT id, request_number AS requestNumber, full_name AS fullName, phone, email, company_name AS companyName, job_title AS jobTitle, project_type AS projectType, wilaya, commune_address AS communeAddress, installation_required AS installationRequired, delivery_timeline AS deliveryTimeline, budget_range AS budgetRange, custom_budget AS customBudget, message, language, status, created_at AS createdAt FROM quote_requests WHERE id = ?").bind(id).first<Record<string, unknown>>();
+  if (!record) return json({ error:"Not found" }, 404);
+  if (request.method === "PATCH") {
+    const body = await request.json().catch(()=>({})) as { status?: string }; const allowed = new Set(["new","in_progress","quoted","won","lost","archived"]);
+    if (!body.status || !allowed.has(body.status)) return json({ error:"Invalid status" }, 400);
+    await env.DB.prepare("UPDATE quote_requests SET status = ?, updated_at = ? WHERE id = ?").bind(body.status, new Date().toISOString(), id).run();
+    record.status = body.status;
+  }
+  const items = await env.DB.prepare("SELECT id, product_name AS productName, product_reference AS productReference, dimensions, finish, quantity FROM quote_request_items WHERE quote_request_id = ?").bind(id).all();
+  const attachments = await env.DB.prepare("SELECT id, original_name AS originalName, mime_type AS mimeType, size_bytes AS sizeBytes FROM quote_attachments WHERE quote_request_id = ? ORDER BY created_at").bind(id).all();
+  return json({ request:{ ...record, installationRequired: Boolean(record.installationRequired), items:items.results || [], attachments:attachments.results || [] } });
+}
+async function adminAttachment(request: Request, env: Env, id: string) {
+  if (!await adminUser(request, env)) return json({ error:"Unauthorized" }, 401);
+  const attachment = await env.DB.prepare("SELECT object_key AS objectKey, original_name AS originalName, mime_type AS mimeType FROM quote_attachments WHERE id = ?").bind(id).first<{objectKey:string;originalName:string;mimeType:string}>();
+  if (!attachment) return json({ error:"Not found" }, 404);
+  const object = await env.BUCKET.get(attachment.objectKey); if (!object) return json({ error:"File not found" }, 404);
+  return new Response(object.body, { headers:{ "content-type":attachment.mimeType, "content-disposition":`attachment; filename="${cleanFileName(attachment.originalName)}"`, "cache-control":"private, no-store" } });
+}
+
+type CategoryInput = { titleFr?: string; titleAr?: string; titleEn?: string; parentId?: string | null; isVisible?: boolean };
+type ProductInput = { reference?:string; nameFr?:string; nameAr?:string; nameEn?:string; categoryId?:string|null; dimensions?:string; finishes?:string; materials?:string; isFeatured?:boolean; isVisible?:boolean };
+async function adminCategories(request: Request, env: Env) {
+  if (!await adminUser(request, env)) return json({ error:"Unauthorized" }, 401);
+  if (request.method === "GET") {
+    const categories = await env.DB.prepare("SELECT id, parent_id AS parentId, slug, title_fr AS titleFr, title_ar AS titleAr, title_en AS titleEn, is_visible AS isVisible, sort_order AS sortOrder FROM categories ORDER BY parent_id IS NOT NULL, sort_order, title_fr").all();
+    return json({ categories:categories.results || [] });
+  }
+  const body = await request.json().catch(()=>({})) as CategoryInput;
+  const titleFr = String(body.titleFr || "").trim(); if (!titleFr) return json({ error:"Le nom français est requis." }, 400);
+  const now = new Date().toISOString(), id = crypto.randomUUID(); let slug = slugify(titleFr) || `categorie-${id.slice(0, 8)}`;
+  const exists = await env.DB.prepare("SELECT id FROM categories WHERE slug = ?").bind(slug).first(); if (exists) slug = `${slug}-${id.slice(0, 6)}`;
+  await env.DB.prepare("INSERT INTO categories (id, parent_id, slug, title_fr, title_ar, title_en, is_visible, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)").bind(id, body.parentId || null, slug, titleFr, String(body.titleAr || titleFr).trim(), String(body.titleEn || titleFr).trim(), body.isVisible === false ? 0 : 1, now, now).run();
+  return json({ ok:true, id }, 201);
+}
+async function adminCategory(request: Request, env: Env, id: string) {
+  if (!await adminUser(request, env)) return json({ error:"Unauthorized" }, 401);
+  if (request.method === "DELETE") {
+    const used = await env.DB.prepare("SELECT (SELECT COUNT(*) FROM categories WHERE parent_id = ?) + (SELECT COUNT(*) FROM products WHERE category_id = ?) AS total").bind(id, id).first<{total:number}>();
+    if ((used?.total || 0) > 0) return json({ error:"Cette catégorie contient des éléments. Masquez-la ou déplacez son contenu avant suppression." }, 409);
+    await env.DB.prepare("DELETE FROM categories WHERE id = ?").bind(id).run(); return json({ ok:true });
+  }
+  const body = await request.json().catch(()=>({})) as CategoryInput;
+  const titleFr = String(body.titleFr || "").trim(); if (!titleFr) return json({ error:"Le nom français est requis." }, 400);
+  if (body.parentId === id) return json({ error:"Une catégorie ne peut pas être son propre parent." }, 400);
+  const result = await env.DB.prepare("UPDATE categories SET parent_id = ?, title_fr = ?, title_ar = ?, title_en = ?, is_visible = ?, updated_at = ? WHERE id = ?").bind(body.parentId || null, titleFr, String(body.titleAr || titleFr).trim(), String(body.titleEn || titleFr).trim(), body.isVisible === false ? 0 : 1, new Date().toISOString(), id).run();
+  if (!result.meta.changes) return json({ error:"Not found" }, 404); return json({ ok:true });
+}
+async function adminProducts(request: Request, env: Env) {
+  if (!await adminUser(request, env)) return json({ error:"Unauthorized" }, 401);
+  if (request.method === "GET") {
+    const products = await env.DB.prepare("SELECT products.id, products.reference, products.slug, products.name_fr AS nameFr, products.name_ar AS nameAr, products.name_en AS nameEn, products.category_id AS categoryId, categories.title_fr AS categoryTitle, products.dimensions, products.finishes, products.materials, products.is_featured AS isFeatured, products.is_visible AS isVisible, (SELECT COUNT(*) FROM product_images WHERE product_images.product_id = products.id) AS imageCount FROM products LEFT JOIN categories ON categories.id = products.category_id ORDER BY products.created_at DESC").all();
+    return json({ products: products.results || [] });
+  }
+  const body = await request.json().catch(()=>({})) as ProductInput; const reference = String(body.reference || "").trim().toUpperCase(), nameFr = String(body.nameFr || "").trim();
+  if (!reference || !nameFr) return json({ error:"La référence et le nom français sont requis." }, 400);
+  const existing = await env.DB.prepare("SELECT id FROM products WHERE reference = ?").bind(reference).first(); if (existing) return json({ error:"Cette référence existe déjà." }, 409);
+  const now = new Date().toISOString(), id = crypto.randomUUID(); let slug = slugify(nameFr) || `produit-${id.slice(0, 8)}`;
+  const slugExists = await env.DB.prepare("SELECT id FROM products WHERE slug = ?").bind(slug).first(); if (slugExists) slug = `${slug}-${id.slice(0, 6)}`;
+  await env.DB.prepare("INSERT INTO products (id, category_id, slug, reference, name_fr, name_ar, name_en, dimensions, finishes, materials, is_featured, is_visible, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").bind(id, body.categoryId || null, slug, reference, nameFr, String(body.nameAr || nameFr).trim(), String(body.nameEn || nameFr).trim(), String(body.dimensions || "").trim(), JSON.stringify(String(body.finishes || "").split(",").map(v=>v.trim()).filter(Boolean)), JSON.stringify(String(body.materials || "").split(",").map(v=>v.trim()).filter(Boolean)), body.isFeatured ? 1 : 0, body.isVisible === false ? 0 : 1, now, now).run();
+  return json({ ok:true, id }, 201);
+}
+async function adminProduct(request: Request, env: Env, id: string) {
+  if (!await adminUser(request, env)) return json({ error:"Unauthorized" }, 401);
+  if (request.method === "DELETE") { await env.DB.prepare("DELETE FROM products WHERE id = ?").bind(id).run(); return json({ ok:true }); }
+  const body = await request.json().catch(()=>({})) as ProductInput; const reference = String(body.reference || "").trim().toUpperCase(), nameFr = String(body.nameFr || "").trim();
+  if (!reference || !nameFr) return json({ error:"La référence et le nom français sont requis." }, 400);
+  const duplicate = await env.DB.prepare("SELECT id FROM products WHERE reference = ? AND id != ?").bind(reference, id).first(); if (duplicate) return json({ error:"Cette référence existe déjà." }, 409);
+  const result = await env.DB.prepare("UPDATE products SET category_id=?, reference=?, name_fr=?, name_ar=?, name_en=?, dimensions=?, finishes=?, materials=?, is_featured=?, is_visible=?, updated_at=? WHERE id=?").bind(body.categoryId || null, reference, nameFr, String(body.nameAr || nameFr).trim(), String(body.nameEn || nameFr).trim(), String(body.dimensions || "").trim(), JSON.stringify(String(body.finishes || "").split(",").map(v=>v.trim()).filter(Boolean)), JSON.stringify(String(body.materials || "").split(",").map(v=>v.trim()).filter(Boolean)), body.isFeatured ? 1 : 0, body.isVisible === false ? 0 : 1, new Date().toISOString(), id).run();
+  if (!result.meta.changes) return json({ error:"Not found" }, 404); return json({ ok:true });
 }
 
 async function createQuoteRequest(request: Request, env: Env): Promise<Response> {
@@ -155,6 +235,17 @@ const worker = {
     if (url.pathname === "/api/admin/request-link" && request.method === "POST") return requestMagicLink(request, env);
     if (url.pathname === "/api/admin/verify" && request.method === "GET") return verifyMagicLink(request, env);
     if (url.pathname === "/api/admin/overview" && request.method === "GET") return adminOverview(request, env);
+    if (url.pathname === "/api/admin/requests" && request.method === "GET") return adminRequests(request, env);
+    const requestMatch = url.pathname.match(/^\/api\/admin\/requests\/([^/]+)$/);
+    if (requestMatch && (request.method === "GET" || request.method === "PATCH")) return adminRequestDetail(request, env, requestMatch[1]);
+    const attachmentMatch = url.pathname.match(/^\/api\/admin\/attachments\/([^/]+)$/);
+    if (attachmentMatch && request.method === "GET") return adminAttachment(request, env, attachmentMatch[1]);
+    if (url.pathname === "/api/admin/categories" && (request.method === "GET" || request.method === "POST")) return adminCategories(request, env);
+    const categoryMatch = url.pathname.match(/^\/api\/admin\/categories\/([^/]+)$/);
+    if (categoryMatch && (request.method === "PATCH" || request.method === "DELETE")) return adminCategory(request, env, categoryMatch[1]);
+    if (url.pathname === "/api/admin/products" && (request.method === "GET" || request.method === "POST")) return adminProducts(request, env);
+    const productMatch = url.pathname.match(/^\/api\/admin\/products\/([^/]+)$/);
+    if (productMatch && (request.method === "PATCH" || request.method === "DELETE")) return adminProduct(request, env, productMatch[1]);
 
     return handler.fetch(request, env, ctx);
   },
