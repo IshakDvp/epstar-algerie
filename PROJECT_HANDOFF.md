@@ -41,13 +41,14 @@ The executor itself still has no GitHub credentials; use the user's GitHub Deskt
 - `/api/admin/projects` and `/api/admin/projects/:id` — protected realisation CRUD.
 - `/api/admin/projects/:id/images` and `/api/admin/project-images/file/:id` — protected project photo upload/preview.
 - `/api/projects` and `/api/projects/images/:id` — public realisation feed and images.
+- `/api/projects/:slug` — public managed-realisation detail and ordered gallery images.
 
 ## Validation
 
-- `npm run build` passed after the image upload and public catalogue integration.
+- `npm run build` passed after the managed-realisation detail-page implementation.
 - Do not add/delete the untracked user file: `public/images/.shop-3d.png.EXMD9g`.
 - Do not add/delete the untracked generated file `.epstar-project-language-footer.tar.gz.L9hrSy`.
 
 ## Exact next action
 
-Commit the current local image/public-catalogue change, push with GitHub Desktop, wait for the Cloudflare build, then test editing `Bureau Direction D02` → add a JPG/PNG/WEBP image → verify the image appears in `/catalogue`, `/catalogue/bureau-direction-d02`, and the quote-request selection.
+Commit the current dynamic-realisation-detail update, push with GitHub Desktop, wait for the Cloudflare build, then open `/projects` and click `Aménagement Pharmacie El Amal` → `Voir le projet`. Verify the title, location, uploaded gallery image and quote form load correctly.
