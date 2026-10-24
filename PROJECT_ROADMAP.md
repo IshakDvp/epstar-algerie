@@ -12,6 +12,7 @@
 - Production deployment through GitHub → Cloudflare Workers Builds has been restored and verified on 24 October 2026.
 - Production CRUD test passed: Pharmacy parent category, Standard/VIP/Luxe subcategories and test product `Bureau Direction D02` were saved successfully.
 - Product-image management and public catalogue data integration are implemented locally: JPG/PNG/WEBP uploads, primary image, secure deletion, public image delivery, managed product details and quote-cart support.
+- Realisations management is implemented locally: multilingual project details, location/category, visibility, feature flag, photo uploads and public project cards.
 
 ## Current
 

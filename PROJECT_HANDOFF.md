@@ -38,6 +38,9 @@ The executor itself still has no GitHub credentials; use the user's GitHub Deskt
 - `/api/catalogue` — public managed-product list, including primary image URLs; supports `?ids=id1,id2` for the quote cart.
 - `/api/catalogue/products/:slug` — public managed-product detail.
 - `/api/catalogue/images/:id` — public cached product image.
+- `/api/admin/projects` and `/api/admin/projects/:id` — protected realisation CRUD.
+- `/api/admin/projects/:id/images` and `/api/admin/project-images/file/:id` — protected project photo upload/preview.
+- `/api/projects` and `/api/projects/images/:id` — public realisation feed and images.
 
 ## Validation
 
