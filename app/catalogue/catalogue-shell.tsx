@@ -1,15 +1,169 @@
 "use client";
-import {useEffect,useMemo,useState} from "react";
-import {useQuoteCart} from "../components/use-quote-cart";
-import {catalog,groups,metaFor,subcategories,type Lang,type Product} from "./data";
-import {label,type ManagedCatalogueProduct,type ManagedCategory} from "./managed";
+import { useEffect, useState } from "react";
+import { useQuoteCart } from "../components/use-quote-cart";
+import { catalog, metaFor, type Lang } from "./data";
+import {
+  label,
+  type ManagedCatalogueProduct,
+  type ManagedCategory,
+} from "./managed";
 import SiteHeader from "../components/site-header";
 import SiteFooter from "../components/site-footer";
-const words={fr:{all:"Tout voir",filter:"Choisir un univers",live:"Catégories EPSTAR",sub:"Choisir une sous-catégorie",details:"Voir la fiche",add:"Ajouter au devis",added:"Ajouté au devis",demo:"RÉFÉRENCE DE DÉMONSTRATION",best:"Meilleure vente",offer:"Offre en cours"},ar:{all:"عرض الكل",filter:"اختر المجال",live:"فئات EPSTAR",sub:"اختر الفئة الفرعية",details:"عرض التفاصيل",add:"أضف إلى طلب السعر",added:"تمت الإضافة",demo:"نموذج تجريبي",best:"من الأكثر مبيعًا",offer:"عرض متوفر"},en:{all:"View all",filter:"Choose a sector",live:"EPSTAR categories",sub:"Choose a subcategory",details:"View details",add:"Add to quote",added:"Added to quote",demo:"DEMO REFERENCE",best:"Best seller",offer:"Current offer"}};
-export default function CatalogueShell(){
- const [lang,setLang]=useState<Lang>("fr"),[theme,setTheme]=useState<"light"|"dark">("light"),[group,setGroup]=useState<"all"|Product["group"]>("all"),[sub,setSub]=useState("all"),[managed,setManaged]=useState<ManagedCatalogueProduct[]>([]),[categories,setCategories]=useState<ManagedCategory[]>([]),[live,setLive]=useState("all");const {cart,setCart}=useQuoteCart();
- useEffect(()=>{const x=localStorage.getItem("epstar-language");if(x==="ar"||x==="fr"||x==="en")setLang(x)},[]);useEffect(()=>{const x=localStorage.getItem("epstar-theme") as "light"|"dark"|null;setTheme(x||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"))},[]);useEffect(()=>{fetch("/api/catalogue").then(r=>r.ok?r.json():null).then(d=>{setManaged(d?.products||[]);setCategories(d?.categories||[])}).catch(()=>{})},[]);useEffect(()=>{document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";document.documentElement.dataset.theme=theme;localStorage.setItem("epstar-language",lang)},[lang,theme]);
- const t=words[lang],rtl=lang==="ar",roots=categories.filter(c=>!c.parentId),children=(id:string)=>categories.filter(c=>c.parentId===id),demo=useMemo(()=>catalog.filter(p=>(group==="all"||p.group===group)&&(sub==="all"||metaFor(p).subcategory===sub)),[group,sub]),demoSubs=group==="all"?[]:Object.entries(subcategories).filter(([,v])=>v.group===group),shown=managed.filter(p=>live==="all"||p.categoryId===live||p.parentCategoryId===live),toggle=(id:string)=>setCart(x=>x.includes(id)?x.filter(v=>v!==id):[...x,id]);
- const managedCard=(p:ManagedCatalogueProduct,i:number)=>{const added=cart.includes(p.id),cat={titleFr:p.categoryFr,titleAr:p.categoryAr,titleEn:p.categoryEn};return <article key={p.id} className="full-product"><a href={`/catalogue/${p.slug}`} className="full-image"><span>M{String(i+1).padStart(2,"0")}</span>{p.imageUrl?<img src={p.imageUrl} alt={label(p,lang)}/>:<small>{t.demo}</small>}{p.isFeatured&&<b className="product-badge best">{t.best}</b>}</a><div><small>{label(cat,lang)} · {p.reference}</small><h2>{label(p,lang)}</h2><p>{p.dimensions||t.demo}</p><div className="product-actions"><a href={`/catalogue/${p.slug}`}>{t.details} <span>↗</span></a><button className={added?"added":""} onClick={()=>toggle(p.id)}>{added?t.added:t.add}<span>{added?"✓":"+"}</span></button></div></div></article>};
- return <main className={`catalogue-page ${theme==="dark"?"dark":""} ${rtl?"rtl":""}`} dir={rtl?"rtl":"ltr"}><SiteHeader {...{lang,setLang,theme,setTheme}}/><section className="catalogue-main"><div className="filter-bar"><small>{t.filter}</small><div><button className={live==="all"&&group==="all"?"active":""} onClick={()=>{setLive("all");setGroup("all");setSub("all")}}>{t.all}</button>{(Object.keys(groups) as Product["group"][]).map(g=><button key={g} className={live==="all"&&group===g?"active":""} onClick={()=>{setLive("all");setGroup(g);setSub("all")}}>{groups[g][lang]}</button>)}</div></div>{roots.length>0&&<div className="sub-filter live-category-filter"><small>{t.live}</small><div>{roots.flatMap(root=>[<button key={root.id} className={live===root.id?"active":""} onClick={()=>{setLive(root.id);setGroup("all");setSub("all")}}>{label(root,lang)}</button>,...children(root.id).map(child=><button key={child.id} className={live===child.id?"active":""} onClick={()=>{setLive(child.id);setGroup("all");setSub("all")}}>↳ {label(child,lang)}</button>)])}</div></div>}{live==="all"&&group!=="all"&&<div className="sub-filter"><small>{t.sub}</small><div>{demoSubs.map(([id,x])=><button key={id} className={sub===id?"active":""} onClick={()=>setSub(id)}>{x.label[lang]}</button>)}</div></div>}<div className="catalogue-full-grid">{live==="all"&&demo.map((p,i)=>{const m=metaFor(p),added=cart.includes(p.id);return <article key={p.id} className="full-product"><a href={`/catalogue/${p.slug}`} className="full-image"><span>0{i+1}</span><img src={p.image} alt={p.name[lang]}/><small>{t.demo}</small>{m.bestseller&&<b className="product-badge best">{t.best}</b>}{m.promotion&&<b className="product-badge offer">{t.offer}</b>}</a><div><small>{subcategories[m.subcategory].label[lang]} · {p.id.toUpperCase()}</small><h2>{p.name[lang]}</h2><p>{p.detail[lang]}</p><div className="product-actions"><a href={`/catalogue/${p.slug}`}>{t.details} <span>↗</span></a><button className={added?"added":""} onClick={()=>toggle(p.id)}>{added?t.added:t.add}<span>{added?"✓":"+"}</span></button></div></div></article>})}{shown.map(managedCard)}</div></section><SiteFooter lang={lang}/></main>
+const tx = {
+  fr: {
+    all: "Tout voir",
+    cat: "Catégories",
+    sub: "Sous-catégories",
+    details: "Voir la fiche",
+    add: "Ajouter au devis",
+    added: "Ajouté au devis",
+    demo: "RÉFÉRENCE DE DÉMONSTRATION",
+  },
+  ar: {
+    all: "عرض الكل",
+    cat: "الفئات",
+    sub: "الفئات الفرعية",
+    details: "عرض التفاصيل",
+    add: "أضف إلى طلب السعر",
+    added: "تمت الإضافة",
+    demo: "نموذج تجريبي",
+  },
+  en: {
+    all: "View all",
+    cat: "Categories",
+    sub: "Subcategories",
+    details: "View details",
+    add: "Add to quote",
+    added: "Added to quote",
+    demo: "DEMO REFERENCE",
+  },
+};
+export default function CatalogueShell() {
+  const [lang, setLang] = useState<Lang>("fr"),
+    [theme, setTheme] = useState<"light" | "dark">("light"),
+    [root, setRoot] = useState("all"),
+    [child, setChild] = useState("all"),
+    [products, setProducts] = useState<ManagedCatalogueProduct[]>([]),
+    [categories, setCategories] = useState<ManagedCategory[]>([]);
+  const { cart, setCart } = useQuoteCart();
+  useEffect(() => {
+    const x = localStorage.getItem("epstar-language");
+    if (x === "ar" || x === "fr" || x === "en") setLang(x);
+    const y = localStorage.getItem("epstar-theme") as "light" | "dark" | null;
+    setTheme(y || "light");
+    fetch("/api/catalogue")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        setProducts(d?.products || []);
+        setCategories(d?.categories || []);
+      })
+      .catch(() => {});
+  }, []);
+  const t = tx[lang],
+    rtl = lang === "ar",
+    roots = categories.filter((c) => !c.parentId),
+    active = categories.find((c) => c.id === root),
+    children = categories.filter((c) => c.parentId === root),
+    shown = products.filter((p) =>
+      root === "all" || child !== "all"
+        ? p.categoryId === child
+        : p.categoryId === root || p.parentCategoryId === root,
+    ),
+    name = (c: ManagedCategory) =>
+      lang === "ar" ? c.titleAr : lang === "en" ? c.titleEn : c.titleFr,
+    toggle = (id: string) =>
+      setCart((x) => (x.includes(id) ? x.filter((v) => v !== id) : [...x, id]));
+  return (
+    <main
+      className={`catalogue-page ${theme === "dark" ? "dark" : ""} ${rtl ? "rtl" : ""}`}
+      dir={rtl ? "rtl" : "ltr"}
+    >
+      <SiteHeader {...{ lang, setLang, theme, setTheme }} />
+      <section className="catalogue-main">
+        <div className="filter-bar">
+          <small>{t.cat}</small>
+          <div>
+            <button
+              className={root === "all" ? "active" : ""}
+              onClick={() => {
+                setRoot("all");
+                setChild("all");
+              }}
+            >
+              {t.all}
+            </button>
+            {roots.map((c) => (
+              <button
+                key={c.id}
+                className={root === c.id ? "active" : ""}
+                onClick={() => {
+                  setRoot(c.id);
+                  setChild("all");
+                }}
+              >
+                {name(c)}
+              </button>
+            ))}
+          </div>
+        </div>
+        {children.length > 0 && (
+          <div className="sub-filter live-category-filter">
+            <small>
+              {t.sub} · {name(active!)}
+            </small>
+            <div>
+              {children.map((c) => (
+                <button
+                  key={c.id}
+                  className={child === c.id ? "active" : ""}
+                  onClick={() => setChild(c.id)}
+                >
+                  {name(c)}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="catalogue-full-grid">
+          {shown.map((p, i) => {
+            const added = cart.includes(p.id),
+              cat = {
+                titleFr: p.categoryFr,
+                titleAr: p.categoryAr,
+                titleEn: p.categoryEn,
+              };
+            return (
+              <article key={p.id} className="full-product">
+                <a href={`/catalogue/${p.slug}`} className="full-image">
+                  <span>M{String(i + 1).padStart(2, "0")}</span>
+                  {p.imageUrl ? (
+                    <img src={p.imageUrl} alt={label(p, lang)} />
+                  ) : (
+                    <small>{t.demo}</small>
+                  )}
+                </a>
+                <div>
+                  <small>
+                    {label(cat, lang)} · {p.reference}
+                  </small>
+                  <h2>{label(p, lang)}</h2>
+                  <p>{p.dimensions || t.demo}</p>
+                  <div className="product-actions">
+                    <a href={`/catalogue/${p.slug}`}>{t.details} ↗</a>
+                    <button
+                      className={added ? "added" : ""}
+                      onClick={() => toggle(p.id)}
+                    >
+                      {added ? t.added : t.add}
+                    </button>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+      <SiteFooter lang={lang} />
+    </main>
+  );
 }
