@@ -1,4 +1,5 @@
 "use client";
+import {useSiteTheme} from "./components/theme-provider";
 
 import { Fragment, useEffect, useMemo, useState, type ReactNode } from "react";
 import QuoteForm from "./components/quote-form";
@@ -20,7 +21,7 @@ const slugs=["pharmacies","bureaux","commerces","chambres"];
 
 export default function Home(){
   const [lang,setLang]=useState<Lang>("fr");
-  const [theme,setTheme]=useState<Theme>("light");
+  const [theme,setTheme] = useSiteTheme();
   const [active,setActive]=useState(0);
   const [paused,setPaused]=useState(false);
   const [clientLogos,setClientLogos]=useState<ClientLogo[]>([]);
@@ -31,8 +32,6 @@ export default function Home(){
   const sectors=useMemo(()=>t.sectors.map((s,i)=>({title:s[0],short:s[1],heading:s[2],text:s[3],image:home.images[i],model:home.models[i],icon:home.icons[i]})),[t,home]);
   useEffect(()=>{const saved=localStorage.getItem("epstar-language");if(saved==="ar"||saved==="fr"||saved==="en")setLang(saved)},[]);
   useEffect(()=>{document.documentElement.lang=lang;localStorage.setItem("epstar-language",lang);document.documentElement.dir=rtl?"rtl":"ltr"},[lang,rtl]);
-  useEffect(()=>{const saved=localStorage.getItem("epstar-theme") as Theme|null;const preferred=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";setTheme(saved||preferred)},[]);
-  useEffect(()=>{document.documentElement.dataset.theme=theme;document.documentElement.style.colorScheme=theme;localStorage.setItem("epstar-theme",theme)},[theme]);
   useEffect(()=>{fetch("/api/client-logos").then(r=>r.ok?r.json():null).then(data=>setClientLogos(data?.logos||[])).catch(()=>{})},[]);
   useEffect(()=>{if(paused)return;const timer=setInterval(()=>setActive(v=>(v+1)%4),6500);return()=>clearInterval(timer)},[paused,active]);
   const current=sectors[active];

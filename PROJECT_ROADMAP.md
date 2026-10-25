@@ -1,5 +1,14 @@
 # EPSTAR Algeria — Project Roadmap
  
+## CURRENT — 25 October 2026, v16 no-light-flash theme handling
+
+- User clarified temporary flash during transitions only. Unified public theme provider; removed independent per-page theme initialization/persistence.
+- Cookie-backed SSR and pre-paint migration of existing localStorage choice. Dark main/background before hydration; legacy mismatch guarded until layout synchronization.
+- Build +47 tests PASS; local browser dark home→Fitout→refresh→Pharmacy and light toggle verified. Production user confirmation pending for v15/v16.
+- Next: deploy v16 over v15, reproduce video path in dark/light and languages; then resume service CMS lifecycle tests (editor opening only PASS).
+
+Historical checkpoint follows.
+ 
 ## CURRENT — 25 October 2026, v15 stable first-render navigation
 
 - Fixed default-to-saved menu replacement after refresh using server-loaded public CMS snapshot and shared provider (header/footer/other content consumers).

@@ -8,6 +8,8 @@ import {publicContentContext} from "../worker/public-content-context";
 import ContentProvider from "./components/content-provider";
 import {defaultContact} from "./content-model";
 import {builtinPages} from "./page-registry";
+import ThemeProvider from "./components/theme-provider";
+import {themeBootstrap} from "./theme-bootstrap";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -45,14 +47,16 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   // Request-scoped published data, shared by SSR and hydration. No mutable cache.
-  await headers();
+  const requestHeaders=await headers();
+  const initialTheme=/(?:^|;\s*)epstar-theme=dark(?:;|$)/.test(requestHeaders.get("cookie")||"")?"dark":"light";
   const content=publicContentContext.getStore()??{contact:defaultContact,offers:[],pages:builtinPages};
   return (
-    <html lang="fr">
+    <html lang="fr" data-theme={initialTheme} suppressHydrationWarning>
+      <head><style>{`html[data-theme="dark"],html[data-theme="dark"] body{background:#0b1418;color:#edf1f2}html[data-theme-pending] body{visibility:hidden}`}</style><script dangerouslySetInnerHTML={{__html:themeBootstrap}}/></head>
       <body
         className={`${manrope.variable} ${alexandria.variable} ${notoArabic.variable} antialiased`}
       >
-        <ContentProvider value={content}><JourneyNav/>{children}</ContentProvider>
+        <ThemeProvider initialTheme={initialTheme}><ContentProvider value={content}><JourneyNav/>{children}</ContentProvider></ThemeProvider>
       </body>
     </html>
   );

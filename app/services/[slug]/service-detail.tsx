@@ -1,4 +1,5 @@
 "use client";
+import {useSiteTheme} from "../../components/theme-provider";
 
 import { useEffect, useState } from "react";
 import {serviceKeys as order,serviceBase as base,type ServiceKey} from "../../service-content";
@@ -16,9 +17,8 @@ export default function ServiceDetail({slug}:{slug:string}){
   const {services,preview,previewError}=useServiceContent(key);
   const [ready,setReady]=useState(false);
   const [lang,setLang]=useState<Lang>("fr");
-  const [theme,setTheme]=useState<Theme>("light");
-  useEffect(()=>{const savedLang=localStorage.getItem("epstar-language");if(savedLang==="fr"||savedLang==="ar"||savedLang==="en")setLang(savedLang);const saved=localStorage.getItem("epstar-theme") as Theme|null;setTheme(saved||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));setReady(true)},[]);
-  useEffect(()=>{if(!ready)return;document.documentElement.dataset.theme=theme;document.documentElement.style.colorScheme=theme;localStorage.setItem("epstar-theme",theme)},[theme,ready]);
+  const [theme,setTheme] = useSiteTheme();
+  useEffect(()=>{const savedLang=localStorage.getItem("epstar-language");if(savedLang==="fr"||savedLang==="ar"||savedLang==="en")setLang(savedLang);setReady(true)},[]);
   useEffect(()=>{if(!ready)return;localStorage.setItem("epstar-language",lang);document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr"},[lang,ready]);
   const content=services[key],t=content.copy[lang],item=t,rtl=lang==="ar";
   return <main className={`service-page ${rtl?"rtl ":""}${theme==="dark"?"dark":""}`} dir={rtl?"rtl":"ltr"}>

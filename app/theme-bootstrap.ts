@@ -1,0 +1,3 @@
+// Runs in the head before content can paint. Cookie supports SSR; localStorage
+// migrates existing visitors. Invalid/blocked storage never breaks navigation.
+export const themeBootstrap=`(()=>{if(location.pathname.startsWith('/admin'))return;var h=document.documentElement,t=h.dataset.theme;try{var s=localStorage.getItem('epstar-theme');if(s==='dark'||s==='light')t=s;else if(!document.cookie.split(';').some(x=>x.trim().startsWith('epstar-theme=')))t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}catch{}if(t!==h.dataset.theme)h.setAttribute('data-theme-pending','');h.dataset.theme=t;h.style.colorScheme=t;document.cookie='epstar-theme='+t+'; Path=/; Max-Age=31536000; SameSite=Lax';})();`;
