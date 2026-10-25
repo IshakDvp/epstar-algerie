@@ -208,6 +208,12 @@ Déplacez ou supprimez d’abord les sous-pages.|انقل الصفحات الف�
 Unauthorized|سجل الدخول أولًا.|Please sign in.
 Admin only|هذه العملية للمسؤول فقط.|Administrator only.
 Not found|العنصر غير موجود.|Item not found.
+Glissez une page ou utilisez les flèches. Les sous-pages restent avec leur parent. Le nouvel ordre est enregistré automatiquement.|اسحب الصفحة أو استخدم الأسهم. تبقى الصفحات الفرعية مع صفحتها الرئيسية. يُحفظ الترتيب تلقائيًا.|Drag a page or use the arrows. Subpages stay with their parent. The new order is saved automatically.
+Ordre enregistré dans les menus.|تم حفظ الترتيب في القوائم.|Menu order saved.
+La liste des pages a changé. Actualisez avant de réordonner.|تغيرت قائمة الصفحات. حدّثها قبل إعادة الترتيب.|The page list changed. Refresh before reordering.
+Langue des textes à modifier|لغة النصوص التي ستعدّلها|Language of the text you are editing
+Ce choix change les textes affichés dans les champs, pas la langue du tableau de bord ni l’ordre des sections.|هذا الاختيار يغيّر النصوص المعروضة داخل حقول التحرير، وليس لغة الداشبورد أو ترتيب الأقسام.|This changes the text shown inside editing fields, not the dashboard language or section order.
+Ouvrez Textes de la page ou Bannière et parcours pour voir les textes dans la langue sélectionnée.|افتح «نصوص الصفحة» أو «البانر ومسارات الزائر» لرؤية النصوص باللغة المختارة.|Open Page text or Hero and visitor journeys to see the text in the selected language.
 Sur-titre — Clients|عنوان تمهيدي — العملاء|Eyebrow — Clients
 Titre — Clients|عنوان — العملاء|Heading — Clients
 Texte — Clients|نص — العملاء|Text — Clients

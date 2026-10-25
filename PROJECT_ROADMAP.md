@@ -1,5 +1,13 @@
 # EPSTAR Algeria — Project Roadmap
 
+## 25 October 2026 — v8 correction, local checks passed / deployment pending
+
+- v7 deployed per screenshots; page registry/header links and home editor visible. Full home draft/publish production test not yet confirmed.
+- Added parent-preserving page drag order + up/down buttons, automatic order-only batch persistence and append-on-create.
+- Fixed footer CSS class collision (nested groups accidentally inherited global footer grid/padding); local browser checked compact layout.
+- Clarified content-language selector vs dashboard language; localized text fields change, shared ordering/media do not.
+- Build and 19 tests passed; production ordering/editor interactions pending. Deploy v8 and complete PROJECT_STATUS.md checks before continuing remaining page-body editors.
+
 ## 25 October 2026 — v7 Pages/menu registry + home editor, LOCAL / deployment pending
 
 - v6 production tests confirmed: locale/RTL persistence, offer population/edit/hide/republish, contact footer update/cleanup, and custom page creation/footer link. Subpage tests still pending.
@@ -47,6 +55,6 @@
 
 ## Next
 
-1. Push v7, verify page menu placements/subpages and home drafts/preview/publish (PROJECT_STATUS.md v7 checklist).
+1. Push v8, verify ordering/footer/content-language, then finish page/subpage and home draft/preview/publish tests (PROJECT_STATUS.md).
 2. Add remaining built-in page section editors, rich custom-page editing/SEO, then broader dashboard UX.
 3. Retire demo entries progressively, add team roles and the AI quote assistant.

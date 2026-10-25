@@ -1,6 +1,18 @@
 # EPSTAR Algeria — Technical Handoff
 
-## Current source and stopping point — 25 October 2026, v7 LOCAL / production pending
+## Current source and stopping point — 25 October 2026, v8 LOCAL / production pending
+
+User screenshots confirm v7 deployed: 12 page records (11 built-ins + custom test page), test page visible in header, home editor visible. Home draft/publish tests still NOT user-confirmed. Requested drag ordering, footer correction and explanation of editor language selector.
+
+v8: pageTreeOrder/movePage in app/page-registry.ts preserve parent groups; page list supports native desktop drag and accessible up/down buttons for touch/keyboard. Only sibling movement; moving roots carries children; parent change remains in edit form. POST /api/admin/content/pages/reorder validates exact current ID set, updates only JSON sortOrder in one D1 batch (json_set on existing records), preserving content/placement fields. New custom pages append after max order. Same order used by header/footer. No migration.
+
+Footer root cause: PageNavigation gave nested groups class footer, matching the global .footer grid/padding. Changed to page-nav-footer/page-nav-header and scoped compact link wrappers in SiteFooter/page-navigation.css. Browser preview confirmed compact five-link footer ~444px, individual links ~32px and no horizontal overflow at current desktop viewport. Actual drag workflow not browser-tested due lack of admin session; helper/API regression tests cover persistence/parent groups/content preservation.
+
+Home language selector is now explicitly labelled Language of the text you are editing, with explanation and prompt to open Page text / Hero and visitor journeys. It selects localized form values only, NOT admin UI locale, media or section order. No automatic translation. Build + 19 tests passed. No production writes/deploys by executor. Deliver EPSTAR_pages_order_footer_v8.zip overlay atop v7; user commits/pushes via existing GitHub Desktop repo. Update PROJECT_STATUS.md after user verification.
+
+Exact next: commit `fix: page ordering footer layout and content language guidance`, deploy v8, test move test-page last and reload/menu propagation, arrows, footer FR/AR/EN, then text-language switching in expanded home fields. Continue pending home draft/preview/publish tests, followed by remaining built-in page editors.
+
+## Previous checkpoint — 25 October 2026, v7 (historical)
 
 User approved full content control staged: menus/page registry first, then existing page section editors starting with home. v7 implements those menus and home editor only. Do NOT claim all built-in page bodies are editable. Remaining about/fitout/services/quote section editors and rich custom-page blocks are next after tests.
 
@@ -98,4 +110,4 @@ The executor itself still has no GitHub credentials; use the user's GitHub Deskt
 
 ## Exact next action
 
-Copy EPSTAR_pages_home_editor_v7.zip overlay into the existing GitHub Desktop clone containing v6. Commit `feat: page menus and home content editor`, push, wait for Cloudflare Ready. Start with menu placement on the existing test page, then subpage navigation, then home draft/preview/publish/revert, media/ordering/extra sections. Follow PROJECT_STATUS.md v7 checklist. No new project, migration or credential change required. After production PASS, implement remaining built-in section editors.
+Copy EPSTAR_pages_order_footer_v8.zip overlay atop v7. Commit `fix: page ordering footer layout and content language guidance`, Push, wait for Cloudflare Ready. Test page ordering/refresh/menu propagation, footer layout and content-language switching; continue home draft/preview/publish/revert checks before implementing remaining page editors. See current PROJECT_STATUS.md.

@@ -38,6 +38,11 @@ export async function adminContent(request:Request,env:Store){
  }
  if(kind!=="offers"&&kind!=="pages")return response({error:"Not found"},404);
  const items=kind==="pages"?withBuiltinPages(await records(env,kind)):await records(env,kind);
+ if(kind==="pages"&&id==="reorder"&&request.method==="POST"){
+  const body:any=await request.json().catch(()=>null),ids=body?.ids;
+  if(!Array.isArray(ids)||ids.length!==items.length||new Set(ids).size!==items.length||ids.some(x=>typeof x!=="string"||!items.some(p=>p.id===x)))return response({error:"La liste des pages a changé. Actualisez avant de réordonner."},409);
+  const now=new Date().toISOString();await env.DB.batch(ids.map((key:string,index:number)=>{const item=items.find(p=>p.id===key)!;return env.DB.prepare("INSERT INTO site_settings(key,value,updated_at) VALUES(?,?,?) ON CONFLICT(key) DO UPDATE SET value=json_set(site_settings.value,'$.sortOrder',?),updated_at=excluded.updated_at").bind(prefix(kind)+key,JSON.stringify({...item,sortOrder:index*10}),now,index*10);}));return response({ok:true});
+ }
  if(kind==="pages"&&id==="bootstrap"&&request.method==="POST"){
   const now=new Date().toISOString();await env.DB.batch(builtinPages.map(item=>env.DB.prepare("INSERT OR IGNORE INTO site_settings(key,value,updated_at) VALUES(?,?,?)").bind(prefix(kind)+item.id,JSON.stringify(item),now)));return response({ok:true});
  }
