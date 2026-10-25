@@ -1,5 +1,13 @@
 # EPSTAR Algeria — Project Roadmap
 
+## CURRENT — 25 October 2026, v12 Fit-out editor ready for deployment
+
+- v11 About editor production lifecycle, multilingual independence and image upload/restore all confirmed PASS by user.
+- Added Fit-out editor: existing three-language text, steps, four sector card labels/descriptions and four shared images; draft/private preview/publish with existing admin guard/CAS. Original sector IDs and quote destinations stay fixed, request handling unchanged.
+- Also fixed scoped dark step/CTA contrast and persistence of chosen language when following sector link. Browser verified Arabic RTL/dark, loaded images/no desktop overflow, Pharmacy quote preselection+Arabic persistence and guest preview protection.
+- No migrations/production writes. v12 overlay atop v11, user Commit/Push. Authenticated fit-out editor lifecycle and media tests pending after deployment.
+- Next: deploy/test fit-out, then services and quote content editors; custom-page builder/SEO, dashboard/team roles and AI remain pending. Historical pending states below are superseded by this checkpoint.
+
 ## CURRENT — 25 October 2026, v11 About editor ready for deployment
 
 - User confirmed PASS: page ordering/footer, home draft/private preview/publish/revert, subpage creation, v10 arrowless menu and dark-mode fixes.
@@ -87,4 +95,6 @@ v9 validation: npm run build passed; 19 existing automated tests plus navigation
 v10 validation: build and 20 automated tests passed. Browser visual/interaction QA not run this turn; user production checks pending. Exact next action: overlay EPSTAR_navigation_dark_arrowless_v10.zip atop v9, Commit/Push, test all five reported points.
 
 v11 final verification: npm run build and all 25 automated tests PASS after final label changes. Browser public FR/AR/light/dark and guest preview privacy verified; authenticated editor/upload workflow still pending user. Preview stopped. Overlay includes source/tests/continuity docs only, no credentials, local DB, media copies or build outputs.
+
+v12 final verification: npm run build and all 30 automated tests PASS after final dark-contrast/language changes. Public browser checks passed as described above; authenticated admin lifecycle pending user deployment. Preview stopped. ZIP contains source/tests/docs only; no secrets, runtime DB, or build artifacts.
 

@@ -2,6 +2,7 @@ import {defaultContact,defaultOffers,publicItems,validWebLink,type ContentItem,t
 import {builtinPages,withBuiltinPages} from "../app/page-registry";
 import {homeContent} from "./home-content";
 import {aboutContent} from "./about-content";
+import {fitoutContent} from "./fitout-content";
 type Store={DB:D1Database;BUCKET:R2Bucket};
 const response=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json","cache-control":"no-store"}});
 const prefix=(kind:string)=>`cms:${kind}:`;
@@ -29,6 +30,7 @@ export async function adminContent(request:Request,env:Store){
  const path=new URL(request.url).pathname.replace("/api/admin/content","").split("/").filter(Boolean),kind=path[0],id=path[1];
  if(kind==="home")return homeContent(request,env,true);
  if(kind==="about")return aboutContent(request,env,true);
+ if(kind==="fitout")return fitoutContent(request,env,true);
  if(kind==="media"&&request.method==="POST") {const form=await request.formData(),file=form.get("image");if(!(file instanceof File)||!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>8*1024*1024||file.size===0)return response({error:"JPG, PNG ou WEBP, 8 Mo maximum."},400);const key=crypto.randomUUID();await env.BUCKET.put(`cms/${key}`,file.stream(),{httpMetadata:{contentType:file.type}});return response({url:`/api/content/media/${key}`});}
  if(kind==="contact"){
   if(request.method==="GET")return response({contact:await contact(env)});

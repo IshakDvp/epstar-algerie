@@ -1,5 +1,21 @@
 # EPSTAR Algeria — Technical Handoff
 
+## CURRENT checkpoint — 25 October 2026, v12 Fit-out editor LOCAL; v11 production fully PASS
+
+User confirmed all About editor tests: open, draft/private preview, publish, revert, language independence, image upload/private preview/restore. These confirmations supersede older pending v11 notes below.
+
+v12: app/fitout-content.ts retains existing Start Project copy/media; app/start-project/page.tsx uses useFitoutContent. Four fixed sector IDs (pharmacies/bureaux/commerces/chambres) and /quote?sector= destinations remain code-owned; overall study stays /quote. Editor changes FR/AR/EN page/step/sector labels and descriptions, shared four images (existing protected R2 upload), not routing, sector count or quote submission behavior. Plain React text, fixed-size arrays, existing layout.
+
+Pages → Fit-out → Contenu — Aménagement opens app/admin/fitout-editor.tsx (same draft/preview/publish behavior and dirty protections as About). site_settings key cms-content:fitout, no migrations. worker/fitout-content.ts validates strict default shape, 20k-string/250k-total, image safe URLs and CAS revisions; GET does not seed. Public GET /api/content/fitout published-only; admin GET/PUT/POST /api/admin/content/fitout behind existing admin-role + origin guard. /start-project?preview=fitout fetches protected draft; guests see explicit unavailable notice and defaults, never draft. Existing sidebar dirty warning limitation/orphan uploads remain as in About.
+
+Incidental checks found low-contrast dark step backgrounds and unpersisted language in Start Project; fixed scoped dark steps/CTA colors and saved epstar-language on language change. Browser verified four loaded images, Arabic RTL/dark layout without desktop horizontal overflow, correct Pharmacy preselection on quote, Arabic retained after hydration, and guest preview unavailable notice. No authenticated admin preview/editor browser session available; user production lifecycle/upload tests remain pending. No production writes/deployment by executor; do not create old Sites project, do not suggest GitHub plugin.
+
+New tests/fitout-content.test.mjs covers default/read-only GET, media/multilingual private draft/publish/revert, stale/concurrent writes, URL/array/size validation, origin/method guards, built Worker guest401/editor403, translation and editor wiring. Build and 30 tests passed before final CSS/language refinements; final outcome recorded at delivery. Full tsc baseline Cloudflare/older quote type failures remain, not a globally clean typecheck.
+
+Exact next: overlay EPSTAR_fitout_editor_v12.zip atop v11, Commit 'feat: add multilingual fitout page draft editor', Push via existing GitHub Desktop, wait Cloudflare Ready. Open Pages → Fit-out content, then user-test draft/private preview, publish/revert, text-language independence and media replacement/restore. Verify four cards still preselect correct quote type and language. Services editors next, then quote content, rich custom-page builder/SEO, broader dashboard/team roles/AI. PROJECT_ROADMAP.md and PROJECT_STATUS.md updated alongside source.
+
+## Historical v11 checkpoint (superseded by current above)
+
 ## CURRENT checkpoint — 25 October 2026, v11 About editor LOCAL, v10 production PASS
 
 The user confirmed v8 ordering/footer, home draft/private preview/publish/revert, subpage placement and v10 arrowless/dark-mode fixes PASS. All older pending statements below are historical and superseded by this checkpoint.
@@ -146,4 +162,6 @@ v9 validation: npm run build passed; 19 existing automated tests plus navigation
 v10 validation: build and 20 automated tests passed. Browser visual/interaction QA not run this turn; user production checks pending. Exact next action: overlay EPSTAR_navigation_dark_arrowless_v10.zip atop v9, Commit/Push, test all five reported points.
 
 v11 final verification: npm run build and all 25 automated tests PASS after final label changes. Browser public FR/AR/light/dark and guest preview privacy verified; authenticated editor/upload workflow still pending user. Preview stopped. Overlay includes source/tests/continuity docs only, no credentials, local DB, media copies or build outputs.
+
+v12 final verification: npm run build and all 30 automated tests PASS after final dark-contrast/language changes. Public browser checks passed as described above; authenticated admin lifecycle pending user deployment. Preview stopped. ZIP contains source/tests/docs only; no secrets, runtime DB, or build artifacts.
 

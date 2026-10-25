@@ -1,6 +1,19 @@
 export type AdminLang="fr"|"ar"|"en";
 // French source keys keep server messages and the existing interface aligned.
-const rows=`Valeur|القيمة|Value
+const rows=`Pharmacies|الصيدليات|Pharmacies
+Bureaux|المكاتب|Offices
+Contenu — Aménagement|محتوى — التجهيز الكامل|Content — Fit-out
+Utilisez Contenu — Aménagement pour modifier les sections de cette page.|استعمل محتوى — التجهيز الكامل لتعديل أقسام هذه الصفحة.|Use Content — Fit-out to edit this page’s sections.
+Question principale|السؤال الرئيسي|Main question
+Texte — Plusieurs espaces|نص — عدة مساحات|Text — Multiple spaces
+Bouton — Étude globale|زر — دراسة شاملة|Button — Overall study
+Bouton — Commencer|زر — ابدأ الطلب|Button — Start request
+Libellé des étapes|تسمية المراحل|Steps label
+Types d’espaces|أنواع المساحات|Space types
+Les destinations des demandes restent fixes pour conserver le bon type de projet.|روابط الطلبات ثابتة للحفاظ على نوع المشروع الصحيح.|Request destinations stay fixed to preserve the correct project type.
+Commerces|المحلات|Retail spaces
+Chambres|غرف النوم|Bedrooms
+Valeur|القيمة|Value
 Numéro|الرقم|Number
 Contenu — À propos|محتوى — من نحن|Content — About
 Utilisez Contenu — À propos pour modifier les sections de cette page.|استعمل محتوى — من نحن لتعديل أقسام هذه الصفحة.|Use Content — About to edit this page’s sections.

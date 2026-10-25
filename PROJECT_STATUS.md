@@ -1,5 +1,13 @@
 # متابعة مشروع EPSTAR الجزائر
 
+## الحالة الحالية — 25 أكتوبر 2026، v12 محرر التجهيز الكامل
+
+- أكد المستخدم نجاح جميع اختبارات «من نحن»: المسودة والمعاينة الخاصة والنشر والإرجاع، استقلال اللغات ورفع الصورة وإرجاعها.
+- أضفنا «محتوى — التجهيز الكامل» ضمن الصفحات: العناوين ونصوص المراحل وأسماء ووصف المساحات الأربع وصورها، بثلاث لغات ومسودة ومعاينة ونشر مستقل.
+- روابط أنواع المشاريع ثابتة لضمان وصول كل بطاقة إلى نوع الطلب الصحيح؛ نموذج الطلب وإرساله لم يتغيرا. حُسّن تباين المراحل ليلًا وحفظ اللغة المختارة عند الانتقال إلى الطلب.
+- بعد نشر v12 فوق v11: افتح المحرر، ثم اختبر المسودة والمعاينة والنشر والإرجاع واللغات والصور، وبعدها انتقال البطاقات لنوع المشروع الصحيح. اختبارات المستخدم لهذه النسخة لم تُنجز بعد.
+- الخطوة التالية بعد الاختبار: محررات صفحات الخدمات، ثم محتوى صفحة الطلب. الحالات الأقدم أدناه تاريخية.
+
 ## الحالة الحالية — 25 أكتوبر 2026، v11 جاهزة للنشر فوق v10
 
 - أكد المستخدم نجاح ترتيب الصفحات والفوتر، ومسودة الرئيسية ومعاينتها ونشرها وإرجاعها، والصفحات الفرعية وتصحيحات القائمة والوضع الليلي في v10.
@@ -125,4 +133,6 @@
 - No database or API changes. v10 overlays v9; user must Commit/Push and verify production AR/FR/EN, light/dark, desktop hover and mobile first/second tap. Full CMS remaining-page editors pending.
 
 v11 final verification: npm run build and all 25 automated tests PASS after final label changes. Browser public FR/AR/light/dark and guest preview privacy verified; authenticated editor/upload workflow still pending user. Preview stopped. Overlay includes source/tests/continuity docs only, no credentials, local DB, media copies or build outputs.
+
+v12 final verification: npm run build and all 30 automated tests PASS after final dark-contrast/language changes. Public browser checks passed as described above; authenticated admin lifecycle pending user deployment. Preview stopped. ZIP contains source/tests/docs only; no secrets, runtime DB, or build artifacts.
 
