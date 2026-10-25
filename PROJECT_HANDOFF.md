@@ -1,4 +1,12 @@
 # EPSTAR Algeria — Technical Handoff
+ 
+## CURRENT — 25 October 2026, v15 initial navigation SSR fix
+
+User screenshots show About missing temporarily on refresh. Root cause useContent initialized builtinPages then fetched /api/content separately in header/footer, replacing menu after hydration. v15 resolves published publicContentData before public route render in worker/index.ts. Request-isolated AsyncLocalStorage (global Symbol shared across Vinext RSC/SSR bundles) passes snapshot to async RootLayout and client ContentProvider. useContent now reads context only; no delayed fetch or browser cache, preserving CMS labels/order/visibility/children at first HTML and hydration. HTML responses no-store. Assets/API/admin skip snapshot; CMS failure logs and uses consistent builtin fallback. Public GET data logic unchanged, no DB writes or migrations. Root headers() marks dynamic render. Provider contains only public contact/offers/visible pages, never drafts or admin data.
+
+Build and 44 tests PASS, including built Worker SSR custom menu label and two concurrent requests with different snapshots (no cross-request leakage). Existing 42 tests retained. No browser QA this patch; production refresh/slow network and CMS hide/order/rename checks pending. First cloudflare:workers import attempt failed Node artifact verification; replaced with node:async_hooks context and rebuilt successfully. No dependency changes. v14 Solutions behavior unchanged; its production confirmation still pending. v13 service lifecycle remains pending (opening only confirmed).
+
+Deliverable EPSTAR_navigation_ssr_v15.zip overlays v14. Commit: fix: render saved navigation before hydration. After Push/deploy test repeated refresh on /services/chambres, home and custom page: About and saved custom items must remain present, same order; test hide/rename in Pages then reload. No Pages bootstrap needed for v15. Then resume v13 service lifecycle. Older checkpoints below are historical.
 
 ## CURRENT checkpoint — 25 October 2026, v14 Solutions navigation LOCAL, production pending
 

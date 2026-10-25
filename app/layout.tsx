@@ -3,6 +3,11 @@ import { Alexandria, Manrope, Noto_Sans_Arabic } from "next/font/google";
 import "./globals.css";
 import JourneyNav from "./components/journey-nav";
 import "./refinement.css";
+import {headers} from "next/headers";
+import {publicContentContext} from "../worker/public-content-context";
+import ContentProvider from "./components/content-provider";
+import {defaultContact} from "./content-model";
+import {builtinPages} from "./page-registry";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -34,17 +39,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Request-scoped published data, shared by SSR and hydration. No mutable cache.
+  await headers();
+  const content=publicContentContext.getStore()??{contact:defaultContact,offers:[],pages:builtinPages};
   return (
     <html lang="fr">
       <body
         className={`${manrope.variable} ${alexandria.variable} ${notoArabic.variable} antialiased`}
       >
-        <JourneyNav/>{children}
+        <ContentProvider value={content}><JourneyNav/>{children}</ContentProvider>
       </body>
     </html>
   );

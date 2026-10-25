@@ -1,4 +1,13 @@
 # EPSTAR Algeria — Project Roadmap
+ 
+## CURRENT — 25 October 2026, v15 stable first-render navigation
+
+- Fixed default-to-saved menu replacement after refresh using server-loaded public CMS snapshot and shared provider (header/footer/other content consumers).
+- Request-isolated context, no browser cache; published content only, no data writes/migrations. HTML no-store.
+- Build +44 tests PASS including real built Worker first HTML and concurrent isolation; browser/production user test pending.
+- Next: apply v15 atop v14, Commit/Push, test refresh on service/home/custom pages and saved menu visibility/order. Then complete v13 service draft/preview/publish/languages/media tests. v14 public navigation confirmation pending.
+
+Historical checkpoint follows.
 
 ## CURRENT — 25 October 2026, v14 Solutions menu ready for deployment
 

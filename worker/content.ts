@@ -12,7 +12,8 @@ async function pageRecords(env:Store){const items=await records(env,"pages");con
 async function records(env:Store,kind:string):Promise<ContentItem[]>{const r=await env.DB.prepare("SELECT value FROM site_settings WHERE key LIKE ?").bind(prefix(kind)+"%").all<{value:string}>();return (r.results||[]).map(r=>JSON.parse(r.value));}
 async function contact(env:Store):Promise<ContactInfo>{const r=await env.DB.prepare("SELECT value FROM site_settings WHERE key = ?").bind("contact").first<{value:string}>();return r?JSON.parse(r.value):defaultContact;}
 async function put(env:Store,key:string,value:unknown){await env.DB.prepare("INSERT INTO site_settings(key,value,updated_at) VALUES(?,?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at").bind(key,JSON.stringify(value),new Date().toISOString()).run();}
-export async function publicContent(env:Store){return response({contact:await contact(env),offers:publicItems(await records(env,"offers")),pages:publicItems(await pageRecords(env))});}
+export async function publicContentData(env:Store){return {contact:await contact(env),offers:publicItems(await records(env,"offers")),pages:publicItems(await pageRecords(env))};}
+export async function publicContent(env:Store){return response(await publicContentData(env));}
 const string=(v:unknown,max=400)=>typeof v==="string"?v.trim().slice(0,max):"";
 const localized=(v:any,max=20000)=>({fr:string(v?.fr,max),ar:string(v?.ar,max),en:string(v?.en,max)});
 export function validateItem(raw:any,id:string,kind:string,items:ContentItem[]):ContentItem{

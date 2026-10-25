@@ -2,7 +2,8 @@
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
 import {demoItems,importDemoItem} from "./import-demo";
-import {adminContent,publicContent,contentMedia} from "./content";
+import {adminContent,publicContent,publicContentData,contentMedia} from "./content";
+import {publicContentContext} from "./public-content-context";
 import {homeContent} from "./home-content";
 import {aboutContent} from "./about-content";
 import {fitoutContent} from "./fitout-content";
@@ -419,6 +420,18 @@ const worker = {
     const publicProjectImageMatch = url.pathname.match(/^\/api\/projects\/images\/([^/]+)$/);
     if (publicProjectImageMatch && request.method === "GET") return publicProjectImage(env, publicProjectImageMatch[1]);
 
+    // Resolve published CMS data before rendering, not in a post-hydration fetch.
+    // Assets and admin routes do not need the public snapshot.
+    if((request.method==="GET"||request.method==="HEAD")&&!url.pathname.startsWith("/admin")&&!url.pathname.startsWith("/api/")&&!url.pathname.startsWith("/assets/")&&!/\.[a-z0-9]+$/i.test(url.pathname)){
+      let content;
+      try {content=await publicContentData(env);} catch(error) {console.error("Public content unavailable",error);}
+      if(content){
+        const rendered=await publicContentContext.run(content,()=>handler.fetch(request,env,ctx));
+        const response=new Response(rendered.body,rendered);
+        response.headers.set("cache-control","no-store");
+        return response;
+      }
+    }
     return handler.fetch(request, env, ctx);
   },
 };
