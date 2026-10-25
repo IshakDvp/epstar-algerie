@@ -1,5 +1,5 @@
 import {defaultContact,defaultOffers,publicItems,validWebLink,type ContentItem,type ContactInfo} from "../app/content-model";
-import {builtinPages,withBuiltinPages} from "../app/page-registry";
+import {builtinPages,withBuiltinPages,initialSolutionsPages} from "../app/page-registry";
 import {homeContent} from "./home-content";
 import {aboutContent} from "./about-content";
 import {fitoutContent} from "./fitout-content";
@@ -7,10 +7,12 @@ import {serviceContent} from "./service-content";
 type Store={DB:D1Database;BUCKET:R2Bucket};
 const response=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json","cache-control":"no-store"}});
 const prefix=(kind:string)=>`cms:${kind}:`;
+const solutionsMarker="cms-meta:solutions-navigation-v1";
+async function pageRecords(env:Store){const items=await records(env,"pages");const initialized=await env.DB.prepare("SELECT value FROM site_settings WHERE key=?").bind(solutionsMarker).first();return initialized?withBuiltinPages(items):initialSolutionsPages(items);}
 async function records(env:Store,kind:string):Promise<ContentItem[]>{const r=await env.DB.prepare("SELECT value FROM site_settings WHERE key LIKE ?").bind(prefix(kind)+"%").all<{value:string}>();return (r.results||[]).map(r=>JSON.parse(r.value));}
 async function contact(env:Store):Promise<ContactInfo>{const r=await env.DB.prepare("SELECT value FROM site_settings WHERE key = ?").bind("contact").first<{value:string}>();return r?JSON.parse(r.value):defaultContact;}
 async function put(env:Store,key:string,value:unknown){await env.DB.prepare("INSERT INTO site_settings(key,value,updated_at) VALUES(?,?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at").bind(key,JSON.stringify(value),new Date().toISOString()).run();}
-export async function publicContent(env:Store){return response({contact:await contact(env),offers:publicItems(await records(env,"offers")),pages:publicItems(withBuiltinPages(await records(env,"pages")))});}
+export async function publicContent(env:Store){return response({contact:await contact(env),offers:publicItems(await records(env,"offers")),pages:publicItems(await pageRecords(env))});}
 const string=(v:unknown,max=400)=>typeof v==="string"?v.trim().slice(0,max):"";
 const localized=(v:any,max=20000)=>({fr:string(v?.fr,max),ar:string(v?.ar,max),en:string(v?.en,max)});
 export function validateItem(raw:any,id:string,kind:string,items:ContentItem[]):ContentItem{
@@ -43,14 +45,17 @@ export async function adminContent(request:Request,env:Store){
   await put(env,"contact",value);return response({ok:true});
  }
  if(kind!=="offers"&&kind!=="pages")return response({error:"Not found"},404);
- const items=kind==="pages"?withBuiltinPages(await records(env,kind)):await records(env,kind);
+ const items=kind==="pages"?await pageRecords(env):await records(env,kind);
  if(kind==="pages"&&id==="reorder"&&request.method==="POST"){
   const body:any=await request.json().catch(()=>null),ids=body?.ids;
   if(!Array.isArray(ids)||ids.length!==items.length||new Set(ids).size!==items.length||ids.some(x=>typeof x!=="string"||!items.some(p=>p.id===x)))return response({error:"La liste des pages a changé. Actualisez avant de réordonner."},409);
   const now=new Date().toISOString();await env.DB.batch(ids.map((key:string,index:number)=>{const item=items.find(p=>p.id===key)!;return env.DB.prepare("INSERT INTO site_settings(key,value,updated_at) VALUES(?,?,?) ON CONFLICT(key) DO UPDATE SET value=json_set(site_settings.value,'$.sortOrder',?),updated_at=excluded.updated_at").bind(prefix(kind)+key,JSON.stringify({...item,sortOrder:index*10}),now,index*10);}));return response({ok:true});
  }
  if(kind==="pages"&&id==="bootstrap"&&request.method==="POST"){
-  const now=new Date().toISOString();await env.DB.batch(builtinPages.map(item=>env.DB.prepare("INSERT OR IGNORE INTO site_settings(key,value,updated_at) VALUES(?,?,?)").bind(prefix(kind)+item.id,JSON.stringify(item),now)));return response({ok:true});
+  const now=new Date().toISOString();const statements=builtinPages.map(item=>env.DB.prepare("INSERT OR IGNORE INTO site_settings(key,value,updated_at) VALUES(?,?,?)").bind(prefix(kind)+item.id,JSON.stringify(item),now));
+  for(const p of builtinPages.filter(p=>p.builtinId?.startsWith("service-"))){statements.push(env.DB.prepare("UPDATE site_settings SET value=json_set(value,'$.parentId',?,'$.showInHeader',json('true')),updated_at=? WHERE key=? AND json_extract(value,'$.parentId') IS NULL AND NOT EXISTS (SELECT 1 FROM site_settings WHERE key=?) AND NOT EXISTS (SELECT 1 FROM site_settings AS child WHERE child.key LIKE 'cms:pages:%' AND json_extract(child.value,'$.parentId')=?)").bind("builtin-solutions",now,prefix(kind)+p.id,solutionsMarker,p.id));}
+  statements.push(env.DB.prepare("INSERT OR IGNORE INTO site_settings(key,value,updated_at) VALUES(?,?,?)").bind(solutionsMarker,"true",now));
+  await env.DB.batch(statements);return response({ok:true});
  }
  if(request.method==="GET")return response({items:items.sort((a,b)=>a.sortOrder-b.sortOrder)});
  if((id==="bootstrap"||id==="import")&&kind==="offers"&&request.method==="POST"){

@@ -1,5 +1,13 @@
 # EPSTAR Algeria — Project Roadmap
 
+## CURRENT — 25 October 2026, v14 Solutions menu ready for deployment
+
+- User confirmed v13 editor opening only, then requested easier public access. Service content lifecycle tests remain pending, not PASS yet.
+- Added Solutions/Nos solutions/حلولنا top-menu link to /#services, with four existing services as child pages. Same arrowless hover/touch/keyboard dropdown; fixed native service URLs and CMS bodies unchanged.
+- One-time safe legacy grouping with read-only pre-bootstrap projection; later staff ordering/visibility/parent changes preserved. Custom hierarchies protected; header/footer placement still managed from Pages.
+- Sticky-header anchor offset and async home realignment added; browser home+cross-page anchor landing and AR/light/dark submenu checked. Build +42 tests PASS.
+- Next: deploy v14 above v13, test menu hover/section link and admin persistence, resume service draft/publish/media tests, then quote editor. Rich custom pages/SEO/dashboard/team roles/AI remain pending.
+
 ## CURRENT — 25 October 2026, v13 Service editors ready for user deployment
 
 - User confirmed full v12 Fit-out lifecycle, language/images and four sector → quote defaults PASS.

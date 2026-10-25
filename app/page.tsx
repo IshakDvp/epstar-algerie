@@ -47,6 +47,7 @@ export default function Home(){
   useEffect(()=>{fetch("/api/catalogue").then(r=>r.ok?r.json():null).then(d=>setProducts((d?.products||[]).map((p:any)=>({...p,name:{fr:p.nameFr,ar:p.nameAr||p.nameFr,en:p.nameEn||p.nameFr},image:p.imageUrl||""})))).catch(()=>{});fetch("/api/projects").then(r=>r.ok?r.json():null).then(d=>setProjects(d?.projects||[])).catch(()=>{});},[]);
   const featuredProduct=products.find(p=>p.isFeatured)||products[0];
   const bestProducts=products.filter(p=>p.id!==featuredProduct?.id).slice(0,3);
+  useEffect(()=>{if(location.hash!=="#services")return;const frame=requestAnimationFrame(()=>document.getElementById("services")?.scrollIntoView({block:"start"}));return()=>cancelAnimationFrame(frame);},[home,clientLogos.length,featuredProduct?.id,lang]);
   
   
   const sections:Record<string,ReactNode>={
