@@ -1,14 +1,21 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-test('submenu supports mouse hover, touch click, Escape, and a larger target',()=>{
+test('arrowless submenu supports hover, touch first tap, keyboard and themed labels',()=>{
  const source=readFileSync('app/components/page-navigation.tsx','utf8');
  assert.ok(source.includes('onPointerEnter='));
  assert.ok(source.includes('event.pointerType==="mouse"'));
- assert.ok(source.includes('(hover: hover) and (pointer: fine)'));
+ assert.ok(source.includes('(hover: none), (pointer: coarse)'));
  assert.ok(source.includes('onPointerLeave='));
  assert.ok(source.includes('event.key==="Escape"'));
- assert.ok(source.includes('<details><summary'));
+ assert.ok(!source.includes('<summary'));
+ assert.ok(source.includes('aria-expanded='));
+ assert.ok(source.includes('event.key==="ArrowDown"'));
+ assert.ok(source.includes('page-nav-label'));
  const css=readFileSync('app/components/page-navigation.css','utf8');
- assert.ok(css.includes('min-width:44px;min-height:44px'));
+ assert.ok(css.includes('min-height:44px'));
+ assert.ok(css.includes('top:calc(100% - 1px)'));
+ assert.ok(css.includes('html[data-theme="dark"] .site-header.unified-header .page-nav-children'));
+ assert.ok(css.includes('bottom:-5px'));
+ assert.ok(readFileSync('app/pages/[slug]/page.tsx','utf8').includes('managed-page ${theme}'));
 });
