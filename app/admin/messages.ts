@@ -208,6 +208,112 @@ Déplacez ou supprimez d’abord les sous-pages.|انقل الصفحات الف�
 Unauthorized|سجل الدخول أولًا.|Please sign in.
 Admin only|هذه العملية للمسؤول فقط.|Administrator only.
 Not found|العنصر غير موجود.|Item not found.
+Sur-titre — Clients|عنوان تمهيدي — العملاء|Eyebrow — Clients
+Titre — Clients|عنوان — العملاء|Heading — Clients
+Texte — Clients|نص — العملاء|Text — Clients
+Gérez les pages et choisissez leurs emplacements dans les menus.|أدر الصفحات وحدد مكان ظهورها في القوائم.|Manage pages and choose where their links appear.
+Emplacements des liens|مكان ظهور الروابط|Link placement
+Menu principal (en haut)|القائمة العلوية|Header menu
+Menu du pied de page|قائمة الفوتر|Footer menu
+Cochez les deux pour les deux menus, ou aucun pour conserver seulement l’accès direct.|فعّل الاثنين للظهور في القائمتين، أو اتركهما فارغين للاكتفاء بالرابط المباشر.|Select both for both menus, or neither for direct access only.
+Liens visibles dans les menus|روابط ظاهرة في القوائم|Links visible in menus
+Page système|صفحة أساسية|Built-in page
+Page système : masquez les liens au lieu de supprimer la page.|صفحة أساسية: أخف روابطها بدل حذفها.|Built-in page: hide its links instead of deleting it.
+Gérer le contenu|إدارة المحتوى|Manage content
+Utilisez Contenu — Accueil pour modifier les sections de cette page.|استخدم «محتوى الرئيسية» لتعديل أقسام هذه الصفحة.|Use Home content to edit this page’s sections.
+Le contenu est géré dans le module correspondant du tableau de bord.|يُدار المحتوى في القسم المخصص له داخل الداشبورد.|Content is managed in its corresponding dashboard module.
+L’édition des sections de cette page sera ajoutée à la prochaine étape.|سيُضاف تحرير أقسام هذه الصفحة في المرحلة التالية.|Section editing for this page will be added in the next phase.
+Retour aux pages|العودة إلى الصفحات|Back to pages
+Contenu — Accueil|محتوى الرئيسية|Home content
+Langue du contenu|لغة المحتوى|Content language
+Enregistrez le brouillon avant la prévisualisation. La publication est une action séparée.|احفظ المسودة قبل المعاينة. النشر خطوة مستقلة.|Save the draft before previewing. Publishing is a separate action.
+Enregistrer le brouillon|حفظ المسودة|Save draft
+Prévisualiser|معاينة|Preview
+Publier|نشر|Publish
+Publier ces modifications sur le site ?|هل تريد نشر هذه التعديلات في الموقع؟|Publish these changes on the website?
+Modifications publiées.|تم نشر التعديلات.|Changes published.
+Brouillon enregistré.|تم حفظ المسودة.|Draft saved.
+Image chargée. Enregistrez le brouillon.|تم رفع الصورة. احفظ المسودة.|Image uploaded. Save the draft.
+Recharger et abandonner les modifications non enregistrées ?|هل تريد إعادة التحميل والتخلي عن التعديلات غير المحفوظة؟|Reload and discard unsaved changes?
+Le contenu a changé. Rechargez avant d’enregistrer.|عُدّل المحتوى من جلسة أخرى. أعد التحميل قبل الحفظ.|Content changed in another session. Reload before saving.
+Ordre et visibilité des sections|ترتيب الأقسام وظهورها|Section order and visibility
+Bannière principale|البانر الرئيسي|Hero banner
+Réassurance|عناصر الثقة|Trust badges
+Sélection produits|مختارات المنتجات|Product highlights
+À propos|من نحن|About
+Solutions|الحلول|Solutions
+Formulaire de devis|نموذج عرض السعر|Quote form
+Méthode|طريقة العمل|Process
+Témoignage|رأي العميل|Testimonial
+Appel à l’action|دعوة للتواصل|Call to action
+Monter|تحريك للأعلى|Move up
+Descendre|تحريك للأسفل|Move down
+Textes de la page|نصوص الصفحة|Page text
+Bannière et parcours|البانر ومسارات الزائر|Hero and visitor journeys
+Solutions et sélection produits|الحلول ومختارات المنتجات|Solutions and product highlights
+Photos de la page|صور الصفحة|Page images
+Photo univers|صورة المجال|Sector image
+Visuel bannière|صورة البانر|Hero image
+Photo — À propos|صورة من نحن|About image
+Photo — Témoignage|صورة رأي العميل|Testimonial image
+Liens des boutons|روابط الأزرار|Button links
+Sections supplémentaires|أقسام إضافية|Additional sections
+Ces sections apparaissent après les sections existantes.|تظهر هذه الأقسام بعد الأقسام الحالية.|These sections appear after the existing sections.
+Section|قسم|Section
+Texte du bouton|نص الزر|Button text
+Lien du bouton|رابط الزر|Button link
+Image|الصورة|Image
+Supprimer cette section du brouillon ?|هل تريد حذف هذا القسم من المسودة؟|Remove this section from the draft?
+Ajouter une section|إضافة قسم|Add section
+Texte|النص|Text
+Élément|عنصر|Item
+Libellé|التسمية|Label
+Sur-titre|عنوان تمهيدي|Eyebrow
+Univers|المجالات|Sectors
+Choisir un secteur|اختر المجال|Choose a sector
+Sur-titre — À propos|عنوان تمهيدي — من نحن|Eyebrow — About
+Titre — À propos|عنوان — من نحن|Heading — About
+Texte — À propos|نص — من نحن|Text — About
+Bouton — À propos|زر — من نحن|Button — About
+Texte sur la photo|نص على الصورة|Image overlay text
+Pourquoi nous choisir ?|لماذا تختارنا؟|Why choose us?
+Points forts|نقاط القوة|Strengths
+Sur-titre — Solutions|عنوان تمهيدي — الحلول|Eyebrow — Solutions
+Bouton — Solutions|زر — الحلول|Button — Solutions
+Sur-titre — Devis|عنوان تمهيدي — عرض السعر|Eyebrow — Quote
+Titre — Devis|عنوان — عرض السعر|Heading — Quote
+Texte — Devis|نص — عرض السعر|Text — Quote
+Sur-titre — Méthode|عنوان تمهيدي — طريقة العمل|Eyebrow — Process
+Titre — Méthode|عنوان — طريقة العمل|Heading — Process
+Texte — Méthode|نص — طريقة العمل|Text — Process
+Étapes|المراحل|Steps
+Sur-titre — Réalisations|عنوان تمهيدي — الإنجازات|Eyebrow — Projects
+Titre — Réalisations|عنوان — الإنجازات|Heading — Projects
+Texte — Réalisations|نص — الإنجازات|Text — Projects
+Libellé projet|تسمية المشروع|Project label
+Bouton — Réalisations|زر — الإنجازات|Button — Projects
+Sur-titre — Témoignage|عنوان تمهيدي — رأي العميل|Eyebrow — Testimonial
+Texte — Témoignage|نص — رأي العميل|Text — Testimonial
+Nom du client|اسم العميل|Client name
+Type de client|نوع العميل|Client type
+Sur-titre — Action|عنوان تمهيدي — التواصل|Eyebrow — Call to action
+Titre — Action|عنوان — التواصل|Heading — Call to action
+Texte — Action|نص — التواصل|Text — Call to action
+Bouton — Action|زر — التواصل|Button — Call to action
+Question|السؤال|Question
+Texte d’aide|نص توضيحي|Help text
+Bouton produits|زر المنتجات|Products button
+Texte produits|وصف المنتجات|Products description
+Texte projet|وصف المشروع|Project description
+Étape produits|مرحلة المنتجات|Products step
+Étape projet|مرحلة المشروع|Project step
+Libellé produit vedette|تسمية المنتج المميز|Featured product label
+Texte produit vedette|وصف المنتج المميز|Featured product description
+Titre sélection|عنوان المختارات|Highlights heading
+Texte sélection|وصف المختارات|Highlights description
+Bouton produit|زر المنتج|Product button
+Libellé offre|تسمية العرض|Offer label
+Aménagement|التجهيز الكامل|Fit-out
 Le nom français est requis.|الاسم بالفرنسية مطلوب.|French name is required.
 Cette catégorie contient des éléments. Masquez-la ou déplacez son contenu avant suppression.|تحتوي الفئة على عناصر. أخفها أو انقل محتواها قبل الحذف.|This category contains items. Hide it or move its content before deleting.
 Une catégorie ne peut pas être son propre parent.|لا يمكن أن تكون الفئة رئيسية لنفسها.|A category cannot be its own parent.

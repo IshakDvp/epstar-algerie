@@ -1,0 +1,3 @@
+import type {HomeBlock} from "../home-content";
+import type {Lang} from "../catalogue/data";
+export default function HomeBlocks({blocks,lang}:{blocks:HomeBlock[];lang:Lang}){return <>{blocks.filter(b=>b.visible).map(b=><section key={b.id} className="managed-home-block section-pad" style={{maxWidth:1400,margin:"32px auto",padding:32}}>{b.image&&<img src={b.image} alt="" style={{width:"100%",maxHeight:500,objectFit:"contain"}}/>}<h2>{b.title[lang]||b.title.fr}</h2><p style={{whiteSpace:"pre-wrap",lineHeight:1.8}}>{b.text[lang]||b.text.fr}</p>{b.href&&<a className="primary-btn" href={b.href}>{b.button[lang]||b.button.fr||"→"}</a>}</section>)}</>;}

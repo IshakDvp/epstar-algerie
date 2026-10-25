@@ -1,5 +1,5 @@
 export type LocalText={fr:string;ar:string;en:string};
-export type ContentItem={id:string;slug:string;title:LocalText;body:LocalText;subtitle:LocalText;image:string;parentId:string|null;visible:boolean;sortOrder:number};
+export type ContentItem={id:string;slug:string;title:LocalText;body:LocalText;subtitle:LocalText;image:string;parentId:string|null;visible:boolean;sortOrder:number;showInHeader?:boolean;showInFooter?:boolean;builtinId?:string};
 export type ContactInfo={phone:string;whatsapp:string;email:string;address:LocalText;hours:LocalText;facebook:string;instagram:string};
 export const defaultContact:ContactInfo={phone:"+213551984778",whatsapp:"213551984778",email:"ishakdib.contact@gmail.com",address:{fr:"",ar:"",en:""},hours:{fr:"",ar:"",en:""},facebook:"",instagram:""};
 const text=(fr:string,ar:string,en:string)=>({fr,ar,en});

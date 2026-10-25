@@ -1,5 +1,14 @@
 # EPSTAR Algeria — Project Roadmap
 
+## 25 October 2026 — v7 Pages/menu registry + home editor, LOCAL / deployment pending
+
+- v6 production tests confirmed: locale/RTL persistence, offer population/edit/hide/republish, contact footer update/cleanup, and custom page creation/footer link. Subpage tests still pending.
+- Independent header/footer flags, shared nested navigation and 11 built-in page records preserving native routes and protected from deletion. Existing custom pages remain footer-linked by default.
+- Home editor: multilingual text/images/links, section ordering/visibility and simple extra blocks; private drafts, admin preview, explicit publish and revision-conflict guard.
+- Homepage catalogue/projects now managed database feeds; original design retained. Other built-in bodies are NOT editable yet; registry offers appropriate next-stage notices or jumps to existing modules.
+- Build + automated checks passed. Public home browser French/Arabic RTL passed after local schema setup. Admin editor/submenus still require production user checks; baseline full-typecheck issues remain.
+- Next: deploy v7, complete PROJECT_STATUS.md tests, then about/fitout/services/quote editors and richer custom-page content. This is a staged CMS, not a completed full-site page builder.
+
 ## 25 October 2026 — v6 correction, local validation passed / deployment pending
 
 - User screenshots confirm v5 deployed; before CRUD tests requested a unified menu, separate user/role, dashboard languages, and existing offers populated automatically.
@@ -38,6 +47,6 @@
 
 ## Next
 
-1. Push v6, verify unified menu/languages/automatic offers, then contact and main/subpages (PROJECT_STATUS.md checklist).
-2. Improve dashboard UX, migrate remaining homepage sections and rich page editing/SEO.
+1. Push v7, verify page menu placements/subpages and home drafts/preview/publish (PROJECT_STATUS.md v7 checklist).
+2. Add remaining built-in page section editors, rich custom-page editing/SEO, then broader dashboard UX.
 3. Retire demo entries progressively, add team roles and the AI quote assistant.

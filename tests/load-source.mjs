@@ -1,0 +1,2 @@
+import {readFileSync} from 'node:fs';import {resolve,dirname,extname} from 'node:path';import ts from 'typescript';
+const cache=new Map();export function sourceURL(path){path=resolve(path);if(cache.has(path))return cache.get(path);let source=ts.transpileModule(readFileSync(path,'utf8'),{compilerOptions:{module:99,target:9}}).outputText;source=source.replace(/(from\s+["'])(\.[^"']+)(["'])/g,(_,a,p,b)=>a+sourceURL(resolve(dirname(path),p+(extname(p)?'':'.ts')))+b);const url='data:text/javascript;base64,'+Buffer.from(source).toString('base64');cache.set(path,url);return url;}

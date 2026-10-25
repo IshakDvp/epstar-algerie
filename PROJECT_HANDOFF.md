@@ -1,6 +1,22 @@
 # EPSTAR Algeria — Technical Handoff
 
-## Current source and stopping point — 25 October 2026, v6
+## Current source and stopping point — 25 October 2026, v7 LOCAL / production pending
+
+User approved full content control staged: menus/page registry first, then existing page section editors starting with home. v7 implements those menus and home editor only. Do NOT claim all built-in page bodies are editable. Remaining about/fitout/services/quote section editors and rich custom-page blocks are next after tests.
+
+v6 production confirmed by user PASS: admin locale/RTL persistence, automatic offers in admin/public, offer title save+revert, hide+republish, contact save/footer and cleanup. Screenshots confirm custom test page saved and linked in footer. Subpage production test pending. These confirmations supersede v6 pending status below.
+
+Page registry: app/page-registry.ts holds 11 allowlisted built-ins with immutable native routes. Page records in cms:pages:<id> gain showInHeader/showInFooter and server-owned builtinId. Legacy custom pages default footer=true/header=false. POST pages/bootstrap INSERT OR IGNOREs built-ins; public read merges missing defaults without writes. Deleting built-ins is blocked; visible flag only controls their menu links, never disables routes. Custom visibility still gates public content. navigationPages builds placement-specific trees; child becomes root if its visible parent is excluded from that placement. Shared PageNavigation uses keyboard-accessible details for desktop/mobile children; SiteHeader/SiteFooter now share records. Existing custom records are not replaced. Raw builtinId spoofing on create is ignored. Slug collisions with built-in internal slugs do not rewrite custom pages.
+
+Home: app/home-content.ts retains current defaults, translations/media/links. HomeEditor under Pages → Home content supports editable text/media/buttons, fixed-size existing sector arrays, order/visibility of 11 sections and 20 optional plain-text/image/button blocks (extras after existing sections). Hero sector count remains four. app/page.tsx renders existing section markup in saved order and loads managed catalogue/project feeds instead of static records; featured product then next 3 products, not measured sales rankings. Client logos still managed. Extra content is rendered safely as React text, no HTML execution.
+
+Storage: site_settings key cms-content:home JSON {draft,published,revision}; no schema migration. GET /api/content/home is published-only. Authenticated admin GET/PUT/POST /api/admin/content/home gets draft, saves draft, or publishes respectively. Same-origin guard and admin-role wrapper retained. Optimistic compare-and-swap protects against stale concurrent saves. Shape, safe URL, duplicate block/order and size checks before writes. Home preview /?preview=home requests protected draft endpoint; no public preview tokens. Publish remains explicit. Media uses existing protected R2 upload endpoint.
+
+Validation: build and 17 automated tests passed, full tsc still baseline Cloudflare Worker types + quote/start-project tuple issues. Public browser preview French/Arabic/RTL checked, no horizontal overflow at current desktop viewport. Local D1 initially had no schema and showed Vite error overlay; applied existing drizzle/0000 schema using --local with .wrangler/state only, reloaded successfully. No admin browser session used; authenticated editor and submenu UI need production verification. No production data or deployment writes by executor. Source remains /workspace/scratch/b8c9077386e2/restore/source/epstar-algerie-main. Deliver v7 overlay atop v6 through existing GitHub Desktop repo.
+
+Exact next: copy v7 overlay → commit `feat: page menus and home content editor` → Push → Cloudflare Ready. Test custom page header/footer/both/neither, child navigation and native-route preservation. Test home draft save, ordinary-site unchanged, authenticated preview, explicit publish, revert, images/order/hide/extras. See Arabic PROJECT_STATUS.md checklist. Then implement section editors for other built-ins. Opening hours structured single-entry widget remains deferred.
+
+## Previous checkpoint — 25 October 2026, v6 (historical)
 
 Latest checkpoint supersedes the v5 deployment state below: user screenshots confirm v5 deployed and sections visible, but asks corrections before CRUD testing. v6 implemented locally, awaiting GitHub Desktop overlay/push and production tests. No external writes/deploy performed by executor.
 
@@ -82,4 +98,4 @@ The executor itself still has no GitHub credentials; use the user's GitHub Deskt
 
 ## Exact next action
 
-Copy v6 overlay into the existing GitHub Desktop clone already containing v5. Commit `fix: unify dashboard navigation languages and offers bootstrap`, push, wait for Cloudflare success. Verify a single menu and separate account, all 3 dashboard languages and persistence, then Nos offres automatic population. Continue offer edit/photo/hide, contact footer/quote links and main/subpage publish/hide tests from PROJECT_STATUS.md. Do not click a manual offer import button: it was removed. No new project, migration or credential change required.
+Copy EPSTAR_pages_home_editor_v7.zip overlay into the existing GitHub Desktop clone containing v6. Commit `feat: page menus and home content editor`, push, wait for Cloudflare Ready. Start with menu placement on the existing test page, then subpage navigation, then home draft/preview/publish/revert, media/ordering/extra sections. Follow PROJECT_STATUS.md v7 checklist. No new project, migration or credential change required. After production PASS, implement remaining built-in section editors.
