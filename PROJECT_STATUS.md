@@ -102,3 +102,10 @@
 نجح build و11 اختبارًا آليًا، تشمل السابق مع قاموس الترجمة وتغطية نصوص الواجهة والقائمة الموحدة، وتجهيز العروض مرة واحدة وعدم إعادة المحذوف. لا توجد migration جديدة: المحتوى محفوظ كسجلات JSON مستقلة في جدول site_settings الموجود، والصور في R2.
 
 فحص TypeScript الشامل ما زال متأثرًا بأخطاء تعريفات Cloudflare وأنواع صفحات الطلب السابقة؛ build ليس فحص أنواع كاملًا. نجحت المعاينة المحلية بعد استعادة الاعتمادات: صفحة الدخول بالعربية والإنجليزية، اتجاه RTL، وحفظ اللغة بعد إعادة التحميل. لم ندخل إلى لوحة مسؤول في المعاينة، ولم نكتب في قاعدة بيانات الإنتاج. اختبار الداشبورد داخل جلسة المستخدم بعد النشر مطلوب.
+## v9 — subpage menu usability (25 October 2026)
+
+- User confirmed v8 ordering/footer PASS and home draft/private preview/publish/revert PASS.
+- Subpage creation/placement works (screenshots); desktop hover was missing and arrow target too small.
+- Header menus now open on fine-pointer mouse hover across parent link and arrow; pointer leave closes. Native details click/keyboard retained; Escape closes and returns focus. Toggle target at least 44×44px. Parent title remains a link. Touch uses tap.
+- No DB/API/schema changes or production writes. Deliver v9 overlay atop v8; user commits/pushes via GitHub Desktop. Next: verify parent-to-child hover, mobile tap, AR/FR/EN and keyboard. Remaining built-in page content editors pending.
+

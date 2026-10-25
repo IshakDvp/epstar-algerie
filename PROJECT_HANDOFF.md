@@ -111,3 +111,12 @@ The executor itself still has no GitHub credentials; use the user's GitHub Deskt
 ## Exact next action
 
 Copy EPSTAR_pages_order_footer_v8.zip overlay atop v7. Commit `fix: page ordering footer layout and content language guidance`, Push, wait for Cloudflare Ready. Test page ordering/refresh/menu propagation, footer layout and content-language switching; continue home draft/preview/publish/revert checks before implementing remaining page editors. See current PROJECT_STATUS.md.
+## v9 — subpage menu usability (25 October 2026)
+
+- User confirmed v8 ordering/footer PASS and home draft/private preview/publish/revert PASS.
+- Subpage creation/placement works (screenshots); desktop hover was missing and arrow target too small.
+- Header menus now open on fine-pointer mouse hover across parent link and arrow; pointer leave closes. Native details click/keyboard retained; Escape closes and returns focus. Toggle target at least 44×44px. Parent title remains a link. Touch uses tap.
+- No DB/API/schema changes or production writes. Deliver v9 overlay atop v8; user commits/pushes via GitHub Desktop. Next: verify parent-to-child hover, mobile tap, AR/FR/EN and keyboard. Remaining built-in page content editors pending.
+
+v9 validation: npm run build passed; 19 existing automated tests plus navigation-hover regression test passed (20 total). Browser interaction not verified in this turn; production hover/touch test pending user deployment.
+

@@ -58,3 +58,12 @@
 1. Push v8, verify ordering/footer/content-language, then finish page/subpage and home draft/preview/publish tests (PROJECT_STATUS.md).
 2. Add remaining built-in page section editors, rich custom-page editing/SEO, then broader dashboard UX.
 3. Retire demo entries progressively, add team roles and the AI quote assistant.
+## v9 — subpage menu usability (25 October 2026)
+
+- User confirmed v8 ordering/footer PASS and home draft/private preview/publish/revert PASS.
+- Subpage creation/placement works (screenshots); desktop hover was missing and arrow target too small.
+- Header menus now open on fine-pointer mouse hover across parent link and arrow; pointer leave closes. Native details click/keyboard retained; Escape closes and returns focus. Toggle target at least 44×44px. Parent title remains a link. Touch uses tap.
+- No DB/API/schema changes or production writes. Deliver v9 overlay atop v8; user commits/pushes via GitHub Desktop. Next: verify parent-to-child hover, mobile tap, AR/FR/EN and keyboard. Remaining built-in page content editors pending.
+
+v9 validation: npm run build passed; 19 existing automated tests plus navigation-hover regression test passed (20 total). Browser interaction not verified in this turn; production hover/touch test pending user deployment.
+
