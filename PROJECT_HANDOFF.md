@@ -1,5 +1,23 @@
 # EPSTAR Algeria — Technical Handoff
 
+## CURRENT checkpoint — 25 October 2026, v13 Service editors LOCAL; v12 production fully PASS
+
+User confirmed v12 opening, private draft/preview, language/image changes, publish/revert and all four sector-card quote preselection tests PASS. Previous pending v12 notes below are historical.
+
+v13 adds Pages → each of service-pharmacies/service-bureaux/service-commerces/service-chambres → Contenu — Service. app/admin/service-editor.tsx is keyed by allowlisted ServiceKey, edits each service independently: FR/AR/EN service name/headline/description, six included prestations, four two-field process steps, section headings/copy, request button and other-services labels, localized made-to-measure chip; shared model/photo image URL or protected existing R2 upload. Existing page structure/counts/routes and QuoteForm submission logic retained. No rich HTML, section reorder/visibility or additional rows in this stage. Brand/decorative icon/number labels remain code-owned. Builtin navigation names still managed separately via page metadata.
+
+app/service-content.ts extracts original service defaults and exposes serviceKeys, isServiceKey, serviceKeyForBuiltin, serviceDefaults. service-detail.tsx now uses useServiceContent(key); public feed supplies all four published documents so related-service names reflect their published service title. Preview replaces only current service with its protected draft; other service titles remain published. /services/:slug?preview=service; normal related links do not propagate preview. Language/theme loaded and persisted with readiness guard.
+
+Storage: existing site_settings keys cms-content:service:<allowlisted slug>, each {draft,published,revision}. No migrations/seed writes. worker/service-content.ts strict default-shape/array/string(20k)/total(250k)/safe-media-URL validation and CAS revisions. Public GET /api/content/services returns {services:{...published}}; never exposes drafts. Admin GET/PUT/POST /api/admin/content/services/:slug via existing admin role/origin wrapper; unknown IDs/deeper paths404, DELETE405. Existing media endpoint and orphan-upload limitations retained. Authenticated editor browser/session tests still pending user; never bypass login.
+
+Browser found language switching replaced quote select options (keys used translated text), causing office/retail/residential selection to reset to pharmacy. Fixed all three translated option lists (project/budget/urgency) to stable numeric keys in app/components/quote-form.tsx; default form behavior, required fields and API submission untouched. Service QuoteForm keyed by slug to reinitialize correctly when service route changes. Browser verified pharmacy0/office1/retail2/residential3 and persistence through language changes; did not submit requests.
+
+Validation: npm run build +37 automated tests PASS. tests/service-content.test.mjs adds seven tests covering all defaults/no writes, independent multilingual/media draft/publish/revert, related published title privacy, concurrent CAS, malformed media/shape/size, origin/method/unknown-ID guards, built Worker guest401/editor403, editor syntax/i18n/wiring and quote option identity. Public browser checked all four routes/crosslinks, FR/AR/EN, Arabic RTL, light/dark desktop, image loads, no horizontal overflow, guest private preview unavailable notice. Full tsc still has baseline missing D1Database/Cloudflare globals and older quote types; new service client files had no reported type errors. No production writes or deployment by executor. Preview stopped before handoff.
+
+Exact next: overlay EPSTAR_service_editors_v13.zip atop v12; user Commit 'feat: add independent multilingual service page editors', Push via existing GitHub Desktop and wait Cloudflare Ready. Open Pages → Pharmacies → Content — Service, verify editor. Then draft TEST French headline/preview only; publish/revert, language isolation, image draft+restore; ensure other services unchanged. Repeat smoke save/preview for offices/retail/bedrooms and check selected quote type after language changes. Next implementation after PASS: quote page content editor; rich custom-page builder/SEO and broader dashboard/team/AI remain pending. Do not create old Sites project or suggest declined GitHub plugin.
+
+## Historical v12 checkpoint (superseded above)
+
 ## CURRENT checkpoint — 25 October 2026, v12 Fit-out editor LOCAL; v11 production fully PASS
 
 User confirmed all About editor tests: open, draft/private preview, publish, revert, language independence, image upload/private preview/restore. These confirmations supersede older pending v11 notes below.

@@ -1,5 +1,13 @@
 # EPSTAR Algeria — Project Roadmap
 
+## CURRENT — 25 October 2026, v13 Service editors ready for user deployment
+
+- User confirmed full v12 Fit-out lifecycle, language/images and four sector → quote defaults PASS.
+- Implemented independent editors for pharmacies, offices, retail and bedrooms, retaining original content/design. Multilingual text, fixed six included items/four steps, two images per service; private draft/preview/publish/revision conflict protection. Related service names follow published titles, never drafts.
+- Fixed a browser-observed quote form language-switch regression: option identity now stable for project/budget/urgency, service form resets only on slug change. API submission unchanged, no requests sent in QA.
+- Build +37 tests PASS. Public browser four routes/selected project types, language switches, images, RTL/light/dark and guest preview privacy checked. Admin editor lifecycle still pending user deployment.
+- No migrations/production writes. Overlay v13 atop v12; existing GitHub Desktop Commit/Push. Next: test all service editors, then quote content editor. Rich custom pages/SEO, dashboard/team roles and AI remain pending.
+
 ## CURRENT — 25 October 2026, v12 Fit-out editor ready for deployment
 
 - v11 About editor production lifecycle, multilingual independence and image upload/restore all confirmed PASS by user.

@@ -6,6 +6,7 @@ import {adminContent,publicContent,contentMedia} from "./content";
 import {homeContent} from "./home-content";
 import {aboutContent} from "./about-content";
 import {fitoutContent} from "./fitout-content";
+import {publicServices} from "./service-content";
 
 interface Env {
   ASSETS: Fetcher;
@@ -365,6 +366,7 @@ const worker = {
     if (url.pathname === "/api/content/home" && request.method === "GET") return homeContent(request,env);
     if (url.pathname === "/api/content/about" && request.method === "GET") return aboutContent(request,env);
     if (url.pathname === "/api/content/fitout" && request.method === "GET") return fitoutContent(request,env);
+    if (url.pathname === "/api/content/services" && request.method === "GET") return publicServices(env);
     if (url.pathname === "/api/content" && request.method === "GET") return publicContent(env);
     const cmsMedia=url.pathname.match(/^\/api\/content\/media\/([a-z0-9-]+)$/);
     if(cmsMedia&&request.method==="GET")return contentMedia(env,cmsMedia[1]);

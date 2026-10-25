@@ -1,6 +1,20 @@
 export type AdminLang="fr"|"ar"|"en";
 // French source keys keep server messages and the existing interface aligned.
-const rows=`Pharmacies|الصيدليات|Pharmacies
+const rows=`Contenu — Service|محتوى — الخدمة|Content — Service
+Utilisez Contenu — Service pour modifier les sections de cette page.|استعمل محتوى — الخدمة لتعديل أقسام هذه الصفحة.|Use Content — Service to edit this page’s sections.
+Bouton — Tous les services|زر — كل الخدمات|Button — All services
+Titre — Prestations|عنوان — الخدمات المقدمة|Title — Included services
+Texte — Prestations|نص — الخدمات المقدمة|Text — Included services
+Sur-titre — Galerie|تمهيد — الصور|Eyebrow — Gallery
+Titre — Galerie|عنوان — الصور|Title — Gallery
+Titre — Autres services|عنوان — الخدمات الأخرى|Title — Other services
+Nom du service|اسم الخدمة|Service name
+Titre principal|العنوان الرئيسي|Main headline
+Prestations incluses|الخدمات المشمولة|Included services
+Libellé — Sur mesure|تسمية — حسب الطلب|Label — Made to measure
+Photo du service|صورة الخدمة|Service photo
+Le formulaire et les liens vers les autres services conservent leur fonctionnement.|يبقى نموذج الطلب وروابط الخدمات الأخرى يعملان كما هما.|The request form and other-service links keep their existing behavior.
+Pharmacies|الصيدليات|Pharmacies
 Bureaux|المكاتب|Offices
 Contenu — Aménagement|محتوى — التجهيز الكامل|Content — Fit-out
 Utilisez Contenu — Aménagement pour modifier les sections de cette page.|استعمل محتوى — التجهيز الكامل لتعديل أقسام هذه الصفحة.|Use Content — Fit-out to edit this page’s sections.

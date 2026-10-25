@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {serviceKeys as order,serviceBase as base,type ServiceKey} from "../../service-content";
+import {useServiceContent} from "../../components/use-service-content";
 import QuoteForm from "../../components/quote-form";
 import SiteFooter from "../../components/site-footer";
 import SiteHeader from "../../components/site-header";
@@ -8,51 +10,26 @@ import SiteHeader from "../../components/site-header";
 type Lang = "fr" | "ar" | "en";
 type Theme = "light" | "dark";
 
-const order = ["pharmacies", "bureaux", "commerces", "chambres"] as const;
-const base = {
-  pharmacies:{model:"/images/pharmacy-3d.png",photo:"/images/pharmacy.png",icon:"✦"},
-  bureaux:{model:"/images/office-3d.png",photo:"/images/office.png",icon:"▦"},
-  commerces:{model:"/images/shop-3d.png",photo:"/images/shop.png",icon:"◇"},
-  chambres:{model:"/images/bedroom-3d.png",photo:"/images/bedroom.png",icon:"⌂"}
-};
-
-const copy = {
-  fr:{nav:["Accueil","À propos","Services","Projets","Contact"],quote:"Demander un devis",back:"Tous les services",eyebrow:"CONCEPTION • FABRICATION • INSTALLATION",intro:"Un accompagnement complet, de la première esquisse jusqu’à la pose finale.",includes:"Ce que nous réalisons",includesText:"Chaque élément est étudié selon vos dimensions, votre activité et votre identité.",process:"Notre méthode",processTitle:"Votre projet, maîtrisé à chaque étape.",steps:[["Étude","Écoute, visite et relevé précis."],["Conception","Plans, matières et visualisation."],["Fabrication","Production sur mesure et contrôle."],["Installation","Livraison, pose et ajustements."]],gallery:"APERÇU DU SAVOIR-FAIRE",galleryTitle:"Des détails pensés pour durer.",cta:"Parlons de votre espace",ctaText:"Partagez vos dimensions et vos besoins. Notre équipe vous proposera une première orientation.",contact:"Demander une étude",other:"Découvrir nos autres univers",footer:"Conception, fabrication et aménagement sur mesure.",items:{
-    pharmacies:{title:"Agencement de pharmacies",headline:"Une pharmacie fluide, rassurante et performante.",text:"Nous organisons comptoirs, rayonnages, réserves et espaces conseil pour améliorer la circulation, la visibilité des produits et le travail quotidien.",list:["Comptoirs d’accueil sur mesure","Rayonnages muraux et gondoles","Vitrines et présentoirs en verre","Réserves et rangements techniques","Espaces conseil et confidentialité","Habillage, éclairage et signalétique"]},
-    bureaux:{title:"Aménagement de bureaux",headline:"Des espaces de travail qui inspirent confiance.",text:"Nous créons des bureaux fonctionnels et élégants, alignés sur votre organisation, votre image et le confort de vos équipes.",list:["Banques d’accueil et réception","Postes de travail personnalisés","Bureaux de direction","Rangements et bibliothèques","Salles de réunion","Cloisons et finitions décoratives"]},
-    commerces:{title:"Agencement de commerces",headline:"Un parcours de vente qui met vos produits en scène.",text:"Nous concevons vitrines, présentoirs et mobilier commercial pour attirer le regard, guider le client et faciliter la vente.",list:["Vitrines et comptoirs en verre","Présentoirs muraux et centraux","Caisses et banques de vente","Mobilier d’exposition","Éclairage intégré","Habillage complet du point de vente"]},
-    chambres:{title:"Chambres et dressings",headline:"Un intérieur construit autour de votre confort.",text:"Nous fabriquons des chambres harmonieuses selon vos dimensions, avec des rangements intelligents et des finitions durables.",list:["Lits et têtes de lit","Dressings sur mesure","Armoires et rangements","Chevets et coiffeuses","Meubles TV et consoles","Éclairage et finitions intégrées"]}}
-  },
-  ar:{nav:["الرئيسية","من نحن","خدماتنا","مشاريعنا","اتصل بنا"],quote:"اطلب عرض سعر",back:"كل الخدمات",eyebrow:"تصميم • تصنيع • تركيب",intro:"مرافقة متكاملة من الفكرة الأولى حتى التركيب والتسليم.",includes:"ما الذي ننفذه؟",includesText:"تتم دراسة كل عنصر حسب المقاسات وطبيعة النشاط وهوية المشروع.",process:"طريقة عملنا",processTitle:"مشروعك تحت السيطرة في كل مرحلة.",steps:[["الدراسة","الاستماع والمعاينة وأخذ القياسات."],["التصميم","المخططات والخامات والتصور النهائي."],["التصنيع","إنتاج حسب الطلب ومراقبة الجودة."],["التركيب","التوصيل والتركيب والضبط النهائي."]],gallery:"لمحة عن خبرتنا",galleryTitle:"تفاصيل مصممة لتدوم.",cta:"لنتحدث عن مساحتك",ctaText:"شاركنا المقاسات والاحتياجات، وسيقدم لك فريقنا توجيهًا أوليًا للمشروع.",contact:"اطلب دراسة مشروع",other:"اكتشف مجالاتنا الأخرى",footer:"تصميم وتصنيع وتجهيز المساحات حسب الطلب.",items:{
-    pharmacies:{title:"تجهيز الصيدليات",headline:"صيدلية منظمة، مريحة وأكثر كفاءة.",text:"ننظم الكاونترات والرفوف والمخازن ومساحات الاستشارة لتحسين الحركة وإبراز المنتجات وتسهيل العمل اليومي.",list:["كاونترات استقبال حسب الطلب","رفوف جدارية ووحدات وسطية","خزائن عرض زجاجية","مخازن وحلول تخزين تقنية","مساحات الاستشارة والخصوصية","الإضاءة والهوية البصرية"]},
-    bureaux:{title:"تجهيز المكاتب",headline:"مساحات عمل تعكس الثقة والاحتراف.",text:"ننشئ مكاتب عملية وأنيقة تتناسب مع تنظيم الشركة وهويتها وراحة فريق العمل.",list:["كاونترات الاستقبال","محطات عمل مخصصة","مكاتب الإدارة","خزائن ومكتبات","قاعات الاجتماعات","فواصل وتشطيبات ديكورية"]},
-    commerces:{title:"تجهيز المحلات",headline:"مسار بيع يضع منتجاتك في الواجهة.",text:"نصمم واجهات ووحدات عرض وأثاثًا تجاريًا يجذب الانتباه ويوجه العميل ويسهل عملية البيع.",list:["واجهات وكاونترات زجاجية","وحدات عرض جدارية ووسطية","كاونترات الدفع والبيع","أثاث عرض المنتجات","إضاءة مدمجة","تجهيز كامل لنقطة البيع"]},
-    chambres:{title:"غرف النوم والدواليب",headline:"مساحة داخلية مصممة حول راحتك.",text:"نصنع غرف نوم متناسقة حسب المقاسات، مع تخزين ذكي وتشطيبات متينة وأنيقة.",list:["الأسرّة وخلفيات السرير","دواليب Dressing حسب الطلب","خزائن وحلول تخزين","طاولات جانبية وتسريحة","وحدات تلفاز وكونسول","إضاءة وتشطيبات مدمجة"]}}
-  },
-  en:{nav:["Home","About","Services","Projects","Contact"],quote:"Request a quote",back:"All services",eyebrow:"DESIGN • MANUFACTURING • INSTALLATION",intro:"Complete support from the first sketch through final installation.",includes:"What we build",includesText:"Every element is designed around your dimensions, activity and identity.",process:"Our process",processTitle:"Your project, controlled at every stage.",steps:[["Study","Brief, site visit and precise survey."],["Design","Plans, materials and visualization."],["Manufacturing","Custom production and quality control."],["Installation","Delivery, fitting and final adjustments."]],gallery:"A GLIMPSE OF OUR CRAFT",galleryTitle:"Details designed to last.",cta:"Let’s discuss your space",ctaText:"Share your dimensions and needs. Our team will provide an initial project direction.",contact:"Request a study",other:"Explore our other sectors",footer:"Custom design, manufacturing and fit-out.",items:{
-    pharmacies:{title:"Pharmacy fit-out",headline:"A smooth, reassuring and efficient pharmacy.",text:"We organize counters, shelving, storage and consultation areas to improve circulation, product visibility and daily operations.",list:["Custom reception counters","Wall shelving and gondolas","Glass display showcases","Technical storage solutions","Private consultation areas","Lighting, cladding and signage"]},
-    bureaux:{title:"Office fit-out",headline:"Workspaces that inspire confidence.",text:"We create functional, elegant offices aligned with your organization, brand and team comfort.",list:["Reception desks","Custom workstations","Executive offices","Storage and libraries","Meeting rooms","Partitions and decorative finishes"]},
-    commerces:{title:"Retail fit-out",headline:"A sales journey that puts products on display.",text:"We design showcases, displays and retail furniture to attract attention, guide customers and support every sale.",list:["Glass showcases and counters","Wall and island displays","Cash and sales counters","Product display furniture","Integrated lighting","Complete point-of-sale fit-out"]},
-    chambres:{title:"Bedrooms and wardrobes",headline:"An interior built around your comfort.",text:"We manufacture harmonious bedrooms to your dimensions, with smart storage and durable finishes.",list:["Beds and headboards","Custom wardrobes","Cabinets and storage","Nightstands and vanities","TV units and consoles","Integrated lighting and finishes"]}}
-  }
-};
 
 export default function ServiceDetail({slug}:{slug:string}){
-  const key=slug as keyof typeof base;
+  const key=slug as ServiceKey;
+  const {services,preview,previewError}=useServiceContent(key);
+  const [ready,setReady]=useState(false);
   const [lang,setLang]=useState<Lang>("fr");
   const [theme,setTheme]=useState<Theme>("light");
-  useEffect(()=>{const saved=localStorage.getItem("epstar-theme") as Theme|null;setTheme(saved||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"))},[]);
-  useEffect(()=>{document.documentElement.dataset.theme=theme;document.documentElement.style.colorScheme=theme;localStorage.setItem("epstar-theme",theme)},[theme]);
-  useEffect(()=>{document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr"},[lang]);
-  const t=copy[lang], item=t.items[key], rtl=lang==="ar";
+  useEffect(()=>{const savedLang=localStorage.getItem("epstar-language");if(savedLang==="fr"||savedLang==="ar"||savedLang==="en")setLang(savedLang);const saved=localStorage.getItem("epstar-theme") as Theme|null;setTheme(saved||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));setReady(true)},[]);
+  useEffect(()=>{if(!ready)return;document.documentElement.dataset.theme=theme;document.documentElement.style.colorScheme=theme;localStorage.setItem("epstar-theme",theme)},[theme,ready]);
+  useEffect(()=>{if(!ready)return;localStorage.setItem("epstar-language",lang);document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr"},[lang,ready]);
+  const content=services[key],t=content.copy[lang],item=t,rtl=lang==="ar";
   return <main className={`service-page ${rtl?"rtl ":""}${theme==="dark"?"dark":""}`} dir={rtl?"rtl":"ltr"}>
     <SiteHeader lang={lang} setLang={setLang} theme={theme} setTheme={setTheme}/>
-    <section className="detail-hero"><div className="detail-copy"><a className="back-link" href="/#services">← {t.back}</a><small>{t.eyebrow}</small><h1>{item.headline}</h1><p>{item.text}</p><a className="primary-btn" href="#devis">{t.contact}</a></div><div className="detail-model"><span/><img src={base[key].model} alt={item.title}/><b>{base[key].icon}</b></div></section>
+    {(preview||previewError)&&<p className="about-preview-notice" role="status">{previewError?({fr:"Aperçu privé indisponible. Connectez-vous au tableau de bord.",ar:"المعاينة الخاصة غير متاحة. سجّل الدخول إلى الداشبورد.",en:"Private preview unavailable. Sign in to the dashboard."})[lang]:({fr:"Aperçu privé du brouillon — non publié.",ar:"معاينة خاصة للمسودة — غير منشورة.",en:"Private draft preview — not published."})[lang]}</p>}
+    <section className="detail-hero"><div className="detail-copy"><a className="back-link" href="/#services">← {t.back}</a><small>{t.eyebrow}</small><h1>{item.headline}</h1><p>{item.text}</p><a className="primary-btn" href="#devis">{t.contact}</a></div><div className="detail-model"><span/><img src={content.images.model} alt={item.title}/><b>{base[key].icon}</b></div></section>
     <section className="detail-includes"><div><small>EPSTAR / {String(order.indexOf(key as typeof order[number])+1).padStart(2,"0")}</small><h2>{t.includes}</h2><p>{t.includesText}</p></div><ul>{item.list.map((x,i)=><li key={x}><b>0{i+1}</b><span>{x}</span></li>)}</ul></section>
     <section className="detail-process"><div className="center-title"><small>{t.process}</small><h2>{t.processTitle}</h2><p>{t.intro}</p></div><div className="detail-steps">{t.steps.map((s,i)=><article key={s[0]}><b>0{i+1}</b><h3>{s[0]}</h3><p>{s[1]}</p></article>)}</div></section>
-    <section className="detail-gallery"><div className="detail-photo"><img src={base[key].photo} alt={item.title}/></div><div><small>{t.gallery}</small><h2>{t.galleryTitle}</h2><p>{item.text}</p><div className="material-chips"><span>3D</span><span>Sur mesure</span><span>EPSTAR</span></div></div></section>
-    <section id="devis" className="detail-quote"><div><small>EPSTAR ALGÉRIE</small><h2>{t.cta}</h2><p>{t.ctaText}</p></div><QuoteForm lang={lang} defaultSector={slug}/></section>
-    <section className="other-services"><small>{t.other}</small><div>{order.filter(x=>x!==key).map(x=><a key={x} href={`/services/${x}`}><span>{base[x].icon}</span><b>{t.items[x].title}</b><i>↗</i></a>)}</div></section>
+    <section className="detail-gallery"><div className="detail-photo"><img src={content.images.photo} alt={item.title}/></div><div><small>{t.gallery}</small><h2>{t.galleryTitle}</h2><p>{item.text}</p><div className="material-chips"><span>3D</span><span>{t.materialLabel}</span><span>EPSTAR</span></div></div></section>
+    <section id="devis" className="detail-quote"><div><small>EPSTAR ALGÉRIE</small><h2>{t.cta}</h2><p>{t.ctaText}</p></div><QuoteForm key={slug} lang={lang} defaultSector={slug}/></section>
+    <section className="other-services"><small>{t.other}</small><div>{order.filter(x=>x!==key).map(x=><a key={x} href={`/services/${x}`}><span>{base[x].icon}</span><b>{services[x].copy[lang].title}</b><i>↗</i></a>)}</div></section>
     <SiteFooter lang={lang}/>
   </main>
 }
