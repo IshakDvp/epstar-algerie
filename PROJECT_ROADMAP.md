@@ -1,5 +1,15 @@
 # EPSTAR Algeria — Project Roadmap
 
+## CURRENT — 25 October 2026, v11 About editor ready for deployment
+
+- User confirmed PASS: page ordering/footer, home draft/private preview/publish/revert, subpage creation, v10 arrowless menu and dark-mode fixes.
+- Added multilingual About editor under Pages, retaining all existing content/design. Editable text, key figures, commitments/expertise/team copy, five images and projects link. Draft/private preview/explicit publish with revision conflict protection; existing admin auth and R2 media.
+- Public browser FR/AR/RTL/light/dark checked; all images load and no horizontal overflow at desktop. About editor authenticated UI and lifecycle await user production tests; automated coverage includes privacy, publish/revert and concurrency.
+- No schema migrations or production writes. v11 overlay atop v10; Commit/Push through existing GitHub Desktop workflow.
+- Next: deploy/test About draft, preview, publish/revert, image upload and language independence. Then fitout/services/quote editors. Rich custom-page builder/SEO and broader dashboard/team/AI remain pending.
+
+## Historical checkpoints (below)
+
 ## 25 October 2026 — v8 correction, local checks passed / deployment pending
 
 - v7 deployed per screenshots; page registry/header links and home editor visible. Full home draft/publish production test not yet confirmed.
@@ -75,4 +85,6 @@ v9 validation: npm run build passed; 19 existing automated tests plus navigation
 - No database or API changes. v10 overlays v9; user must Commit/Push and verify production AR/FR/EN, light/dark, desktop hover and mobile first/second tap. Full CMS remaining-page editors pending.
 
 v10 validation: build and 20 automated tests passed. Browser visual/interaction QA not run this turn; user production checks pending. Exact next action: overlay EPSTAR_navigation_dark_arrowless_v10.zip atop v9, Commit/Push, test all five reported points.
+
+v11 final verification: npm run build and all 25 automated tests PASS after final label changes. Browser public FR/AR/light/dark and guest preview privacy verified; authenticated editor/upload workflow still pending user. Preview stopped. Overlay includes source/tests/continuity docs only, no credentials, local DB, media copies or build outputs.
 

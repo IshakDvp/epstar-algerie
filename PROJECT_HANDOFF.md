@@ -1,5 +1,21 @@
 # EPSTAR Algeria — Technical Handoff
 
+## CURRENT checkpoint — 25 October 2026, v11 About editor LOCAL, v10 production PASS
+
+The user confirmed v8 ordering/footer, home draft/private preview/publish/revert, subpage placement and v10 arrowless/dark-mode fixes PASS. All older pending statements below are historical and superseded by this checkpoint.
+
+v11 adds Pages → About → Contenu — À propos. app/about-content.ts extracts every current FR/AR/EN page text and five existing images unchanged. AboutEditor edits all copy (including fixed-size stats/value/method arrays), media through existing protected R2 upload, and projects button link. Language selector edits localized text, independent of admin UI locale. Existing layout retained; section count/order remains fixed; no rich HTML, extra blocks or section visibility controls in this stage. Decorative brand labels and shared quote form remain outside this editor.
+
+Storage: site_settings key cms-content:about = {draft,published,revision}; no migration. worker/about-content.ts validates exact default shape/array sizes, strings <=20k and total <=250k, safe images/links, and compare-and-swap revisions. Public GET /api/content/about returns published only, never seeds DB. Admin GET/PUT/POST /api/admin/content/about is routed through existing admin-role authentication and same-origin write guard. PUT saves draft, POST publishes after client confirmation. Preview /about?preview=about uses protected admin GET, no public token. Guests receive unavailable notice and defaults, never draft. No production writes by executor.
+
+Client: useAboutContent loads public/draft config; AboutEditor disables fields while saving/uploading and prevents preview of unsaved changes. Back/reload and browser unload warn for dirty state. Sidebar navigation is not covered by that back warning. Media settings shared among languages; texts independent; no automatic translation. Failed saves preserve draft input; 409 asks reload. Uploads may remain orphaned if abandoned (existing media behavior).
+
+Checks: build +25 automated tests passed before semantic tuple-label refinement; final validation recorded at delivery below. New about tests cover read-only defaults, multilingual draft/private/publish/revert, two concurrent saves (200/409), URL/shape/size rejection, origin/method guards, deployed Worker guest401/editor403, editor syntax/i18n/wiring. Browser public page FR/AR+RTL/light/dark checked: all images loaded, no desktop horizontal overflow; private preview guest warning verified. No authenticated admin browser session available; user must test editor save/upload/preview/publish. Full tsc remains affected by baseline Cloudflare/global and older quote tuple issues; do not claim globally clean.
+
+Delivery: overlay EPSTAR_about_editor_v11.zip atop v10 in user's existing GitHub Desktop repo; Commit 'feat: add multilingual about page draft editor', Push, wait Cloudflare Ready. Exact next test: Pages → About → Content; change French title with TEST, save draft, preview (TEST only there), public remains unchanged, then publish and revert. Test text-language independence and image replacement afterward. Remaining: fitout/services/quote content editors, richer custom pages/SEO, dashboard improvements, team roles, AI assistant. Do not create/redeploy an old Sites project or suggest declined GitHub plugin.
+
+## Historical checkpoints (below)
+
 ## Current source and stopping point — 25 October 2026, v8 LOCAL / production pending
 
 User screenshots confirm v7 deployed: 12 page records (11 built-ins + custom test page), test page visible in header, home editor visible. Home draft/publish tests still NOT user-confirmed. Requested drag ordering, footer correction and explanation of editor language selector.
@@ -128,4 +144,6 @@ v9 validation: npm run build passed; 19 existing automated tests plus navigation
 - No database or API changes. v10 overlays v9; user must Commit/Push and verify production AR/FR/EN, light/dark, desktop hover and mobile first/second tap. Full CMS remaining-page editors pending.
 
 v10 validation: build and 20 automated tests passed. Browser visual/interaction QA not run this turn; user production checks pending. Exact next action: overlay EPSTAR_navigation_dark_arrowless_v10.zip atop v9, Commit/Push, test all five reported points.
+
+v11 final verification: npm run build and all 25 automated tests PASS after final label changes. Browser public FR/AR/light/dark and guest preview privacy verified; authenticated editor/upload workflow still pending user. Preview stopped. Overlay includes source/tests/continuity docs only, no credentials, local DB, media copies or build outputs.
 

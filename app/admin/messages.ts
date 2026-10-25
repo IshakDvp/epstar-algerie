@@ -1,6 +1,31 @@
 export type AdminLang="fr"|"ar"|"en";
 // French source keys keep server messages and the existing interface aligned.
-const rows=`Vue d’ensemble|نظرة عامة|Overview
+const rows=`Valeur|القيمة|Value
+Numéro|الرقم|Number
+Contenu — À propos|محتوى — من نحن|Content — About
+Utilisez Contenu — À propos pour modifier les sections de cette page.|استعمل محتوى — من نحن لتعديل أقسام هذه الصفحة.|Use Content — About to edit this page’s sections.
+Enregistrez pour activer la prévisualisation.|احفظ المسودة لتفعيل المعاينة.|Save the draft to enable preview.
+Introduction|المقدمة|Introduction
+Présentation|التعريف بالشركة|Company presentation
+Chiffres clés|أرقام أساسية|Key figures
+Titre — Notre histoire|عنوان — قصتنا|Title — Our story
+Texte — Notre histoire|نص — قصتنا|Text — Our story
+Sur-titre — Engagements|تمهيد — التزاماتنا|Eyebrow — Commitments
+Titre — Engagements|عنوان — التزاماتنا|Title — Commitments
+Engagements|التزاماتنا|Commitments
+Sur-titre — Savoir-faire|تمهيد — خبراتنا|Eyebrow — Expertise
+Titre — Savoir-faire|عنوان — خبراتنا|Title — Expertise
+Savoir-faire|الخبرات|Expertise
+Sur-titre — Équipe|تمهيد — الفريق|Eyebrow — Team
+Titre — Équipe|عنوان — الفريق|Title — Team
+Texte — Équipe|نص — الفريق|Text — Team
+Note|ملاحظة|Note
+Visuel principal|الصورة الرئيسية|Main image
+Visuel bureau|صورة المكتب|Office image
+Visuel commerce|صورة المحل|Retail image
+Photo savoir-faire|صورة الخبرات|Expertise photo
+Visuel équipe|صورة قسم الفريق|Team section image
+Vue d’ensemble|نظرة عامة|Overview
 Demandes|الطلبات|Requests
 Catalogue|الكتالوج|Catalogue
 Réalisations|إنجازاتنا|Projects

@@ -1,5 +1,13 @@
 # متابعة مشروع EPSTAR الجزائر
 
+## الحالة الحالية — 25 أكتوبر 2026، v11 جاهزة للنشر فوق v10
+
+- أكد المستخدم نجاح ترتيب الصفحات والفوتر، ومسودة الرئيسية ومعاينتها ونشرها وإرجاعها، والصفحات الفرعية وتصحيحات القائمة والوضع الليلي في v10.
+- أُضيف محرر «محتوى — من نحن» ضمن الصفحات: النصوص بثلاث لغات، الأرقام والالتزامات والخبرات والفريق، خمس صور ورابط المشاريع. المحتوى الحالي محفوظ والتصميم لم يتغير.
+- الحفظ مسودة منفصلة، المعاينة خاصة بالمسؤول، والنشر إجراء مستقل مع تأكيد. حماية من تعارض الحفظ؛ لا تغيير لقاعدة البيانات ولا كتابة إنتاجية من طرفنا.
+- بعد النشر: عدّل عنوانًا فرنسيًا بكلمة TEST، احفظ وعاين، تأكد أن الموقع العادي لم يتغير، ثم اختبر النشر والإرجاع. بعدها تبديل لغة النصوص ورفع صورة.
+- بقية محررات التجهيز والخدمات والطلب لم تُنفّذ بعد. المعلومات الأقدم أدناه تاريخية وتُرجع لهذه الحالة عند التعارض.
+
 آخر تحديث: 25 أكتوبر 2026 — حزمة pages-order-footer v8، فوق v7 المنشورة.
 
 ## تصحيح v8 — الترتيب والفوتر وتوضيح اللغة
@@ -115,4 +123,6 @@
 - Replaced details/arrow with controlled arrowless parent link and submenu. Mouse hover opens; coarse/touch first click opens, second navigates parent. ArrowDown opens/focuses first child, Tab follows links, Escape closes/focuses parent; blur outside closes. aria-expanded/controls and aria-current provided.
 - Scoped header/dropdown dark palette to html[data-theme], independent of page wrapper; managed pages also now receive theme/RTL classes. Underline drawn under inline label, not old inherited anchor pseudo-element. Dropdown top overlaps parent bottom by 1px to avoid hover gap.
 - No database or API changes. v10 overlays v9; user must Commit/Push and verify production AR/FR/EN, light/dark, desktop hover and mobile first/second tap. Full CMS remaining-page editors pending.
+
+v11 final verification: npm run build and all 25 automated tests PASS after final label changes. Browser public FR/AR/light/dark and guest preview privacy verified; authenticated editor/upload workflow still pending user. Preview stopped. Overlay includes source/tests/continuity docs only, no credentials, local DB, media copies or build outputs.
 
