@@ -49,14 +49,16 @@ export default async function RootLayout({
   // Request-scoped published data, shared by SSR and hydration. No mutable cache.
   const requestHeaders=await headers();
   const initialTheme=/(?:^|;\s*)epstar-theme=dark(?:;|$)/.test(requestHeaders.get("cookie")||"")?"dark":"light";
+  const languageCookie=(requestHeaders.get("cookie")||"").match(/(?:^|;\s*)epstar-language=(ar|en|fr)(?:;|$)/)?.[1];
+  const initialLang=languageCookie==="ar"?"ar":languageCookie==="en"?"en":"fr";
   const content=publicContentContext.getStore()??{contact:defaultContact,offers:[],pages:builtinPages};
   return (
-    <html lang="fr" data-theme={initialTheme} suppressHydrationWarning>
+    <html lang={initialLang} dir={initialLang==="ar"?"rtl":"ltr"} data-theme={initialTheme} suppressHydrationWarning>
       <head><style>{`html[data-theme="dark"],html[data-theme="dark"] body{background:#0b1418;color:#edf1f2}html[data-theme-pending] body{visibility:hidden}`}</style><script dangerouslySetInnerHTML={{__html:themeBootstrap}}/></head>
       <body
         className={`${manrope.variable} ${alexandria.variable} ${notoArabic.variable} antialiased`}
       >
-        <ThemeProvider initialTheme={initialTheme}><ContentProvider value={content}><JourneyNav/>{children}</ContentProvider></ThemeProvider>
+        <ThemeProvider initialTheme={initialTheme} initialLang={initialLang}><ContentProvider value={content}><JourneyNav/>{children}</ContentProvider></ThemeProvider>
       </body>
     </html>
   );

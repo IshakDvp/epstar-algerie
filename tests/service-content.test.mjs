@@ -69,7 +69,7 @@ test('service editor translated fields, private preview wiring, form and crossli
  function visit(n){if(ts.isCallExpression(n)&&n.expression.getText(ast)==='t'&&ts.isStringLiteral(n.arguments[0]))assert.ok(adminMessages[n.arguments[0].text],n.arguments[0].text);ts.forEachChild(n,visit);}visit(ast);
  const labels=JSON.parse(source.match(/const labels:Record<string,string>=(.*);/)[1]);for(const label of Object.values(labels))assert.ok(adminMessages[label],label);
  assert.ok(source.includes('?preview=service'));assert.ok(source.includes('beforeunload'));assert.ok(source.includes('serviceKey'));
- const page=readFileSync('app/services/[slug]/service-detail.tsx','utf8');assert.ok(page.includes('<QuoteForm key={slug} lang={lang} defaultSector={slug}/>'));assert.ok(page.includes('services[x].copy[lang].title'));assert.ok(page.includes('href="#devis"'));assert.ok(!page.includes('dangerouslySetInnerHTML'));assert.ok(page.includes('epstar-language'));
+ const page=readFileSync('app/services/[slug]/service-detail.tsx','utf8');assert.ok(page.includes('<QuoteForm key={slug} lang={lang} defaultSector={slug}/>'));assert.ok(page.includes('services[x].copy[lang].title'));assert.ok(page.includes('href="#devis"'));assert.ok(!page.includes('dangerouslySetInnerHTML'));assert.ok(page.includes('useSiteLanguage()'));assert.ok(readFileSync('app/components/theme-provider.tsx','utf8').includes('epstar-language'));
  const hook=readFileSync('app/components/use-service-content.ts','utf8');assert.ok(hook.includes('/api/admin/content/services/'));assert.ok(hook.includes('[key]:d.draft'));
  assert.ok(readFileSync('app/admin/content-manager.tsx','utf8').includes('serviceKeyForBuiltin(i.builtinId)'));
 });

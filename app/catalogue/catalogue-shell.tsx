@@ -1,5 +1,5 @@
 "use client";
-import {useSiteTheme} from "../components/theme-provider";
+import {useSiteTheme,useSiteLanguage} from "../components/theme-provider";
 import { useEffect, useState } from "react";
 import { useQuoteCart } from "../components/use-quote-cart";
 import CategoryFilters,{matchesCategory} from "../components/category-filters";
@@ -41,7 +41,7 @@ const tx = {
   },
 };
 export default function CatalogueShell() {
-  const [lang, setLang] = useState<Lang>("fr"),
+  const [lang,setLang]=useSiteLanguage(),
     [theme,setTheme] = useSiteTheme(),
     [root, setRoot] = useState("all"),
     [child, setChild] = useState("all"),
@@ -49,8 +49,7 @@ export default function CatalogueShell() {
     [categories, setCategories] = useState<ManagedCategory[]>([]);
   const { cart, setCart } = useQuoteCart();
   useEffect(() => {
-    const x = localStorage.getItem("epstar-language");
-    if (x === "ar" || x === "fr" || x === "en") setLang(x);
+    
     
     fetch("/api/catalogue")
       .then((r) => (r.ok ? r.json() : null))

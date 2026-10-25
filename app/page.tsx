@@ -1,5 +1,5 @@
 "use client";
-import {useSiteTheme} from "./components/theme-provider";
+import {useSiteTheme,useSiteLanguage} from "./components/theme-provider";
 
 import { Fragment, useEffect, useMemo, useState, type ReactNode } from "react";
 import QuoteForm from "./components/quote-form";
@@ -20,7 +20,7 @@ const slugs=["pharmacies","bureaux","commerces","chambres"];
 
 
 export default function Home(){
-  const [lang,setLang]=useState<Lang>("fr");
+  const [lang,setLang]=useSiteLanguage();
   const [theme,setTheme] = useSiteTheme();
   const [active,setActive]=useState(0);
   const [paused,setPaused]=useState(false);
@@ -30,8 +30,6 @@ export default function Home(){
   const capabilities=home.capabilities[lang],showcaseTitle=home.showcaseTitle[lang],showcaseText=home.showcaseText[lang],selectedLabel=home.selectedLabel[lang],start=home.start[lang],productHighlights=home.productHighlights[lang],trust=home.trust[lang];
   const t=home.copy[lang]; const rtl=lang==="ar";
   const sectors=useMemo(()=>t.sectors.map((s,i)=>({title:s[0],short:s[1],heading:s[2],text:s[3],image:home.images[i],model:home.models[i],icon:home.icons[i]})),[t,home]);
-  useEffect(()=>{const saved=localStorage.getItem("epstar-language");if(saved==="ar"||saved==="fr"||saved==="en")setLang(saved)},[]);
-  useEffect(()=>{document.documentElement.lang=lang;localStorage.setItem("epstar-language",lang);document.documentElement.dir=rtl?"rtl":"ltr"},[lang,rtl]);
   useEffect(()=>{fetch("/api/client-logos").then(r=>r.ok?r.json():null).then(data=>setClientLogos(data?.logos||[])).catch(()=>{})},[]);
   useEffect(()=>{if(paused)return;const timer=setInterval(()=>setActive(v=>(v+1)%4),6500);return()=>clearInterval(timer)},[paused,active]);
   const current=sectors[active];

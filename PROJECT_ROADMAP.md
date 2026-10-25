@@ -1,5 +1,14 @@
 # EPSTAR Algeria — Project Roadmap
  
+## CURRENT — 25 October 2026, v17 language transition fix
+
+- Removed temporary default-French render on public page navigation; shared language context, cookie-backed SSR, pre-paint localStorage migration and direction handling.
+- Header/JourneyNav share the same selection; dashboard editor/admin locale unchanged. v16 dark-mode fix retained.
+- Build +50 tests PASS, first HTML verified in all three languages across nine route families. Browser AR home→offers→refresh, EN navigation and FR toggle verified locally.
+- Next: apply v17 over v16, Commit/Push/deploy, user checks video reproduction AR/FR/EN and dark. Then resume service CMS lifecycle (opening only previously PASS).
+
+Historical checkpoint follows.
+ 
 ## CURRENT — 25 October 2026, v16 no-light-flash theme handling
 
 - User clarified temporary flash during transitions only. Unified public theme provider; removed independent per-page theme initialization/persistence.

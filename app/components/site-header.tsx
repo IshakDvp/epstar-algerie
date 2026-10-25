@@ -23,7 +23,7 @@ export default function SiteHeader({ lang, setLang, theme, setTheme }: Props) {
   const t = copy[lang];
   const {pages}=useContent();
   const active = (href: string) => href === "/" ? pathname === "/" : pathname.startsWith(href);
-  const choose = (next: Lang) => { setLang(next); localStorage.setItem("epstar-language", next); };
+  const choose = (next: Lang) => { setLang(next); };
   return <header className="site-header unified-header" dir={lang === "ar" ? "rtl" : "ltr"}>
     <a className="logo" href="/" aria-label="EPSTAR"><img src="/epstar-logo.png" alt="EPSTAR Design"/></a>
     <nav className="desktop-navigation" aria-label="Navigation"><PageNavigation pages={pages} placement="header" lang={lang} pathname={pathname} onNavigate={()=>setOpen(false)}/></nav>

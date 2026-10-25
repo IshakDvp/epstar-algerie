@@ -1,5 +1,5 @@
 "use client";
-import {useSiteTheme} from "../../components/theme-provider";
+import {useSiteTheme,useSiteLanguage} from "../../components/theme-provider";
 
 import { useEffect, useState } from "react";
 import {serviceKeys as order,serviceBase as base,type ServiceKey} from "../../service-content";
@@ -15,11 +15,8 @@ type Theme = "light" | "dark";
 export default function ServiceDetail({slug}:{slug:string}){
   const key=slug as ServiceKey;
   const {services,preview,previewError}=useServiceContent(key);
-  const [ready,setReady]=useState(false);
-  const [lang,setLang]=useState<Lang>("fr");
+  const [lang,setLang]=useSiteLanguage();
   const [theme,setTheme] = useSiteTheme();
-  useEffect(()=>{const savedLang=localStorage.getItem("epstar-language");if(savedLang==="fr"||savedLang==="ar"||savedLang==="en")setLang(savedLang);setReady(true)},[]);
-  useEffect(()=>{if(!ready)return;localStorage.setItem("epstar-language",lang);document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr"},[lang,ready]);
   const content=services[key],t=content.copy[lang],item=t,rtl=lang==="ar";
   return <main className={`service-page ${rtl?"rtl ":""}${theme==="dark"?"dark":""}`} dir={rtl?"rtl":"ltr"}>
     <SiteHeader lang={lang} setLang={setLang} theme={theme} setTheme={setTheme}/>
