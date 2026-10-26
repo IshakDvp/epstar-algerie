@@ -1,5 +1,14 @@
 # EPSTAR Algeria — Project Roadmap
  
+## CURRENT — 26 October 2026, v18 header + Solutions scrolling
+
+- Explicit shared header dimensions/fonts/spacing across page families; mobile breakpoint preserved.
+- Removed repeated Home scrollIntoView effect triggered by async data; native hash link owns the single smooth scroll, sticky offset retained.
+- Build +51 tests PASS; browser AR Home/Catalogue both84px header/14px links/24px gap; Catalogue→Solutions final target120px/header84px.
+- Next: deploy v18 over v17, reproduce user's navigation video and mobile/FR/EN smoke, then resume service CMS lifecycle tests. Production confirmation pending.
+
+Historical checkpoint follows.
+ 
 ## CURRENT — 25 October 2026, v17 language transition fix
 
 - Removed temporary default-French render on public page navigation; shared language context, cookie-backed SSR, pre-paint localStorage migration and direction handling.

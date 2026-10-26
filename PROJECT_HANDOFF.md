@@ -1,5 +1,15 @@
 # EPSTAR Algeria — Technical Handoff
  
+## CURRENT — 26 October 2026, v18 header metrics and single hash scroll LOCAL
+
+User video: menu looks smaller after Home→Catalogue, Solutions appears to navigate twice. v18 gives .site-header.unified-header explicit page-independent typography/height/padding/logo metrics in page-navigation.css (desktop84px minheight, links14px/800, navgap24px, AR Alexandria/Latin Manrope; mobile<=980 hidden desktop, <=520 minheight72/logo106x44). Old .desktop-navigation>a rules no longer matched grouped links; explicit descendant rules avoid inherited page styles. Actual browser AR Home and Catalogue both height84/link14/gap24/samefamily verified. No page body typography changed.
+
+Removed Home effect that called scrollIntoView whenever home/client logos/featured product/lang changed. Native /#services link is now the sole scroll owner (same-page and cross-page); sticky scroll-margin120 retained. Prevents async data changes from restarting smooth scrolling. Native scroll anchoring handles normal document reflow; this patch does not server-render all Home data or freeze CMS/image layout. Browser Catalogue→Solutions lands #services top120 with headerbottom84; immediate observation during native smooth motion was1043 then settled120. No instrumented frame-by-frame slow-network capture; production video smoke required. Existing arrowless submenu/touch/keyboard/CMS hierarchy unchanged. v15/16/17 shared SSR menu/theme/language retained. No dependencies/schema/DB writes.
+
+Build +51 tests PASS: previous50, updated obsolete solutions regression to assert no .scrollIntoView invocation and sticky offset; new explicit header metrics/mobile breakpoint guard. Local browser desktop AR metrics and hash landing checked; small-screen manual production check pending. No production deploy/auth/quote submissions. Preview stopped at delivery.
+
+Deliverable EPSTAR_header_anchor_v18.zip overlays v17. Commit: fix: stabilize header metrics and solutions scrolling. Next user copy/Commit/Push, reproduce Home→Products menu size then Products→Solutions and Home→Solutions; confirm one smooth move, test mobile menu and FR/EN. No explicit full production PASS received yet for v15-v17; latest video visually suggests language/theme stable but do not overstate. v13 service lifecycle still only editor opening PASS. Older checkpoints historical.
+ 
 ## CURRENT — 25 October 2026, v17 initial language and RTL fix LOCAL
 
 User video shows transient FR/default direction during navigation before AR returns. Unified public language in existing ThemeProvider using LanguageContext/useSiteLanguage. All ten public UI owners now read shared language (home/catalogue/demo+managed product/project-shell covering projects/about/details/fitout/services/quote/offers/custom pages). Removed their independent localStorage read/write effects and document lang/dir mutations. SiteHeader choose delegates to shared setter; JourneyNav reads same context instead of MutationObserver/default FR. CMS editor language and admin language remain independent and untouched.

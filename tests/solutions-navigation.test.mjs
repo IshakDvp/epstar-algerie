@@ -46,8 +46,8 @@ test('first rollout preserves custom service parent assignments and never create
  assert.equal(list.find(p=>p.id===office.id).parentId,parent.id);assert.equal(list.find(p=>p.id===office.id).showInHeader,false);
  assert.equal(list.find(p=>p.id===pharmacy.id).parentId,null);assert.equal(list.find(p=>p.id===child.id).parentId,pharmacy.id);
 });
-test('section anchor has sticky-header offset and home refresh realigns after asynchronous content',()=>{
+test('section anchor has sticky-header offset and only native navigation owns scrolling',()=>{
  assert.ok(readFileSync('app/components/page-navigation.css','utf8').includes('#services{scroll-margin-top:120px}'));
- const home=readFileSync('app/page.tsx','utf8');assert.ok(home.includes('id="services"'));assert.ok(home.includes('location.hash!=="#services"'));assert.ok(home.includes('scrollIntoView'));
+ const home=readFileSync('app/page.tsx','utf8');assert.ok(home.includes('id="services"'));assert.doesNotMatch(home,/\.scrollIntoView\s*\(/);
  const nav=readFileSync('app/components/page-navigation.tsx','utf8');assert.ok(nav.includes('!href.includes("#")'));assert.ok(nav.includes('onPointerEnter='));
 });
