@@ -1,5 +1,15 @@
 # EPSTAR Algeria — Project Roadmap
  
+## CURRENT — 26 October 2026, v19 Solutions populated-layout fix
+
+- v18 user video FAILED Solutions: landed at bestsellers after async layout insertion. Earlier empty-data browser check did not cover production.
+- Home now gets published CMS/products/projects/logos before SSR, and hydration retains same snapshot. No late public section insertion from re-fetch.
+- Initial home #services navigation deferred until load/fonts/layout ready; exactly one controlled scroll. Same-home anchors stay native. No repeated data-driven correction.
+- Build +54 tests PASS; browser tested four local QA products (bestsellers present), cross-page Solutions and refresh final target120/header84. Production confirmation pending; no blanket solved claim.
+- Next: apply v19 above v18, Commit/Push/deploy and reproduce production video; then return to pending service CMS lifecycle tests.
+
+Historical checkpoint follows.
+ 
 ## CURRENT — 26 October 2026, v18 header + Solutions scrolling
 
 - Explicit shared header dimensions/fonts/spacing across page families; mobile breakpoint preserved.

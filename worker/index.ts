@@ -423,9 +423,19 @@ const worker = {
     // Resolve published CMS data before rendering, not in a post-hydration fetch.
     // Assets and admin routes do not need the public snapshot.
     if((request.method==="GET"||request.method==="HEAD")&&!url.pathname.startsWith("/admin")&&!url.pathname.startsWith("/api/")&&!url.pathname.startsWith("/assets/")&&!/\.[a-z0-9]+$/i.test(url.pathname)){
-      let content;
+      let content:import("../app/components/use-content").PublicContentData|undefined;
       try {content=await publicContentData(env);} catch(error) {console.error("Public content unavailable",error);}
       if(content){
+        if(url.pathname==="/"){
+          // Resolve every layout-changing home feed before SSR/hash navigation.
+          // Each read fails independently; hydration keeps that same snapshot.
+          const read=async(promise:Promise<Response>,fallback:any)=>{try{const r=await promise;return r.ok?await r.json():fallback;}catch(error){console.error("Home feed unavailable",error);return fallback;}};
+          const [home,catalogue,projects,logos]=await Promise.all([
+            read(homeContent(request,env),{home:null}),read(publicCatalogue(request,env),{products:[]}),
+            read(publicProjects(request,env),{projects:[]}),read(publicClientLogos(env),{logos:[]})
+          ]) as any[];
+          content.homeInitial={home:home.home,products:catalogue.products||[],projects:projects.projects||[],logos:logos.logos||[]};
+        }
         const rendered=await publicContentContext.run(content,()=>handler.fetch(request,env,ctx));
         const response=new Response(rendered.body,rendered);
         response.headers.set("cache-control","no-store");

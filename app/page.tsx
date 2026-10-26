@@ -8,6 +8,8 @@ import SiteFooter from "./components/site-footer";
 import type {Lang} from "./catalogue/data";
 import {useHomeContent} from "./components/use-home-content";
 import HomeBlocks from "./components/home-blocks";
+import {useContent} from "./components/use-content";
+import {useInitialHomeAnchor} from "./components/use-initial-home-anchor";
 
 type Theme = "light" | "dark";
 type ClientLogo = {id:string;name:string;website:string|null;url:string};
@@ -20,17 +22,19 @@ const slugs=["pharmacies","bureaux","commerces","chambres"];
 
 
 export default function Home(){
+  useInitialHomeAnchor();
+  const {homeInitial}=useContent();
   const [lang,setLang]=useSiteLanguage();
   const [theme,setTheme] = useSiteTheme();
   const [active,setActive]=useState(0);
   const [paused,setPaused]=useState(false);
-  const [clientLogos,setClientLogos]=useState<ClientLogo[]>([]);
+  const [clientLogos,setClientLogos]=useState<ClientLogo[]>(homeInitial?.logos||[]);
   
   const {home,preview,previewError}=useHomeContent();
   const capabilities=home.capabilities[lang],showcaseTitle=home.showcaseTitle[lang],showcaseText=home.showcaseText[lang],selectedLabel=home.selectedLabel[lang],start=home.start[lang],productHighlights=home.productHighlights[lang],trust=home.trust[lang];
   const t=home.copy[lang]; const rtl=lang==="ar";
   const sectors=useMemo(()=>t.sectors.map((s,i)=>({title:s[0],short:s[1],heading:s[2],text:s[3],image:home.images[i],model:home.models[i],icon:home.icons[i]})),[t,home]);
-  useEffect(()=>{fetch("/api/client-logos").then(r=>r.ok?r.json():null).then(data=>setClientLogos(data?.logos||[])).catch(()=>{})},[]);
+  useEffect(()=>{if(homeInitial)return;fetch("/api/client-logos").then(r=>r.ok?r.json():null).then(data=>setClientLogos(data?.logos||[])).catch(()=>{})},[homeInitial]);
   useEffect(()=>{if(paused)return;const timer=setInterval(()=>setActive(v=>(v+1)%4),6500);return()=>clearInterval(timer)},[paused,active]);
   const current=sectors[active];
   
@@ -39,13 +43,14 @@ export default function Home(){
   
   const br=(x:string)=>x.split("\n").map((v,i)=><span key={i}>{v}{i<x.split("\n").length-1&&<br/>}</span>);
   
-  const [products,setProducts]=useState<Array<{id:string;slug:string;reference:string;name:Record<Lang,string>;image:string;isFeatured:boolean}>>([]);
-  const [projects,setProjects]=useState<Array<{id:string;slug:string;titleFr:string;titleAr:string;titleEn:string;summaryFr:string;summaryAr:string;summaryEn:string;imageUrl:string}>>([]);
-  useEffect(()=>{fetch("/api/catalogue").then(r=>r.ok?r.json():null).then(d=>setProducts((d?.products||[]).map((p:any)=>({...p,name:{fr:p.nameFr,ar:p.nameAr||p.nameFr,en:p.nameEn||p.nameFr},image:p.imageUrl||""})))).catch(()=>{});fetch("/api/projects").then(r=>r.ok?r.json():null).then(d=>setProjects(d?.projects||[])).catch(()=>{});},[]);
+  const mapProducts=(items:any[])=>items.map(p=>({...p,name:{fr:p.nameFr,ar:p.nameAr||p.nameFr,en:p.nameEn||p.nameFr},image:p.imageUrl||""}));
+  const [products,setProducts]=useState<Array<{id:string;slug:string;reference:string;name:Record<Lang,string>;image:string;isFeatured:boolean}>>(()=>mapProducts(homeInitial?.products||[]));
+  const [projects,setProjects]=useState<Array<{id:string;slug:string;titleFr:string;titleAr:string;titleEn:string;summaryFr:string;summaryAr:string;summaryEn:string;imageUrl:string}>>(homeInitial?.projects||[]);
+  useEffect(()=>{if(homeInitial)return;fetch("/api/catalogue").then(r=>r.ok?r.json():null).then(d=>setProducts(mapProducts(d?.products||[]))).catch(()=>{});fetch("/api/projects").then(r=>r.ok?r.json():null).then(d=>setProjects(d?.projects||[])).catch(()=>{});},[homeInitial]);
   const featuredProduct=products.find(p=>p.isFeatured)||products[0];
   const bestProducts=products.filter(p=>p.id!==featuredProduct?.id).slice(0,3);
-  // Native hash navigation owns scrolling. Repeating scrollIntoView when CMS,
-  // logos or products arrive interrupts it and creates a second visible jump.
+  // Initial cross-page hash waits for the complete snapshot and layout once.
+  // Same-document clicks stay native; data changes never restart scrolling.
   
   
   const sections:Record<string,ReactNode>={
