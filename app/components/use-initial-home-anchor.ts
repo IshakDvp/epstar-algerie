@@ -16,6 +16,7 @@ export function useInitialHomeAnchor(){useEffect(()=>{
    const target=document.getElementById("services");if(!target)return;
    delete root.dataset.epstarAnchor;
    const url=new URL(location.href);url.hash="services";history.replaceState(history.state,"",url);
+   window.dispatchEvent(new Event("epstar-anchor"));
    target.scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth"});
   });});
  });

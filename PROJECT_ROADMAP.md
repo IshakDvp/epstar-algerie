@@ -1,5 +1,14 @@
 # EPSTAR Algeria — Project Roadmap
  
+## CURRENT — 26 October 2026, v20 Solutions red active state
+
+- Solutions now uses URL pathname+hash for red active text/underline; Home not selected simultaneously.
+- Handles native hash/history and v19 deferred replaceState via explicit notification. Same existing dark styling; no manual-scroll scrollspy.
+- Build +56 tests PASS; browser direct section→Home→Solutions shows exactly one correct active item.
+- Next: deploy v20 over v19, check red selection/refresh/dark then resume service CMS lifecycle tests.
+
+Historical checkpoint follows.
+ 
 ## CURRENT — 26 October 2026, v19 Solutions populated-layout fix
 
 - v18 user video FAILED Solutions: landed at bestsellers after async layout insertion. Earlier empty-data browser check did not cover production.

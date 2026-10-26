@@ -1,14 +1,17 @@
 "use client";
-import {useId,useState} from "react";
+import {useEffect,useId,useState} from "react";
+import {navigationActive} from "../navigation-active";
 import {navigationPages,pageHref} from "../page-registry";
 import type {ContentItem} from "../content-model";
 import type {Lang} from "../catalogue/data";
 import "./page-navigation.css";
 export default function PageNavigation({pages,placement,lang,pathname="",onNavigate}:{pages:ContentItem[];placement:"header"|"footer";lang:Lang;pathname?:string;onNavigate?:()=>void}){
  const list=navigationPages(pages,placement),[openId,setOpenId]=useState<string|null>(null),prefix=useId();
+ const [hash,setHash]=useState("");
+ useEffect(()=>{const sync=()=>setHash(location.hash);sync();window.addEventListener("hashchange",sync);window.addEventListener("popstate",sync);window.addEventListener("epstar-anchor",sync);return()=>{window.removeEventListener("hashchange",sync);window.removeEventListener("popstate",sync);window.removeEventListener("epstar-anchor",sync);};},[pathname]);
  const link=(p:ContentItem,hasChildren=false)=>{
-  const href=pageHref(p),active=!href.includes("#")&&(href==="/"?pathname==="/":pathname===href||pathname.startsWith(href+"/"));
-  return <a href={href} className={active?"active":""} aria-current={active?"page":undefined}
+  const href=pageHref(p),active=navigationActive(href,pathname,hash);
+  return <a href={href} className={active?"active":""} aria-current={active?(href.includes("#")?"location":"page"):undefined}
    aria-expanded={hasChildren?openId===p.id:undefined} aria-controls={hasChildren?prefix+p.id:undefined}
    onClick={event=>{if(hasChildren&&window.matchMedia("(hover: none), (pointer: coarse)").matches&&openId!==p.id){event.preventDefault();setOpenId(p.id);return;}setOpenId(null);onNavigate?.();}}>
    {placement==="header"&&p.builtinId==="offers"&&<small className="nav-promo">{lang==="ar"?"جديد":lang==="fr"?"NOUVEAU":"NEW"}</small>}

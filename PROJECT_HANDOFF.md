@@ -1,5 +1,13 @@
 # EPSTAR Algeria — Technical Handoff
  
+## CURRENT — 26 October 2026, v20 Solutions active state LOCAL
+
+User reports only remaining note: Solutions not red when clicked. This suggests v19 navigation improved; not an explicit full PASS, don't invent lifecycle confirmations. v20 navigationActive helper recognizes pathname+hash for section links; Home inactive only while /#services active. PageNavigation synchronizes hash initially and on hashchange/popstate/custom epstar-anchor event. v19 deferred controller dispatches event after replaceState restores hash (replaceState alone does not emit hashchange). Uses existing active class/red/underline/dark palette; aria-current location for section vs page for routes. No scrollspy on manual scroll; active selection follows URL hash. No scroll algorithm/data/CMS change.
+
+Build +56 tests PASS; new2 active-state/history-event regressions; old solutions static test updated from intentionally excluded hash to shared active helper. Browser direct /#services shows ONLY Solutions active, computed light red rgb201,0,24 and aria-current location; click Home makes ONLY Home active, same-home Solutions ONLY Solutions. No production writes/deploy or auth. Preview stopped.
+
+Deliverable EPSTAR_solutions_active_v20.zip overlays v19. Commit: fix: highlight solutions navigation when active. Next user copy/Commit/Push, Solutions from anotherpage+refresh and Home switch, dark palette smoke. Then resume service CMS draft/private-preview/publish/language/media lifecycle (only editor opening PASS previously). Older checkpoints historical.
+ 
 ## CURRENT — 26 October 2026, v19 populated Home snapshot + deferred initial Solutions anchor LOCAL
 
 v18 production FAILED Solutions test: user video lands on bestsellers instead of Solutions. Header issue not reported again, but no explicit standalone PASS. Root cause home originally rendered empty products/default CMS then sections inserted/reordered after native hash target calculated. v18 removal of repeated scroll alone insufficient; prior empty-data local test was not representative.
