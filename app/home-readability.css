@@ -1,0 +1,59 @@
+/* v22: Home-only reading scale. Shared navigation and other pages stay unchanged. */
+.home-page{--home-body:1.125rem;--home-meta:.875rem;--home-muted:#4e6069;font-size:var(--home-body)}
+.home-page.dark{--home-muted:#c2cdd2}
+main.home-page.dark section :is(h1,h2,h3){color:#f1f5f7}
+main.home-page.dark :is(.hero-copy>p,.hero-proof span,.section-title>p,.center-title p,.client-references p,.highlight-heading p,.start-question>em){color:var(--home-muted)}
+main.home-page.dark .steps p{color:#dce5e9}
+.home-page :is(section,.footer) :is(p,li){font-size:var(--home-body);line-height:1.8;overflow-wrap:anywhere}
+.home-page :is(section,.footer) small,.home-page .mini-title{font-size:var(--home-meta);line-height:1.65;letter-spacing:.04em;opacity:1}
+.home-page.rtl :is(section,.footer) small,.home-page.rtl .mini-title{letter-spacing:0}
+.home-page .premium-hero .hero-copy h1,.home-page.rtl .premium-hero .hero-copy h1{font-size:clamp(2.375rem,4.5vw,4rem);line-height:1.22;letter-spacing:-.025em;overflow-wrap:anywhere}
+.home-page :is(.section-title,.center-title,.highlight-heading,.client-references,.about article,.quote-band,.final-cta,.managed-home-block) h2{font-size:clamp(2rem,3.3vw,3rem);line-height:1.3;letter-spacing:-.015em;overflow-wrap:anywhere}
+.home-page :is(.steps,.about-points,.best-product-grid,.project-cards) h3{font-size:clamp(1.375rem,2vw,1.75rem);line-height:1.4;overflow-wrap:anywhere}
+.home-page .featured-copy h3,.home-page .stage-copy h3{font-size:clamp(1.75rem,3vw,2.75rem);line-height:1.3}
+.home-page :is(.hero-copy,.highlight-heading,.section-title,.center-title,.client-references)>p,.home-page .start-question>em{color:var(--home-muted);font-size:var(--home-body);line-height:1.8;opacity:1}
+.home-page .start-question>p{font-size:1.375rem!important;line-height:1.6}
+.home-page .start-eyebrow{font-size:var(--home-meta)!important;line-height:1.65}
+.home-page .hero-actions b{font-size:1.125rem;line-height:1.5}
+.home-page .hero-actions small,.home-page .hero-actions .action-step{font-size:var(--home-meta)!important;line-height:1.65;opacity:1}
+.home-page .hero-actions :is(.primary-btn,.secondary-btn){height:auto;min-width:0;min-height:150px;flex:1}
+.home-page .hero-proof span{font-size:1rem;line-height:1.7;padding:10px;min-width:0;color:var(--home-muted)}
+.home-page .hero-proof b{font-size:var(--home-meta)}
+.home-page :is(.trust-band,.about-points) span{font-size:1rem;line-height:1.8;opacity:1}
+.home-page :is(.stage-copy,.featured-copy,.project-cards) p{color:#e0e7eb;opacity:1}
+.home-page :is(.steps,.about article,.quote-band,.final-cta) p{opacity:1}
+.home-page :is(.steps,.testimonial) small,.home-page .testimonial footer span{font-size:var(--home-meta);opacity:1}
+.home-page :is(.stage-copy,.featured-copy,.best-product-grid,.projects-intro,.about article,.final-cta) a,
+.home-page .featured-copy>span,.home-page .best-product-grid span,.home-page .project-cards span{font-size:1rem;line-height:1.6}
+.home-page :is(.stage-copy,.about article,.final-cta) a{min-height:44px;padding-block:12px}
+.home-page .premium-tabs b,.home-page .showcase-nav b{font-size:1.125rem;line-height:1.5}
+.home-page .showcase-nav button{height:auto;min-height:112px}
+.home-page .stage-label,.home-page .media-tag b{font-size:var(--home-meta);line-height:1.65}
+.home-page .managed-home-block .primary-btn{font-size:1rem;display:inline-block;min-height:44px;line-height:1.6}
+.home-page :is(.quote-band input,.quote-band select,.quote-band textarea,.quote-band button){font-size:1rem;line-height:1.6;min-height:44px}
+.home-page .quote-band label{font-size:1rem;line-height:1.6}
+.home-page .footer p,.home-page .footer a,.home-page .footer span{font-size:1rem;line-height:1.8;opacity:1;overflow-wrap:anywhere}
+.home-page .footer h4{font-size:1.125rem;line-height:1.5}
+.home-page .footer small,.home-page .footer .copyright{font-size:var(--home-meta);opacity:1}
+.home-page .footer .footer-navigation .page-nav-group.page-nav-footer>a,.home-page .footer .footer-navigation .page-nav-children a{font-size:1rem}
+.home-page.dark :is(.mini-title,.start-eyebrow,.highlight-heading>small,.section-title small,.center-title small,.projects-intro>a,.client-references small){color:#ff8292}
+.home-page :is(a,button,input,textarea,select):focus-visible{outline:3px solid #1968be;outline-offset:4px}
+.home-page.dark :is(a,button,input,textarea,select):focus-visible{outline-color:#87c9ff}
+@media(max-width:900px){
+ .home-page .hero-shell.premium-hero{height:auto;min-height:0;padding-bottom:32px}
+ .home-page .premium-hero .hero-copy{min-width:0}
+ .home-page .hero-actions :is(.primary-btn,.secondary-btn){flex:auto;min-height:0;width:100%}
+ .home-page .showcase-stage{min-height:760px}
+ .home-page .stage-copy{padding:30px 24px;position:relative;background:#102027}
+ .home-page .showcase-stage>img{position:relative;height:320px;max-width:100%;object-fit:contain}
+}
+@media(max-width:560px){
+ .home-page{--home-body:1.0625rem}
+ .home-page .premium-hero .hero-copy>p{font-size:var(--home-body)!important}
+ .home-page .hero-proof{grid-template-columns:1fr}
+ .home-page .hero-proof span:nth-child(odd){border-inline-end:0}
+ .home-page .showcase-stage{min-height:0}
+ .home-page .hero-actions{flex-wrap:wrap}
+ .home-page .quote-band form{min-width:0}
+ .home-page .quote-band :is(input,select,textarea){max-width:100%;min-width:0}
+}

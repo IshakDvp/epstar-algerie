@@ -10,6 +10,7 @@ import {useHomeContent} from "./components/use-home-content";
 import HomeBlocks from "./components/home-blocks";
 import {useContent} from "./components/use-content";
 import {useInitialHomeAnchor} from "./components/use-initial-home-anchor";
+import "./home-readability.css";
 
 type Theme = "light" | "dark";
 type ClientLogo = {id:string;name:string;website:string|null;url:string};
@@ -92,7 +93,7 @@ projects:(<section id="projets" className="projects premium-projects section-pad
 testimonial:(<section className="testimonial"><div className="testimonial-photo"><img src={home.testimonialImage} alt={sectors[1].title}/></div><blockquote><small>{t.review}</small><p>“{t.reviewText}”</p><footer><b>{t.client}</b><span>{t.clientType}</span></footer></blockquote></section>),
 cta:(<section className="final-cta"><small>{t.ctaTag}</small><h2>{br(t.ctaTitle)}</h2><p>{t.ctaText}</p><a href={home.links.study}>{t.study}<span>↗</span></a></section>),
 };
-  return <main dir={rtl?"rtl":"ltr"} className={`${rtl?"rtl ":""}${theme==="dark"?"dark":""}`}>
+  return <main dir={rtl?"rtl":"ltr"} className={`home-page ${rtl?"rtl ":""}${theme==="dark"?"dark":""}`}>
 <SiteHeader lang={lang} setLang={setLang} theme={theme} setTheme={setTheme}/>
 {(preview||previewError)&&<aside role="status" style={{padding:16,background:"#fff2cc",color:"#202020",position:"sticky",top:0,zIndex:100}}>{preview?(lang==="ar"?"معاينة مسودة — غير منشورة":lang==="fr"?"Aperçu du brouillon — non publié":"Draft preview — not published"):(lang==="ar"?"المعاينة تتطلب دخول المسؤول":lang==="fr"?"Connexion administrateur requise":"Administrator sign-in required")}</aside>}
 {home.sectionOrder.map(key=>!home.hiddenSections.includes(key)&&<Fragment key={key}>{sections[key]}</Fragment>)}
