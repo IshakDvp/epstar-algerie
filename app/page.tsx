@@ -11,6 +11,7 @@ import HomeBlocks from "./components/home-blocks";
 import {useContent} from "./components/use-content";
 import {useInitialHomeAnchor} from "./components/use-initial-home-anchor";
 import "./home-readability.css";
+import "./home-layout.css";
 
 type Theme = "light" | "dark";
 type ClientLogo = {id:string;name:string;website:string|null;url:string};

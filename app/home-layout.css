@@ -1,0 +1,111 @@
+/* v23 — Home composition. No fixed content heights or changes to CMS ordering. */
+main.home-page{--home-surface:#fff;--home-panel:#f2f5f6;--home-text:#17272e;--home-border:#d4dee2}
+main.home-page.dark{--home-surface:#142128;--home-panel:#0e171c;--home-text:#f1f5f7;--home-border:#34464f}
+main.home-page>.section-pad{width:100%;max-width:1280px;padding:72px 48px;margin-inline:auto;min-height:0}
+main.home-page .section-title{gap:32px;align-items:start;margin-bottom:32px}
+main.home-page .section-title>div,main.home-page .section-title>p{min-width:0}
+main.home-page .section-title h2{margin-block:12px 0}
+main.home-page .section-title p{max-width:520px;margin-block:12px 0}
+/* Logo count never creates unoccupied grid columns. */
+main.home-page>.client-references{padding-block:48px;text-align:center}
+main.home-page .client-references>div:first-child{max-width:720px;margin:0 auto 24px}
+main.home-page .client-logo-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:16px}
+main.home-page .client-logo-grid>a,main.home-page .client-logo-grid>div{flex:0 1 180px;min-width:140px;height:100px;background:var(--home-surface);border:1px solid var(--home-border);border-radius:8px}
+/* Two readable columns, followed by the reasons strip. DOM/editor order unchanged. */
+main.home-page>.about{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:28px;align-items:stretch}
+main.home-page .about-visual{height:auto;min-height:360px;position:relative;overflow:hidden;border-radius:12px}
+main.home-page .about-visual img{position:absolute;inset:0;width:100%;height:100%;border-radius:0;object-fit:cover}
+main.home-page .about-visual:after{content:"";position:absolute;inset:55% 0 0;background:linear-gradient(transparent,#071218d9)}
+main.home-page .about-visual>span{z-index:1;font-size:1.5rem;line-height:1.5;inset-inline:24px;left:auto;bottom:24px}
+main.home-page .about>article{min-width:0;min-height:0;padding:36px;background:var(--home-surface);color:var(--home-text);border:1px solid var(--home-border);border-radius:12px;box-shadow:none}
+main.home-page .about>article h2{font-size:clamp(1.875rem,2.8vw,2.5rem);margin-block:14px 20px;line-height:1.4}
+main.home-page .about>article>small{color:#b50018;opacity:1}
+main.home-page.dark .about>article>small{color:#ff8292}
+main.home-page .about>article p{color:var(--home-muted);margin-block:0 24px}
+main.home-page .about-points{grid-column:1/-1;padding:24px 28px;border-radius:12px;background:var(--home-panel);box-shadow:none;border:1px solid var(--home-border)}
+main.home-page .about-points h3{margin:0 0 16px}
+main.home-page .about-points>div{display:inline-flex;width:33.333%;vertical-align:top;align-items:start;padding:8px 16px;gap:12px;border:0;min-width:0}
+/* Each showcase image and its text have their own row: no text/image collision. */
+main.home-page .sector-showcase{grid-template-columns:minmax(220px,.34fr) minmax(0,1fr);min-height:0;align-items:stretch}
+main.home-page .showcase-stage{display:flex;flex-direction:column;min-height:0;padding-top:54px}
+main.home-page .showcase-stage>img{position:relative;inset:auto;width:100%;height:330px;flex:none;object-fit:contain;padding:12px 24px}
+main.home-page .stage-copy{position:relative;inset:auto;padding:28px 32px 32px;background:#102027;flex:1}
+main.home-page .stage-copy h3{margin:12px 0}
+main.home-page .showcase-nav{min-width:0}
+main.home-page .showcase-nav button{min-width:0;white-space:normal}
+main.home-page .stage-label{color:#d5dfe4;opacity:1}
+main.home-page :is(#apropos,#projets,#contact){scroll-margin-top:108px}
+/* Solid, legible form with the intro aligned to its first row, not its midpoint. */
+main.home-page>.quote-band{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:32px;min-height:0;padding:64px max(32px,calc((100vw - 1184px)/2));background:var(--home-panel);color:var(--home-text)}
+main.home-page .quote-band>div{min-width:0;max-width:760px;margin-inline:auto;text-align:center}
+main.home-page .quote-band>div>small{color:#b50018}
+main.home-page.dark .quote-band>div>small{color:#ff8292}
+main.home-page .quote-band>div>p{color:var(--home-muted);max-width:680px;margin-inline:auto}
+main.home-page .quote-band .smart-quote{width:100%;max-width:1000px;margin-inline:auto;min-width:0;padding:28px;border:1px solid var(--home-border);border-radius:12px;background:var(--home-surface);color:var(--home-text);box-shadow:0 12px 32px #00000008;gap:20px!important}
+main.home-page .quote-band .field{min-width:0}
+main.home-page .quote-band .field label,main.home-page .quote-band legend{font-size:1rem;line-height:1.6;color:var(--home-text)}
+main.home-page .quote-band :is(input,select,textarea){width:100%;max-width:100%;min-width:0;min-height:48px;padding:12px;border:1px solid #82969f!important;border-radius:6px;background:var(--home-surface)!important;color:var(--home-text)!important;font-size:1rem;line-height:1.6;outline:revert}
+main.home-page .quote-band :is(input,select,textarea):focus{border-color:#1968be!important;box-shadow:0 0 0 3px #1968be25}
+main.home-page .quote-band select option{background:var(--home-surface);color:var(--home-text)}
+main.home-page .quote-band :is(input,textarea)::placeholder{color:var(--home-muted);opacity:1}
+main.home-page .quote-band .quote-empty{grid-column:1/-1;padding:18px;border:1px solid var(--home-border);background:var(--home-panel);text-align:start}
+main.home-page .quote-band .quote-empty h3{margin:0 0 8px;font-size:1.25rem;color:var(--home-text)}
+main.home-page .quote-band .quote-empty p,main.home-page .quote-band .quote-guidance{font-size:1rem;color:var(--home-muted);margin:0;line-height:1.8}
+main.home-page .quote-band .quote-empty a{display:inline-block;font-size:1rem;color:var(--home-text);background:transparent;text-decoration:underline;margin-top:10px;padding:6px 0}
+main.home-page .quote-band .full,main.home-page .quote-band .quote-guidance,main.home-page .quote-band .prepare-btn{grid-column:1/-1}
+main.home-page .quote-band fieldset.installation{margin:0;padding:12px;border:1px solid var(--home-border);border-radius:6px}
+main.home-page .quote-band input[type=radio]{width:18px;min-height:18px;height:18px;padding:0;margin-inline-end:6px}
+main.home-page .quote-band .installation label{display:inline-flex;align-items:center;gap:6px;margin-inline-end:14px}
+main.home-page .quote-band input[type=file]{font-size:.875rem;white-space:normal;padding:8px}
+main.home-page .quote-band input::file-selector-button{font:inherit;padding:8px;border:1px solid var(--home-border);border-radius:4px;background:var(--home-panel);color:var(--home-text);margin-inline-end:8px}
+main.home-page .quote-band .field small{color:var(--home-muted)}
+/* Project captions live on solid surfaces, never across a busy photograph. */
+main.home-page .editorial-projects{grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));grid-template-rows:none;gap:24px;align-items:stretch}
+main.home-page .editorial-projects>a,main.home-page .editorial-projects>a:first-child{grid-column:auto;grid-row:auto;min-width:0}
+main.home-page .editorial-projects>a>article{display:flex;flex-direction:column;height:100%;overflow:hidden;border:1px solid var(--home-border);border-radius:12px;background:var(--home-surface);color:var(--home-text)}
+main.home-page .editorial-projects article:after{display:none}
+main.home-page .editorial-projects article>img{display:block;width:100%;height:250px;object-fit:cover;flex:none}
+main.home-page .editorial-projects article>div,main.home-page .editorial-projects>a:not(:first-child) article>div{position:static;inset:auto;max-width:none;padding:24px;flex:1;color:var(--home-text)}
+main.home-page .editorial-projects article>div small{color:#b50018}
+main.home-page.dark .editorial-projects article>div small{color:#ff8292}
+main.home-page .editorial-projects article>div h3{font-size:1.5rem;line-height:1.5;margin:12px 0}
+main.home-page .editorial-projects article>div p{font-size:1rem;color:var(--home-muted);line-height:1.8;margin:0 0 16px}
+main.home-page .editorial-projects .project-no{display:none}
+main.home-page .projects-intro a{display:inline-block;min-height:44px;padding-block:10px;font-size:1rem;color:#b50018}
+main.home-page.dark .projects-intro a{color:#ff8292}
+/* A short review should not produce a giant empty red column. */
+main.home-page>.testimonial{width:calc(100% - 96px);max-width:1184px;min-height:0;margin:0 auto 72px;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:stretch;border-radius:12px}
+main.home-page .testimonial-photo{position:relative;min-height:300px;height:auto}
+main.home-page .testimonial-photo img{position:absolute;inset:0;height:100%;width:100%;object-fit:cover}
+main.home-page .testimonial blockquote{display:flex;flex-direction:column;justify-content:center;min-width:0;padding:36px;min-height:0;background:#b50018}
+main.home-page .testimonial blockquote>p{font-size:clamp(1.25rem,2vw,1.625rem);line-height:1.8;margin:16px 0 24px}
+main.home-page .testimonial footer{font-size:1rem;line-height:1.7}
+main.home-page>.final-cta{padding:64px 24px}
+@media(max-width:900px){
+ main.home-page>.section-pad{padding:52px 24px}
+ main.home-page>.about{grid-template-columns:1fr;gap:20px}
+ main.home-page .about-visual{min-height:280px}
+ main.home-page .about>article{padding:28px}
+ main.home-page .about-points>div{display:flex;width:100%;padding:10px 0}
+ main.home-page .sector-showcase{grid-template-columns:1fr}
+ main.home-page .showcase-nav{display:grid;grid-template-columns:1fr 1fr}
+ main.home-page>.quote-band{grid-template-columns:1fr;gap:24px;padding:48px 24px}
+ main.home-page .quote-band>div{padding-top:0}
+ main.home-page>.testimonial{width:calc(100% - 48px);margin-bottom:52px;grid-template-columns:1fr}
+ main.home-page .testimonial-photo{min-height:260px}
+}
+@media(max-width:560px){
+ main.home-page>.section-pad{padding:44px 20px}
+ main.home-page .section-title{flex-direction:column;gap:16px}
+ main.home-page .client-logo-grid{gap:12px}
+ main.home-page .client-logo-grid>a,main.home-page .client-logo-grid>div{flex-basis:calc(50% - 6px);min-width:0;height:88px}
+ main.home-page .about>article,main.home-page .about-points{padding:24px}
+ main.home-page .showcase-nav{grid-template-columns:1fr}
+ main.home-page .showcase-stage>img{height:250px;padding:12px}
+ main.home-page .stage-copy{padding:24px}
+ main.home-page>.quote-band{padding:44px 16px}
+ main.home-page .quote-band .smart-quote{padding:20px;grid-template-columns:minmax(0,1fr)}
+ main.home-page .quote-band .field{grid-column:1/-1}
+ main.home-page .testimonial blockquote{padding:28px}
+ main.home-page>.testimonial{width:calc(100% - 40px);margin-bottom:44px}
+}
