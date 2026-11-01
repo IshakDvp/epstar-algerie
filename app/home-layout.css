@@ -1,13 +1,34 @@
-/* v23 — Home composition. No fixed content heights or changes to CMS ordering. */
+/* v23/v24 — Home composition; CMS section ordering and saved copy preserved. */
 main.home-page{--home-surface:#fff;--home-panel:#f2f5f6;--home-text:#17272e;--home-border:#d4dee2}
+/* v24: an intrinsic two-column hero replaces the accumulated legacy min-heights. */
+main.home-page #accueil.premium-hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:32px;align-items:center;min-height:0;height:auto;padding:32px 48px;overflow:visible}
+main.home-page #accueil .hero-copy{display:block;grid-column:1;grid-row:1;width:auto;max-width:none;min-width:0;margin:0;padding:0;direction:inherit;text-align:start;animation:none}
+main.home-page #accueil .hero-copy h1{font-size:clamp(2.125rem,3.4vw,3rem);line-height:1.25;letter-spacing:-.02em;margin:12px 0 16px;max-width:650px}
+main.home-page #accueil .hero-copy>p{font-size:1rem;line-height:1.75;margin:0;max-width:650px}
+main.home-page #accueil .start-question{max-width:none;margin-top:18px;text-align:start}
+main.home-page #accueil .start-question>p{font-size:1.125rem!important;line-height:1.5;margin:0 0 4px}
+main.home-page #accueil .start-question>em{font-size:.875rem;line-height:1.6;margin-bottom:12px}
+main.home-page #accueil .hero-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px!important;margin:14px 0 0}
+main.home-page #accueil .hero-actions>a{display:grid;grid-template-columns:minmax(0,1fr) auto;align-content:start;gap:6px 10px;width:auto;min-width:0;height:auto;min-height:0;padding:16px;position:relative;border-radius:8px;white-space:normal}
+main.home-page #accueil .hero-actions .action-step{grid-column:1;font-size:.8125rem!important;line-height:1.5;letter-spacing:0;opacity:1}
+main.home-page #accueil .hero-actions b{grid-column:1;font-size:1rem;line-height:1.5}
+main.home-page #accueil .hero-actions small:not(.action-step){grid-column:1/-1;font-size:.875rem!important;line-height:1.6}
+main.home-page #accueil .hero-actions a>span{position:static;grid-column:2;grid-row:1/3;align-self:center;margin:0;transform:none}
+main.home-page #accueil .hero-proof{max-width:none;margin:18px 0 0}
+main.home-page #accueil .hero-proof span{font-size:.875rem;line-height:1.6;padding:8px;min-height:0}
+main.home-page #accueil .premium-media{grid-column:2;grid-row:1;display:grid;grid-template-rows:minmax(0,1fr) auto;position:relative;inset:auto;min-width:0;width:100%;height:400px;margin:0;padding:0;transform:none;animation:none}
+main.home-page #accueil .premium-media img{display:block;width:100%;height:100%;min-height:0;object-fit:contain;animation:none}
+main.home-page #accueil .media-tag{position:static;justify-self:end;min-width:0;max-width:100%;margin:4px 8px 0;padding:8px 12px;box-shadow:none;z-index:3}
+main.home-page #accueil .media-tag small,main.home-page #accueil .media-tag b{font-size:.8125rem;line-height:1.5}
+main.home-page #accueil .hero-index{top:4px;font-size:120px;pointer-events:none}
 main.home-page.dark{--home-surface:#142128;--home-panel:#0e171c;--home-text:#f1f5f7;--home-border:#34464f}
-main.home-page>.section-pad{width:100%;max-width:1280px;padding:72px 48px;margin-inline:auto;min-height:0}
+main.home-page>.section-pad{width:100%;max-width:1280px;padding:48px;margin-inline:auto;min-height:0}
 main.home-page .section-title{gap:32px;align-items:start;margin-bottom:32px}
 main.home-page .section-title>div,main.home-page .section-title>p{min-width:0}
 main.home-page .section-title h2{margin-block:12px 0}
 main.home-page .section-title p{max-width:520px;margin-block:12px 0}
 /* Logo count never creates unoccupied grid columns. */
-main.home-page>.client-references{padding-block:48px;text-align:center}
+main.home-page>.client-references{padding-block:32px;text-align:center}
 main.home-page .client-references>div:first-child{max-width:720px;margin:0 auto 24px}
 main.home-page .client-logo-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:16px}
 main.home-page .client-logo-grid>a,main.home-page .client-logo-grid>div{flex:0 1 180px;min-width:140px;height:100px;background:var(--home-surface);border:1px solid var(--home-border);border-radius:8px}
@@ -27,9 +48,9 @@ main.home-page .about-points h3{margin:0 0 16px}
 main.home-page .about-points>div{display:inline-flex;width:33.333%;vertical-align:top;align-items:start;padding:8px 16px;gap:12px;border:0;min-width:0}
 /* Each showcase image and its text have their own row: no text/image collision. */
 main.home-page .sector-showcase{grid-template-columns:minmax(220px,.34fr) minmax(0,1fr);min-height:0;align-items:stretch}
-main.home-page .showcase-stage{display:flex;flex-direction:column;min-height:0;padding-top:54px}
-main.home-page .showcase-stage>img{position:relative;inset:auto;width:100%;height:330px;flex:none;object-fit:contain;padding:12px 24px}
-main.home-page .stage-copy{position:relative;inset:auto;padding:28px 32px 32px;background:#102027;flex:1}
+main.home-page .showcase-stage{display:flex;flex-direction:column;min-height:0;padding-top:40px}
+main.home-page .showcase-stage>img{position:relative;inset:auto;width:100%;height:260px;flex:none;object-fit:contain;padding:8px 20px}
+main.home-page .stage-copy{position:relative;inset:auto;padding:24px 28px;background:#102027;flex:1}
 main.home-page .stage-copy h3{margin:12px 0}
 main.home-page .showcase-nav{min-width:0}
 main.home-page .showcase-nav button{min-width:0;white-space:normal}
@@ -74,15 +95,43 @@ main.home-page .editorial-projects .project-no{display:none}
 main.home-page .projects-intro a{display:inline-block;min-height:44px;padding-block:10px;font-size:1rem;color:#b50018}
 main.home-page.dark .projects-intro a{color:#ff8292}
 /* A short review should not produce a giant empty red column. */
-main.home-page>.testimonial{width:calc(100% - 96px);max-width:1184px;min-height:0;margin:0 auto 72px;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:stretch;border-radius:12px}
+main.home-page>.testimonial{width:calc(100% - 96px);max-width:1184px;min-height:0;margin:0 auto 48px;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:stretch;border-radius:12px}
 main.home-page .testimonial-photo{position:relative;min-height:300px;height:auto}
 main.home-page .testimonial-photo img{position:absolute;inset:0;height:100%;width:100%;object-fit:cover}
 main.home-page .testimonial blockquote{display:flex;flex-direction:column;justify-content:center;min-width:0;padding:36px;min-height:0;background:#b50018}
 main.home-page .testimonial blockquote>p{font-size:clamp(1.25rem,2vw,1.625rem);line-height:1.8;margin:16px 0 24px}
 main.home-page .testimonial footer{font-size:1rem;line-height:1.7}
-main.home-page>.final-cta{padding:64px 24px}
+main.home-page>.final-cta{padding:44px 24px}
+/* Complete the light palette for the intentionally dark legacy cards. */
+main.home-page:not(.dark) .featured-product>a,main.home-page:not(.dark) .sector-showcase,main.home-page:not(.dark) .stage-copy{background:var(--home-surface);color:var(--home-text)}
+main.home-page:not(.dark) .featured-product>a,main.home-page:not(.dark) .sector-showcase{border:1px solid var(--home-border)}
+main.home-page:not(.dark) .featured-visual,main.home-page:not(.dark) .showcase-stage{background:radial-gradient(circle at 50% 40%,#fff,#eaf0f2)}
+main.home-page:not(.dark) .showcase-stage:before{opacity:.2}
+main.home-page:not(.dark) :is(.featured-copy,.stage-copy) :is(h3,a,span){color:var(--home-text)}
+main.home-page:not(.dark) :is(.featured-copy,.stage-copy) p{color:var(--home-muted)}
+main.home-page:not(.dark) :is(.featured-copy,.stage-copy) small{color:#b50018}
+main.home-page:not(.dark) .stage-label{color:var(--home-muted)}
+main.home-page:not(.dark) .steps article.featured{background:#edf2f4;color:var(--home-text);border-color:var(--home-border)}
+main.home-page:not(.dark) .steps article.featured p{color:var(--home-muted)}
+main.home-page:not(.dark)>.final-cta{background:var(--home-panel);color:var(--home-text);border-top:1px solid var(--home-border)}
+main.home-page:not(.dark) .final-cta small{color:#b50018}
+main.home-page:not(.dark) .final-cta p{color:var(--home-muted);opacity:1}
+main.home-page .final-cta a{background:#c90018;color:#fff}
+main.home-page .about>article>a,main.home-page .about>article>a:visited,main.home-page .about>article>a:hover,main.home-page .about>article>a:focus{background:#c90018;color:#fff}
+main.home-page .about>article>a span{color:#fff}
+main.home-page:not(.dark)>.footer{background:#edf2f4;color:var(--home-text);border-top:1px solid var(--home-border)}
+main.home-page:not(.dark) .footer :is(h4,p,a,span,small){color:var(--home-text);opacity:1}
+main.home-page:not(.dark) .footer .copyright{border-color:var(--home-border)}
+main.home-page>.footer{padding-block:36px;gap:28px}
+main.home-page .footer>div{gap:8px}
+main.home-page .footer .footer-navigation .footer-page-links{margin-top:12px;gap:4px}
 @media(max-width:900px){
- main.home-page>.section-pad{padding:52px 24px}
+ main.home-page #accueil.premium-hero{grid-template-columns:minmax(0,1fr);gap:16px;padding:28px 24px!important}
+ main.home-page #accueil .hero-copy{display:contents}
+ main.home-page #accueil .premium-media{grid-column:1;grid-row:auto;order:4;height:280px;margin:0}
+ main.home-page #accueil .start-question{order:5;margin-top:0}
+ main.home-page #accueil .hero-proof{order:6;margin-top:0}
+ main.home-page>.section-pad{padding:36px 24px}
  main.home-page>.about{grid-template-columns:1fr;gap:20px}
  main.home-page .about-visual{min-height:280px}
  main.home-page .about>article{padding:28px}
@@ -95,17 +144,28 @@ main.home-page>.final-cta{padding:64px 24px}
  main.home-page .testimonial-photo{min-height:260px}
 }
 @media(max-width:560px){
- main.home-page>.section-pad{padding:44px 20px}
+ main.home-page #accueil.premium-hero{padding:24px 20px!important;gap:12px}
+ main.home-page #accueil .hero-copy h1{font-size:2.125rem!important;line-height:1.3!important;margin:0!important}
+ main.home-page #accueil .hero-copy>p{font-size:1rem!important;line-height:1.75!important}
+ main.home-page #accueil .hero-actions{grid-template-columns:minmax(0,1fr);gap:10px!important;margin-top:12px}
+ main.home-page #accueil .hero-actions>a{padding:14px;min-height:0}
+ main.home-page #accueil .premium-media{height:230px}
+ main.home-page #accueil .media-tag{justify-self:end;padding:6px 10px;margin-top:0}
+ main.home-page #accueil .hero-proof{grid-template-columns:1fr 1fr}
+ main.home-page #accueil .hero-proof span{padding:8px 4px;font-size:.8125rem}
+ main.home-page>.section-pad{padding:32px 20px}
  main.home-page .section-title{flex-direction:column;gap:16px}
  main.home-page .client-logo-grid{gap:12px}
  main.home-page .client-logo-grid>a,main.home-page .client-logo-grid>div{flex-basis:calc(50% - 6px);min-width:0;height:88px}
  main.home-page .about>article,main.home-page .about-points{padding:24px}
  main.home-page .showcase-nav{grid-template-columns:1fr}
- main.home-page .showcase-stage>img{height:250px;padding:12px}
+ main.home-page .showcase-stage>img{height:210px;padding:12px}
  main.home-page .stage-copy{padding:24px}
  main.home-page>.quote-band{padding:44px 16px}
  main.home-page .quote-band .smart-quote{padding:20px;grid-template-columns:minmax(0,1fr)}
  main.home-page .quote-band .field{grid-column:1/-1}
  main.home-page .testimonial blockquote{padding:28px}
  main.home-page>.testimonial{width:calc(100% - 40px);margin-bottom:44px}
+ main.home-page>.footer{padding:28px 20px;gap:22px}
+ main.home-page .footer h4{margin-bottom:4px}
 }
