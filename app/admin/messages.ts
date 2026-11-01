@@ -1,6 +1,16 @@
 export type AdminLang="fr"|"ar"|"en";
 // French source keys keep server messages and the existing interface aligned.
-const rows=`Contenu — Service|محتوى — الخدمة|Content — Service
+const rows=`1 — Bannière principale|1 — البانر الرئيسي|1 — Main banner
+2 — Prestations|2 — الخدمات المقدمة|2 — Included services
+3 — Méthode et étapes|3 — مراحل العمل|3 — Process and steps
+4 — Galerie|4 — معرض الصور|4 — Gallery
+5 — Demande de devis|5 — طلب الدراسة وعرض السعر|5 — Quote request
+6 — Autres services|6 — الخدمات الأخرى|6 — Other services
+Les sections suivent l’ordre de la page publique.|الأقسام مرتبة حسب ظهورها في صفحة الموقع.|Sections follow their order on the public page.
+La description de cette section reprend celle de la bannière principale.|وصف هذا القسم هو نفس وصف البانر الرئيسي؛ تعديله هناك يغيّره هنا أيضًا.|This section reuses the main banner description; editing it there updates both places.
+Identité du service — liens depuis les autres pages|هوية الخدمة — روابط من الصفحات الأخرى|Service identity — links from other pages
+Ce nom apparaît dans les cartes des autres services, pas comme titre principal de cette page.|يظهر هذا الاسم في بطاقات الخدمات الأخرى، وليس كعنوان رئيسي لهذه الصفحة.|This name appears in other-service cards, not as this page’s main headline.
+Contenu — Service|محتوى — الخدمة|Content — Service
 Utilisez Contenu — Service pour modifier les sections de cette page.|استعمل محتوى — الخدمة لتعديل أقسام هذه الصفحة.|Use Content — Service to edit this page’s sections.
 Bouton — Tous les services|زر — كل الخدمات|Button — All services
 Titre — Prestations|عنوان — الخدمات المقدمة|Title — Included services

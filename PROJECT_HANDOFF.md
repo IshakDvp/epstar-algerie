@@ -1,4 +1,15 @@
 # EPSTAR Algeria — Technical Handoff
+
+## 2026-11-01 — v21 service editor / public order alignment
+
+- Remove All services backlink from all four service pages and its editable UI field. Legacy `copy.back` remains stored but unused to preserve exact-shape validation and existing drafts; no migration or customer-content overwrite.
+- Explicit shared service editor layout: hero (eyebrow/headline/description/button/model), included services, process (eyebrow/title/intro/steps), gallery (photo and text), quote request, other services. Service identity is separate metadata, not a page section.
+- Gallery description intentionally reuses hero text; translated editor note explains both locations. Existing draft/revision/publish/media and FR/AR/EN preserved.
+- Evidence: `npm run build` PASS; `node --test tests/*.test.mjs` 58/58 PASS. Public Pharmacy Arabic preview inspected in browser: backlink absent, rendered section order confirmed. Authenticated editor visual/lifecycle test NOT VERIFIED here; user acceptance still pending.
+- Scope: shared four-service template only. Home/About/Fitout/offers/products/projects/custom-page editor alignment remains PENDING; do not call entire dashboard reviewed.
+- Next: apply v21 overlay over current v20 repo; Commit/Push. In Pages > Pharmacy > Content, compare numbered editor sections against public page. Save TEST headline as draft, preview, verify public unchanged; then publish/revert deliberately. Smoke other 3 services and languages/images before wider dashboard rollout.
+- Full engineering audit NOT VERIFIED. See ENGINEERING_AUDIT.md and TEST_EVIDENCE.md. No production deployment or data writes performed by assistant.
+
  
 ## CURRENT — 26 October 2026, v20 Solutions active state LOCAL
 

@@ -2,6 +2,7 @@
 import {useEffect,useState,type ReactNode} from "react";
 import {type ServiceContent,type ServiceKey} from "../service-content";
 import {useAdminI18n} from "./i18n";
+import {serviceEditorSections} from "../service-editor-layout";
 const labels:Record<string,string>={"back":"Bouton — Tous les services","eyebrow":"Sur-titre","intro":"Introduction","includes":"Titre — Prestations","includesText":"Texte — Prestations","process":"Sur-titre — Méthode","processTitle":"Titre — Méthode","steps":"Étapes","gallery":"Sur-titre — Galerie","galleryTitle":"Titre — Galerie","cta":"Titre — Devis","ctaText":"Texte — Devis","contact":"Texte du bouton","other":"Titre — Autres services","title":"Nom du service","headline":"Titre principal","text":"Description","list":"Prestations incluses","materialLabel":"Libellé — Sur mesure","model":"Visuel principal","photo":"Photo du service"};
 export default function ServiceEditor({serviceKey,onBack}:{serviceKey:ServiceKey;onBack:()=>void}){
  const endpoint="/api/admin/content/services/"+serviceKey;
@@ -23,8 +24,14 @@ export default function ServiceEditor({serviceKey,onBack}:{serviceKey:ServiceKey
  <label className="home-content-language"><span>{t("Langue des textes à modifier")}</span><select value={editLang} onChange={e=>setEditLang(e.target.value as typeof editLang)}><option value="fr">Français</option><option value="ar">العربية</option><option value="en">English</option></select><small>{t("Ce choix change les textes affichés dans les champs, pas la langue du tableau de bord ni l’ordre des sections.")}</small></label></div>
  {notice&&<p className="cms-notice" role="status">{t(notice)}</p>}
  <div className="home-editor-actions"><button disabled={busy||!draft} onClick={()=>save()}>{t("Enregistrer le brouillon")}</button>{!dirty&&draft&&!busy?<a href={`/services/${serviceKey}?preview=service`} target="_blank" rel="noreferrer">{t("Prévisualiser")}</a>:<span>{t("Enregistrez pour activer la prévisualisation.")}</span>}<button disabled={busy||!draft} onClick={()=>save(true)}>{t("Publier")}</button><button disabled={busy} onClick={()=>{if(!dirty||confirm(t("Recharger et abandonner les modifications non enregistrées ?")))load();}}>{t("Actualiser")}</button></div>
- {!draft?<p>{t("Chargement…")}</p>:<fieldset className="about-editor-fields" disabled={busy}><details open><summary>{t("Textes de la page")}</summary>{Object.entries(draft.copy[editLang]).map(([key,value])=>fields(value,["copy",editLang,key],labels[key]||key))}</details>
- <details><summary>{t("Photos de la page")}</summary>{Object.entries(draft.images).map(([key,value])=><label className="home-media" key={key}>{t(labels[key])}<input value={value} dir="ltr" onChange={e=>change(["images",key],e.target.value)}/><input type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>upload(key,e.target.files?.[0])}/>{value&&<img src={value} alt=""/>}</label>)}</details>
+ {!draft?<p>{t("Chargement…")}</p>:<fieldset className="about-editor-fields" disabled={busy}>
+ <p>{t("Les sections suivent l’ordre de la page publique.")}</p>
+ {serviceEditorSections.map(section=><details key={section.id} open><summary>{t(section.label)}</summary>
+ {section.id==="gallery"&&<p>{t("La description de cette section reprend celle de la bannière principale.")}</p>}
+ {section.fields.map(key=>fields(draft.copy[editLang][key],["copy",editLang,key],labels[key]))}
+ {section.images.map(key=><label className="home-media" key={key}>{t(labels[key])}<input value={draft.images[key]} dir="ltr" onChange={e=>change(["images",key],e.target.value)}/><input type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>upload(key,e.target.files?.[0])}/>{draft.images[key]&&<img src={draft.images[key]} alt=""/>}</label>)}
+ </details>)}
+ <details><summary>{t("Identité du service — liens depuis les autres pages")}</summary><p>{t("Ce nom apparaît dans les cartes des autres services, pas comme titre principal de cette page.")}</p>{fields(draft.copy[editLang].title,["copy",editLang,"title"],labels.title)}</details>
  <p>{t("Le formulaire et les liens vers les autres services conservent leur fonctionnement.")}</p></fieldset>}
  </section>;
 }
