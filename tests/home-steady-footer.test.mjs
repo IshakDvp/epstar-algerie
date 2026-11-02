@@ -21,5 +21,16 @@ test('shared footer has email before phone, lower horizontal nav and centered co
  assert.ok(css.includes('flex-direction:row;flex-wrap:wrap'));
  assert.match(css,/\.copyright\{[^}]*grid-row:3[^}]*text-align:center/);
  assert.ok(css.includes('html[data-theme="dark"]'));
- assert.ok(css.includes('@media(max-width:560px)'));
+ assert.ok(css.includes('@media(max-width:640px)'));
+});
+test('compact footer removes contact heading and groups icon links beside WhatsApp',()=>{
+ const page=readFileSync('app/components/site-footer.tsx','utf8'),css=readFileSync('app/components/site-footer.css','utf8');
+ assert.ok(!page.includes('<h4>{t.contact}</h4>'));
+ assert.ok(page.includes('className="footer-contact-row"'));
+ assert.ok(page.includes('className="footer-channels"'));
+ assert.ok(page.includes('<ContactIcon phone/>'));
+ assert.ok(page.includes('className="footer-whatsapp"'));
+ assert.ok(page.includes('(c.facebook||c.instagram)&&'));
+ assert.ok(css.includes('align-items:center;gap:12px 32px;padding:24px'));
+ assert.ok(css.includes('grid-row:4'));
 });

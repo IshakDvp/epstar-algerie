@@ -1,5 +1,14 @@
 # EPSTAR Algeria — Project Roadmap
 
+## 2026-11-02 — v27 compact footer refinement
+
+- User rejected v26 footer screenshot as too empty/tall and approved narrower-scope repair. Only shared footer markup/CSS and its regression test changed; hero and CMS section order untouched.
+- Removed visible Contact heading. Email then phone are icon links grouped in one block, with compact outlined WhatsApp button beside them. Icons are inline SVG aria-hidden, focusable=false; text remains accessible. Logo/contact vertically center in top row, padding reduced to24px, row gaps12px, lower navigation divider padding12px. Copyright remains centered below horizontal wrapping links.
+- Phone<=640px stacks centered logo/contact before nav/copyright; contact row wraps safely, long email wraps, text is LTR-isolated. Preserved optional address/hours/social links and configured CMS navigation/child links. Empty social container no longer rendered.
+- Verified npm run build PASS (Worker ESM/hosting artifact). Final node --test tests/*.test.mjs70/70 PASS, zero failures/skips. Added compact footer regression; updated breakpoint expectation from560 to640. No dependency, auth, DB, environment or deployment changes.
+- Browser visual/responsive geometry NOT VERIFIED due prior preview browser policy limitation; no workaround used. Build/source assertions are not visual acceptance. Full PEQG remains NOT VERIFIED. User should check AR/FR/EN light/dark, phone/desktop, Home and other pages with shared footer, mail/tel/WhatsApp links, optional long details and menu children.
+- Delivery EPSTAR_footer_compact_v27.zip overlay for installed v26; Commit/Push existing GitHub Desktop flow. Roll back by reverting this commit, no DB rollback. Next: obtain user visual PASS, then agree section ordering (v26 proposal still pending).
+
 ## 2026-11-02 — v26 steady hero / plain path prompt / shared footer
 
 - Reviewed attached Recording 2026-11-02 155757.mp4 (20.67s) at 2/9/17s and supplied screenshots. User rejects v25 expandable guidance and requests stable hero, shared compact footer and a review of section order.
