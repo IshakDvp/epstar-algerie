@@ -11,10 +11,10 @@ test('sections and request form use fluid width with responsive gutters',()=>{
  assert.ok(css.includes('max-width:65ch'));
  assert.ok(!readFileSync('app/components/home-blocks.tsx','utf8').includes('maxWidth:1400'));
 });
-test('hero keeps CMS guidance accessible without stacking it over both paths',()=>{
- assert.ok(page.includes('<details className="path-guidance"><summary>{start.ask}</summary>'));
- for(const key of ['eyebrow','hint','productStep','projectStep','product','project','productDesc','projectDesc'])assert.ok(page.includes(`start.${key}`));
- assert.ok(page.includes('aria-describedby="product-path-context"'));
+test('hero only shows the plain path question and both path cards',()=>{
+ assert.ok(page.includes('<p className="path-prompt">{start.ask}</p>'));
+ for(const key of ['product','project','productDesc','projectDesc'])assert.ok(page.includes(`start.${key}`));
+ assert.ok(!page.includes('path-guidance'));
  assert.ok(!page.includes('className="action-step"'));
  assert.ok(css.includes('main.home-page.rtl :is(h1,h2,h3)'));
  assert.ok(css.includes('unicode-bidi:isolate'));

@@ -12,7 +12,6 @@ import {useContent} from "./components/use-content";
 import {useInitialHomeAnchor} from "./components/use-initial-home-anchor";
 import "./home-readability.css";
 import "./home-layout.css";
-import {heroPathLabel} from "./home-presentation";
 
 type Theme = "light" | "dark";
 type ClientLogo = {id:string;name:string;website:string|null;url:string};
@@ -61,16 +60,16 @@ hero:(<section id="accueil" className="hero-shell premium-hero" onMouseEnter={()
       <div className="hero-index" aria-hidden="true">0{active+1}</div>
       <div className="hero-copy" key={`c-${lang}-${active}`}>
         <span className="mini-title">{t.overline}</span>
-        <h1>{current.heading}</h1>
-        <p>{current.text}</p>
-        <div className="start-question"><details className="path-guidance"><summary>{start.ask}</summary><small className="start-eyebrow">{start.eyebrow}</small><p>{start.hint}</p><p id="product-path-context">{heroPathLabel(start.productStep)}</p><p id="project-path-context">{heroPathLabel(start.projectStep)}</p></details><div className="hero-actions"><a href={home.links.catalogue} className="primary-btn" aria-describedby="product-path-context"><b>{start.product}</b><small>{start.productDesc}</small><span aria-hidden="true">↗</span></a><a href={home.links.fitout} className="secondary-btn" aria-describedby="project-path-context"><b>{start.project}</b><small>{start.projectDesc}</small><span aria-hidden="true">→</span></a></div></div>
+        <div className="hero-heading-reserve"><h1>{current.heading}</h1>{sectors.map((s,i)=><div className="hero-heading-ghost" aria-hidden="true" key={i}>{s.heading}</div>)}</div>
+        <div className="hero-description-reserve"><p>{current.text}</p>{sectors.map((s,i)=><p className="hero-description-ghost" aria-hidden="true" key={i}>{s.text}</p>)}</div>
+        <div className="start-question"><p className="path-prompt">{start.ask}</p><div className="hero-actions"><a href={home.links.catalogue} className="primary-btn"><b>{start.product}</b><small>{start.productDesc}</small><span aria-hidden="true">↗</span></a><a href={home.links.fitout} className="secondary-btn"><b>{start.project}</b><small>{start.projectDesc}</small><span aria-hidden="true">→</span></a></div></div>
         <div className="hero-proof">{capabilities.map((item,i)=><span key={item}><b>0{i+1}</b>{item}</span>)}</div>
       </div>
       <div className="hero-media premium-media" key={`i-${active}`}>
         <span className="model-orbit" aria-hidden="true"/>
         <span className="model-grid" aria-hidden="true"/>
         <img src={current.model} alt={current.title}/>
-        <div className="media-tag"><small>EPSTAR / 0{active+1}</small><b>{current.title}</b></div>
+        <div className="media-tag"><small>EPSTAR / 0{active+1}</small><div className="hero-label-reserve"><b>{current.title}</b>{sectors.map((s,i)=><b className="hero-label-ghost" aria-hidden="true" key={i}>{s.title}</b>)}</div></div>
       </div>
       <div className="sector-tabs premium-tabs" role="tablist" aria-label={t.choose}>{sectors.map((s,i)=><button key={s.title} role="tab" aria-selected={active===i} className={active===i?"active":""} onClick={()=>setActive(i)}><i>0{i+1}</i><span className="tab-icon">{s.icon}</span><span><b>{s.title}</b><small>{s.short}</small></span><em>↗</em></button>)}</div>
     </section>),

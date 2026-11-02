@@ -1,5 +1,16 @@
 # v21 evidence — 2026-11-01
 
+## 2026-11-02 — v26 steady hero / plain path prompt / shared footer
+
+- Reviewed attached Recording 2026-11-02 155757.mp4 (20.67s) at 2/9/17s and supplied screenshots. User rejects v25 expandable guidance and requests stable hero, shared compact footer and a review of section order.
+- Home shows only start.ask as a plain paragraph above both existing path cards. Removed disclosure, arrow and helper copy from public rendering. Old eyebrow/hint/step values remain in saved schema, untouched; editor now shows only the active question/card fields and explains archived helper values in AR/FR/EN.
+- Each of the four slide headings/descriptions/tag titles participates in a shared CSS grid sizing area, with aria-hidden invisible sizing copies. Active content stays visible, one semantic h1 only; no JS measurement or text clipping. The longest wrapping content reserves stable space for the current language/viewport. Image box remains fixed at the responsive desktop/tablet/phone media height; content can grow safely for longer CMS edits. This is stability across slides, not one pixel height for all device sizes/languages.
+- Shared SiteFooter now puts logo at logical start and contact at logical end (mirrored for Arabic); email first, then phone. Removed visible Navigation heading and brand description. Existing WhatsApp/address/hours/social links remain. Lower nav is centered horizontal flex with wrapping when space requires; copyright is centered in a full-width third row with explicit LTR direction. Shared CSS covers native/managed pages and both themes; menu placement/children are retained.
+- Build: npm run build PASS (ESM Worker + hosting manifest validation). node --test tests/*.test.mjs:69/69 PASS, no skips/failures. Added steady-grid and shared-footer regression assertions; updated v25 guidance expectations to new approved behavior. No dependencies, migrations, secrets, production data or deployment changed.
+- Browser visual/geometry certification NOT VERIFIED: previous preview URL/security policy block remains a verification limitation; no browser workaround attempted. Source/build tests do not prove equal measured slide heights. Production checks required across all four slides, AR/FR/EN and light/dark at phone/tablet/desktop widths; footer must be checked outside Home too. Full PEQG remains NOT VERIFIED, not PASS.
+- Section order intentionally unchanged pending agreement. Proposed: hero,trust,services,products,projects,about,process,clients,testimonial,quote,cta. Rationale: explain solutions and show work before conversion form. Keep CMS order/visibility authoritative; do not force source defaults over saved ordering. Extra Home blocks remain as before.
+- Deliverable EPSTAR_home_steady_footer_v26.zip is an overlay for v25. Existing GitHub Desktop Commit/Push -> Cloudflare workflow. Exact next step: user deploys/tests this UI patch and agrees/amends proposed section sequence; then align actual CMS ordering and editor in a separate bounded change.
+
 ## 2026-11-02 — v25 fluid Home and Arabic hierarchy
 
 - User approved removing fixed-width Home section shells and reducing stacked Arabic hero text, following video 152132. Scope: Home only; no new dependency, migration, auth or production changes.

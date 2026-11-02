@@ -2,6 +2,7 @@
 import type { Lang } from "../catalogue/data";
 import PageNavigation from "./page-navigation";
 import {useContent} from "./use-content";
+import "./site-footer.css";
 
 const copy = {
   ar: { description:"تصميم وتصنيع وتجهيز المساحات حسب الطلب.", navigation:"روابط الموقع", home:"الرئيسية", products:"المنتجات", fitout:"التجهيز الكامل", projects:"إنجازاتنا", offers:"عروضنا", contact:"اتصل بنا", temporary:"بيانات تواصل مؤقتة", demo:"نسخة تجريبية." },
@@ -11,5 +12,5 @@ const copy = {
 
 export default function SiteFooter({lang}:{lang:Lang}) {
   const t=copy[lang],{contact:c,pages}=useContent();
-  return <footer className="footer"><div><img src="/epstar-logo.png" alt="EPSTAR"/><p>{t.description}</p></div><div className="footer-navigation"><h4>{t.navigation}</h4><div className="footer-page-links"><PageNavigation pages={pages} placement="footer" lang={lang}/></div></div><div><h4>{t.contact}</h4>{c.phone&&<a href={`tel:${c.phone}`}>{c.phone}</a>}{c.whatsapp&&<a href={`https://wa.me/${c.whatsapp}`} target="_blank" rel="noreferrer">WhatsApp</a>}{c.email&&<a href={`mailto:${c.email}`}>{c.email}</a>}<p>{c.address[lang]||c.address.fr}</p><small>{c.hours[lang]||c.hours.fr}</small>{c.facebook&&<a href={c.facebook} target="_blank" rel="noreferrer">Facebook</a>}{c.instagram&&<a href={c.instagram} target="_blank" rel="noreferrer">Instagram</a>}</div><p className="copyright">© 2026 EPSTAR</p></footer>;
+  return <footer className="footer epstar-footer"><div className="footer-brand"><a href="/" aria-label="EPSTAR"><img src="/epstar-logo.png" alt="EPSTAR"/></a></div><div className="footer-contact"><h4>{t.contact}</h4>{c.email&&<a dir="ltr" href={`mailto:${c.email}`}>{c.email}</a>}{c.phone&&<a dir="ltr" href={`tel:${c.phone}`}>{c.phone}</a>}{c.whatsapp&&<a href={`https://wa.me/${c.whatsapp}`} target="_blank" rel="noreferrer">WhatsApp</a>}{c.address[lang]||c.address.fr?<p>{c.address[lang]||c.address.fr}</p>:null}{c.hours[lang]||c.hours.fr?<small>{c.hours[lang]||c.hours.fr}</small>:null}<div className="footer-social">{c.facebook&&<a href={c.facebook} target="_blank" rel="noreferrer">Facebook</a>}{c.instagram&&<a href={c.instagram} target="_blank" rel="noreferrer">Instagram</a>}</div></div><nav className="footer-navigation" aria-label={t.navigation}><div className="footer-page-links"><PageNavigation pages={pages} placement="footer" lang={lang}/></div></nav><p className="copyright" dir="ltr">© 2026 EPSTAR</p></footer>;
 }
