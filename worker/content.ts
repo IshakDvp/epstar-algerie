@@ -48,6 +48,13 @@ export async function adminContent(request:Request,env:Store){
  }
  if(kind!=="offers"&&kind!=="pages")return response({error:"Not found"},404);
  const items=kind==="pages"?await pageRecords(env):await records(env,kind);
+ if(kind==="pages"&&id==="solutions-navigation"&&request.method==="POST"){
+  const rows=await env.DB.prepare("SELECT key,value FROM site_settings WHERE key LIKE ?").bind(prefix(kind)+"%").all<{key:string;value:string}>();
+  const raw=rows.results||[],projected=twoPathSolutionsPages(raw.map(r=>JSON.parse(r.value))),now=new Date().toISOString();
+  const statements=projected.map(p=>{const before=raw.find(r=>r.key===prefix(kind)+p.id);return before?env.DB.prepare("UPDATE site_settings SET value=?,updated_at=? WHERE key=? AND value=?").bind(JSON.stringify(p),now,before.key,before.value):env.DB.prepare("INSERT OR IGNORE INTO site_settings(key,value,updated_at) VALUES(?,?,?)").bind(prefix(kind)+p.id,JSON.stringify(p),now);});
+  statements.push(env.DB.prepare("INSERT OR IGNORE INTO site_settings(key,value,updated_at) VALUES(?,?,?)").bind(pathsMarker,"true",now));
+  await env.DB.batch(statements);return response({ok:true});
+ }
  if(kind==="pages"&&id==="reorder"&&request.method==="POST"){
   const body:any=await request.json().catch(()=>null),ids=body?.ids;
   if(!Array.isArray(ids)||ids.length!==items.length||new Set(ids).size!==items.length||ids.some(x=>typeof x!=="string"||!items.some(p=>p.id===x)))return response({error:"La liste des pages a changé. Actualisez avant de réordonner."},409);

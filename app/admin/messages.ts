@@ -1,6 +1,9 @@
 export type AdminLang="fr"|"ar"|"en";
 // French source keys keep server messages and the existing interface aligned.
-const rows=`Pages et menus|الصفحات والقوائم|Pages and menus
+const rows=`Appliquer le menu convenu|تطبيق المينيو المتفق عليه|Apply agreed menu
+Navigation appliquée.|تم تطبيق ترتيب المينيو.|Menu structure applied.
+Appliquer remplace la hiérarchie du menu par les deux parcours convenus, sans supprimer les pages ni leurs contenus.|هذا الزر يعيد تنظيم المينيو إلى المسارين المتفق عليهما، دون حذف الصفحات أو محتواها. يستبدل ترتيب وعلاقات الروابط الحالية.|This replaces the current menu hierarchy and ordering with the two agreed paths, without deleting pages or content.
+Pages et menus|الصفحات والقوائم|Pages and menus
 Paramètres du lien|إعدادات الرابط|Link settings
 Nom du lien dans les menus|اسم الرابط في القوائم|Menu link name
 Gérer les offres|إدارة العروض|Manage offers

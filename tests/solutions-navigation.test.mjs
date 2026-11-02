@@ -8,6 +8,16 @@ const {adminContent,publicContent}=await import(sourceURL('worker/content.ts'));
 function store(){const db=new DatabaseSync(':memory:');db.exec(readFileSync('drizzle/0000_unique_rawhide_kid.sql','utf8'));return {db,DB:{prepare(sql){let args=[];const s=db.prepare(sql),q={bind(...v){args=v;return q},async first(){return s.get(...args)||null},async all(){return {results:s.all(...args)}},async run(){return {meta:{changes:Number(s.run(...args).changes)}}}};return q},async batch(stmts){db.exec('BEGIN');try{const r=[];for(const q of stmts)r.push(await q.run());db.exec('COMMIT');return r;}catch(e){db.exec('ROLLBACK');throw e;}}},BUCKET:{}};}
 const req=(path='pages',method='GET',data)=>new Request('https://test/api/admin/content/'+path,{method,headers:{'content-type':'application/json'},...(data?{body:JSON.stringify(data)}:{})});
 const body=async r=>(await r).json();
+test('explicit menu repair works even with existing marker and formatted JSON, preserves copy and repeats safely',async()=>{
+ const env=store();await adminContent(req('pages/bootstrap','POST'),env);
+ const items=(await body(adminContent(req(),env))).items;
+ for(const p of items){p.parentId=p.builtinId.startsWith('service-')?'builtin-solutions':null;p.showInHeader=true;p.body.ar='KEEP';env.db.prepare('UPDATE site_settings SET value=? WHERE key=?').run(JSON.stringify(p,null,2),'cms:pages:'+p.id);}
+ for(let i=0;i<2;i++)assert.equal((await adminContent(req('pages/solutions-navigation','POST'),env)).status,200);
+ const after=(await body(adminContent(req(),env))).items;
+ assert.deepEqual(navigationPages(after,'header').filter(p=>p.parentId==='builtin-solutions').map(pageHref),['/start-project','/catalogue']);
+ assert.ok(after.every(p=>p.body.ar==='KEEP'));
+ assert.equal((await adminContent(new Request('https://test/api/admin/content/pages/solutions-navigation',{method:'POST',headers:{origin:'https://evil.test'}}),env)).status,403);
+});
 const legacy=()=>builtinPages.filter(p=>p.builtinId!=='solutions').map(p=>({...p,parentId:null,showInHeader:p.builtinId.startsWith('service-')?false:p.showInHeader}));
 function seed(env,items){for(const p of items)env.db.prepare('INSERT INTO site_settings(key,value,updated_at) VALUES(?,?,?)').run('cms:pages:'+p.id,JSON.stringify(p),'2026-10-25');}
 test('solutions now groups only fit-out and ready products; every native sector route survives',()=>{
