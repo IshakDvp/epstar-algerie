@@ -386,3 +386,13 @@ v12 final verification: npm run build and all 30 automated tests PASS after fina
 - Delivery: overlay EPSTAR_solutions_two_paths_v30.zip on installed v29. Copy files, Commit/Push existing repo, then open Dashboard > Pages once to persist structure. Review custom root links if present. Test anchor, both destinations, sector access, renamed labels, mobile and AR/FR/EN light/dark.
 - Rollback: revert code commit; persisted menu changes require editing Pages structure or restoring an approved DB backup. Code rollback does not undo saved menu data. Do not delete pages or migration markers blindly.
 
+## 2026-11-02 — v31 dashboard page/link clarity
+- Approved scoped UI correction: Pages & sub-pages renamed Pages and menus in AR/FR/EN. Existing dedicated content modules remain single sources.
+- Builtin page actions/form now say Link settings / Menu link name; native record status is Link enabled/disabled, not Published/Draft. Dedicated links say Manage offers/products/projects. Custom pages still have normal content editing. Existing sector/Home/Fitout/About editor entry points retained.
+- No API payload, authorization, database, migration, frontend navigation, theme or language persistence changes. v30 navigation and v29 atomic login fixes preserved.
+- PEQG snapshot before-v31.zip contains previous3 modified source files plus CSS; local only, not a production DB backup. Read-only source inventory followed by controlled text/action-label changes.
+- Verification: npm run build PASS; node --test tests/*.test.mjs78/78 PASS,0fail/skip (logs /tmp/nav31-build.log and /tmp/nav31-tests-final.log). New regression checks exact action distinctions and retained module dispatch; existing dictionary/syntax/API/navigation/auth tests pass.
+- Browser authenticated dashboard/mobile/visual E2E NOT VERIFIED this stage. No production deployment performed. Full PEQG remains not approved; dependency/security/reliability/restore blockers from v29 remain open.
+- Deliver overlay EPSTAR_dashboard_clarity_v31.zip on v30. User copy/Commit/Push, wait Cloudflare, test Pages and menus > Offers > Link settings versus Manage offers. Repeat Catalogue/Projects/custom page and three languages; check no data loss.
+- Rollback by reverting v31 code commit; no data rollback needed. Next: user acceptance, then remaining PEQG launch blockers.
+

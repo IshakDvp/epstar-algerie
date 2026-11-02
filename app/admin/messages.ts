@@ -1,6 +1,15 @@
 export type AdminLang="fr"|"ar"|"en";
 // French source keys keep server messages and the existing interface aligned.
-const rows=`1 — Bannière principale|1 — البانر الرئيسي|1 — Main banner
+const rows=`Pages et menus|الصفحات والقوائم|Pages and menus
+Paramètres du lien|إعدادات الرابط|Link settings
+Nom du lien dans les menus|اسم الرابط في القوائم|Menu link name
+Gérer les offres|إدارة العروض|Manage offers
+Gérer les produits|إدارة المنتجات|Manage products
+Gérer les réalisations|إدارة الإنجازات|Manage projects
+Lien activé|الرابط مفعّل|Link enabled
+Lien désactivé|الرابط معطّل|Link disabled
+Réglez les liens ici. Le contenu reste dans son module dédié.|هنا تضبط أسماء الروابط وترتيبها ومكان ظهورها. المحتوى يعدّل من قسمه المختص عبر زر المحتوى، وليس نسخة أخرى هنا.|Configure links here. Content stays in its dedicated module, reached through its content button.
+1 — Bannière principale|1 — البانر الرئيسي|1 — Main banner
 2 — Prestations|2 — الخدمات المقدمة|2 — Included services
 3 — Méthode et étapes|3 — مراحل العمل|3 — Process and steps
 4 — Galerie|4 — معرض الصور|4 — Gallery
