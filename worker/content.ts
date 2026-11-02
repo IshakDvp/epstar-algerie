@@ -8,13 +8,14 @@ type Store={DB:D1Database;BUCKET:R2Bucket};
 const response=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json","cache-control":"no-store"}});
 const prefix=(kind:string)=>`cms:${kind}:`;
 const solutionsMarker="cms-meta:solutions-navigation-v1";
-const pathsMarker="cms-meta:solutions-navigation-v2";
+// v3 retries the agreed rollout even when a previous initialization marker exists.
+const pathsMarker="cms-meta:solutions-navigation-v3";
 async function pageRecords(env:Store){const items=await records(env,"pages");const initialized=await env.DB.prepare("SELECT value FROM site_settings WHERE key=?").bind(pathsMarker).first();return initialized?withBuiltinPages(items):twoPathSolutionsPages(items);}
 async function records(env:Store,kind:string):Promise<ContentItem[]>{const r=await env.DB.prepare("SELECT value FROM site_settings WHERE key LIKE ?").bind(prefix(kind)+"%").all<{value:string}>();return (r.results||[]).map(r=>JSON.parse(r.value));}
 async function contact(env:Store):Promise<ContactInfo>{const r=await env.DB.prepare("SELECT value FROM site_settings WHERE key = ?").bind("contact").first<{value:string}>();return r?JSON.parse(r.value):defaultContact;}
 async function put(env:Store,key:string,value:unknown){await env.DB.prepare("INSERT INTO site_settings(key,value,updated_at) VALUES(?,?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at").bind(key,JSON.stringify(value),new Date().toISOString()).run();}
 export async function publicContentData(env:Store){return {contact:await contact(env),offers:publicItems(await records(env,"offers")),pages:publicItems(await pageRecords(env))};}
-export async function publicContent(env:Store){return response(await publicContentData(env));}
+export async function publicContent(env:Store){return response({...await publicContentData(env),navigationVersion:"v33"});}
 const string=(v:unknown,max=400)=>typeof v==="string"?v.trim().slice(0,max):"";
 const localized=(v:any,max=20000)=>({fr:string(v?.fr,max),ar:string(v?.ar,max),en:string(v?.en,max)});
 export function validateItem(raw:any,id:string,kind:string,items:ContentItem[]):ContentItem{
@@ -62,8 +63,9 @@ export async function adminContent(request:Request,env:Store){
  }
  if(kind==="pages"&&id==="bootstrap"&&request.method==="POST"){
   const now=new Date().toISOString();const statements=builtinPages.map(item=>env.DB.prepare("INSERT OR IGNORE INTO site_settings(key,value,updated_at) VALUES(?,?,?)").bind(prefix(kind)+item.id,JSON.stringify(item),now));
-  const existing=await records(env,"pages");
-  for(const p of twoPathSolutionsPages(existing)){const before=existing.find(x=>x.id===p.id);if(before&&JSON.stringify(before)!==JSON.stringify(p))statements.push(env.DB.prepare("UPDATE site_settings SET value=?,updated_at=? WHERE key=? AND value=? AND NOT EXISTS (SELECT 1 FROM site_settings WHERE key=?)").bind(JSON.stringify(p),now,prefix(kind)+p.id,JSON.stringify(before),pathsMarker));}
+  const rawRows=await env.DB.prepare("SELECT key,value FROM site_settings WHERE key LIKE ?").bind(prefix(kind)+"%").all<{key:string;value:string}>();
+  const existing=(rawRows.results||[]).map(r=>JSON.parse(r.value) as ContentItem);
+  for(const p of twoPathSolutionsPages(existing)){const raw=(rawRows.results||[]).find(r=>r.key===prefix(kind)+p.id);if(raw&&raw.value!==JSON.stringify(p))statements.push(env.DB.prepare("UPDATE site_settings SET value=?,updated_at=? WHERE key=? AND value=? AND NOT EXISTS (SELECT 1 FROM site_settings WHERE key=?)").bind(JSON.stringify(p),now,raw.key,raw.value,pathsMarker));}
   statements.push(env.DB.prepare("INSERT OR IGNORE INTO site_settings(key,value,updated_at) VALUES(?,?,?)").bind(pathsMarker,"true",now));
   statements.push(env.DB.prepare("INSERT OR IGNORE INTO site_settings(key,value,updated_at) VALUES(?,?,?)").bind(solutionsMarker,"true",now));
   await env.DB.batch(statements);return response({ok:true});

@@ -8,6 +8,29 @@ const {adminContent,publicContent}=await import(sourceURL('worker/content.ts'));
 function store(){const db=new DatabaseSync(':memory:');db.exec(readFileSync('drizzle/0000_unique_rawhide_kid.sql','utf8'));return {db,DB:{prepare(sql){let args=[];const s=db.prepare(sql),q={bind(...v){args=v;return q},async first(){return s.get(...args)||null},async all(){return {results:s.all(...args)}},async run(){return {meta:{changes:Number(s.run(...args).changes)}}}};return q},async batch(stmts){db.exec('BEGIN');try{const r=[];for(const q of stmts)r.push(await q.run());db.exec('COMMIT');return r;}catch(e){db.exec('ROLLBACK');throw e;}}},BUCKET:{}};}
 const req=(path='pages',method='GET',data)=>new Request('https://test/api/admin/content/'+path,{method,headers:{'content-type':'application/json'},...(data?{body:JSON.stringify(data)}:{})});
 const body=async r=>(await r).json();
+test('v33 projects legacy production layout immediately despite v2 marker, then persists once and preserves later edits',async()=>{
+ const env=store();const items=builtinPages.map(p=>({...p,parentId:p.builtinId.startsWith('service-')?'builtin-solutions':null,showInHeader:p.builtinId!=='quote'}));
+ seed(env,items);
+ env.db.prepare('INSERT INTO site_settings(key,value,updated_at) VALUES(?,?,?)').run('cms-meta:solutions-navigation-v2','true','old');
+ for(const p of items)env.db.prepare('UPDATE site_settings SET value=? WHERE key=?').run(JSON.stringify(p,null,2),'cms:pages:'+p.id);
+ const before=env.db.prepare('SELECT COUNT(*) AS n FROM site_settings').get().n;
+ const {default:builtWorker}=await import('../dist/server/index.js');
+ const builtResponse=await builtWorker.fetch(new Request('https://test/api/content'),env,{waitUntil(){},passThroughOnException(){}});
+ const builtData=await builtResponse.json();
+ assert.equal(builtData.navigationVersion,'v33');
+ assert.deepEqual(navigationPages(builtData.pages,'header').filter(p=>p.parentId==='builtin-solutions').map(pageHref),['/start-project','/catalogue']);
+ const publicResult=await body(publicContent(env));assert.equal(publicResult.navigationVersion,'v33');
+ const nav=navigationPages(publicResult.pages,'header');
+ assert.deepEqual(nav.filter(p=>!p.parentId).map(p=>p.builtinId),['home','solutions','offers','projects','about']);
+ assert.deepEqual(nav.filter(p=>p.parentId==='builtin-solutions').map(pageHref),['/start-project','/catalogue']);
+ assert.equal(env.db.prepare('SELECT COUNT(*) AS n FROM site_settings').get().n,before);
+ await adminContent(req('pages/bootstrap','POST'),env);
+ const persisted=JSON.parse(env.db.prepare('SELECT value FROM site_settings WHERE key=?').get('cms:pages:builtin-catalogue').value);
+ assert.equal(persisted.parentId,'builtin-solutions');
+ await adminContent(req('pages/'+persisted.id,'PUT',{...persisted,title:{fr:'MY TITLE',ar:'اسمي',en:'My title'},sortOrder:999}),env);
+ await adminContent(req('pages/bootstrap','POST'),env);
+ assert.equal((await body(publicContent(env))).pages.find(p=>p.id===persisted.id).title.ar,'اسمي');
+});
 test('explicit menu repair works even with existing marker and formatted JSON, preserves copy and repeats safely',async()=>{
  const env=store();await adminContent(req('pages/bootstrap','POST'),env);
  const items=(await body(adminContent(req(),env))).items;
@@ -37,7 +60,7 @@ test('v2 public projection is read-only; bootstrap retains copy, footer, visibil
  assert.equal((await adminContent(req('pages/bootstrap','POST'),env)).status,200);
  const list=(await body(adminContent(req(),env))).items,after=list.find(p=>p.id===service.id);assert.equal(list.length,12);
  assert.equal(after.title.fr,'TEAM PHARMACY');assert.equal(after.body.ar,'KEEP BODY');assert.equal(after.showInFooter,true);assert.equal(after.visible,false);assert.equal(after.showInHeader,false);
- assert.ok(env.db.prepare('SELECT value FROM site_settings WHERE key=?').get('cms-meta:solutions-navigation-v2'));
+ assert.ok(env.db.prepare('SELECT value FROM site_settings WHERE key=?').get('cms-meta:solutions-navigation-v3'));
 });
 test('after v2 initialization staff can rename, hide and reorder without bootstrap resets',async()=>{
  const env=store();await adminContent(req('pages/bootstrap','POST'),env);
