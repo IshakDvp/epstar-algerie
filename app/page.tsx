@@ -63,7 +63,7 @@ hero:(<section id="accueil" className="hero-shell premium-hero" onMouseEnter={()
         <span className="mini-title">{t.overline}</span>
         <h1>{current.heading}</h1>
         <p>{current.text}</p>
-        <div className="start-question"><small className="start-eyebrow">{start.eyebrow}</small><p>{start.ask}</p><em>{start.hint}</em><div className="hero-actions"><a href={home.links.catalogue} className="primary-btn"><small className="action-step">{heroPathLabel(start.productStep)}</small><b>{start.product}</b><small>{start.productDesc}</small><span>↗</span></a><a href={home.links.fitout} className="secondary-btn"><small className="action-step">{heroPathLabel(start.projectStep)}</small><b>{start.project}</b><small>{start.projectDesc}</small><span>→</span></a></div></div>
+        <div className="start-question"><details className="path-guidance"><summary>{start.ask}</summary><small className="start-eyebrow">{start.eyebrow}</small><p>{start.hint}</p><p id="product-path-context">{heroPathLabel(start.productStep)}</p><p id="project-path-context">{heroPathLabel(start.projectStep)}</p></details><div className="hero-actions"><a href={home.links.catalogue} className="primary-btn" aria-describedby="product-path-context"><b>{start.product}</b><small>{start.productDesc}</small><span aria-hidden="true">↗</span></a><a href={home.links.fitout} className="secondary-btn" aria-describedby="project-path-context"><b>{start.project}</b><small>{start.projectDesc}</small><span aria-hidden="true">→</span></a></div></div>
         <div className="hero-proof">{capabilities.map((item,i)=><span key={item}><b>0{i+1}</b>{item}</span>)}</div>
       </div>
       <div className="hero-media premium-media" key={`i-${active}`}>

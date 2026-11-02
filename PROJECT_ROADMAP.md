@@ -1,5 +1,16 @@
 # EPSTAR Algeria — Project Roadmap
 
+## 2026-11-02 — v25 fluid Home and Arabic hierarchy
+
+- User approved removing fixed-width Home section shells and reducing stacked Arabic hero text, following video 152132. Scope: Home only; no new dependency, migration, auth or production changes.
+- Hero, section-pad (including managed blocks), quote form, testimonial and footer now use fluid width and shared clamp-based side gutters. Paragraphs retain readable 65ch measures; these are text limits, not section container caps. Responsive phone/tablet gutters remain.
+- Hero paths show title + short description. Native keyboard-operable details/summary keeps the existing question, eyebrow, help and path labels available on demand; path labels also describe each link accessibly. All saved CMS keys/links retained, no DB rewrite. Home editor explains these presentation roles in AR/FR/EN.
+- Arabic headings use normal tracking, lighter hierarchy and more line height; secondary text/capabilities/trust labels use lighter weights. Featured image and solution illustration scale with viewport; footer uses balanced columns and isolated LTR phone/email.
+- Verification: npm run build PASS (verified ESM Worker/hosting artifact); node --test tests/*.test.mjs 67/67 PASS, no failures/skips. Includes two fluid-width/content-preservation regressions. Full TypeScript baseline is NOT certified clean.
+- Browser: initial local EN empty-state DOM verified disclosure + two paths. Isolated local D1/R2 fixtures were prepared (4 products,3 projects,2 logos), not production and not packaged. After preview restart, browser reload was denied by URL/security policy; no workaround attempted. Therefore final populated render, three-language light/dark screenshots and responsive overflow measurements for v25 are NOT VERIFIED. Earlier v24 measurements do not certify v25.
+- Full PEQG remains NOT VERIFIED, not PASS. Production visual acceptance and AR/FR/EN desktop/mobile light/dark checks required after overlay deployment; validate guidance expand/collapse, both links, managed sections, form, footer and no horizontal scroll. No claim the Home page is finalized.
+- Delivery: EPSTAR_home_fluid_ar_v25.zip overlay for v24; replace matching files only, Commit/Push via existing GitHub Desktop workflow. No native Sites publish, secrets or QA fixtures included. Pending unrelated email vars/source sync and complete dashboard/public ordering audit remain unchanged.
+
 ## 2026-11-01 — v24 compact Home hero / complete light surfaces
 
 - User videos 204524/204916 showed v23 still too tall, inconsistent spacing and dark surfaces in light mode; no whole-page visual acceptance claimed.

@@ -1,13 +1,14 @@
-/* v23/v24 — Home composition; CMS section ordering and saved copy preserved. */
-main.home-page{--home-surface:#fff;--home-panel:#f2f5f6;--home-text:#17272e;--home-border:#d4dee2}
+/* Home composition: fluid sections, readable copy; saved CMS order/data preserved. */
+main.home-page{--home-gutter:clamp(20px,3.2vw,72px);--home-space:clamp(32px,4vw,64px);--home-surface:#fff;--home-panel:#f2f5f6;--home-text:#17272e;--home-border:#d4dee2}
 /* v24: an intrinsic two-column hero replaces the accumulated legacy min-heights. */
-main.home-page #accueil.premium-hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:32px;align-items:center;min-height:0;height:auto;padding:32px 48px;overflow:visible}
+main.home-page #accueil.premium-hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:32px;align-items:center;min-height:0;height:auto;width:100%;max-width:none;margin-inline:0;padding:32px var(--home-gutter);overflow:visible}
 main.home-page #accueil .hero-copy{display:block;grid-column:1;grid-row:1;width:auto;max-width:none;min-width:0;margin:0;padding:0;direction:inherit;text-align:start;animation:none}
 main.home-page #accueil .hero-copy h1{font-size:clamp(2.125rem,3.4vw,3rem);line-height:1.25;letter-spacing:-.02em;margin:12px 0 16px;max-width:650px}
 main.home-page #accueil .hero-copy>p{font-size:1rem;line-height:1.75;margin:0;max-width:650px}
 main.home-page #accueil .start-question{max-width:none;margin-top:18px;text-align:start}
-main.home-page #accueil .start-question>p{font-size:1.125rem!important;line-height:1.5;margin:0 0 4px}
-main.home-page #accueil .start-question>em{font-size:.875rem;line-height:1.6;margin-bottom:12px}
+main.home-page #accueil .path-guidance summary{cursor:pointer;font-size:1rem;font-weight:500;line-height:1.7;padding-block:4px;color:var(--home-text)}
+main.home-page #accueil .path-guidance[open]{padding:12px 16px;border:1px solid var(--home-border);border-radius:8px;background:var(--home-panel)}
+main.home-page #accueil .path-guidance :is(p,small){display:block;font-size:.875rem;line-height:1.8;font-weight:400;margin:8px 0 0;color:var(--home-muted)}
 main.home-page #accueil .hero-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px!important;margin:14px 0 0}
 main.home-page #accueil .hero-actions>a{display:grid;grid-template-columns:minmax(0,1fr) auto;align-content:start;gap:6px 10px;width:auto;min-width:0;height:auto;min-height:0;padding:16px;position:relative;border-radius:8px;white-space:normal}
 main.home-page #accueil .hero-actions .action-step{grid-column:1;font-size:.8125rem!important;line-height:1.5;letter-spacing:0;opacity:1}
@@ -22,7 +23,19 @@ main.home-page #accueil .media-tag{position:static;justify-self:end;min-width:0;
 main.home-page #accueil .media-tag small,main.home-page #accueil .media-tag b{font-size:.8125rem;line-height:1.5}
 main.home-page #accueil .hero-index{top:4px;font-size:120px;pointer-events:none}
 main.home-page.dark{--home-surface:#142128;--home-panel:#0e171c;--home-text:#f1f5f7;--home-border:#34464f}
-main.home-page>.section-pad{width:100%;max-width:1280px;padding:48px;margin-inline:auto;min-height:0}
+main.home-page>.section-pad{width:100%;max-width:none;padding:var(--home-space) var(--home-gutter);margin-inline:0;min-height:0}
+main.home-page :is(.highlight-heading,.center-title){max-width:none}
+main.home-page :is(.highlight-heading,.center-title)>p{max-width:65ch}
+main.home-page .center-title>p{margin-inline:auto}
+main.home-page :is(.about>article p,.stage-copy p,.featured-copy p,.managed-home-block>p){max-width:65ch}
+main.home-page.rtl :is(h1,h2,h3){letter-spacing:0;font-weight:600;line-height:1.5;text-wrap:pretty}
+main.home-page.rtl :is(p,.hero-actions small,.showcase-nav small){line-height:1.9;font-weight:400}
+main.home-page.rtl :is(.hero-proof span,.trust-band span,.showcase-nav b,.best-product-grid h3){font-weight:500}
+main.home-page.rtl #accueil .hero-copy h1{line-height:1.45;max-width:22ch}
+main.home-page .featured-copy{padding:clamp(24px,3vw,48px)}
+main.home-page .featured-product>a{min-height:0}
+main.home-page .featured-visual{min-height:280px;height:clamp(280px,26vw,460px)}
+main.home-page .featured-visual img{max-height:100%}
 main.home-page .section-title{gap:32px;align-items:start;margin-bottom:32px}
 main.home-page .section-title>div,main.home-page .section-title>p{min-width:0}
 main.home-page .section-title h2{margin-block:12px 0}
@@ -47,9 +60,9 @@ main.home-page .about-points{grid-column:1/-1;padding:24px 28px;border-radius:12
 main.home-page .about-points h3{margin:0 0 16px}
 main.home-page .about-points>div{display:inline-flex;width:33.333%;vertical-align:top;align-items:start;padding:8px 16px;gap:12px;border:0;min-width:0}
 /* Each showcase image and its text have their own row: no text/image collision. */
-main.home-page .sector-showcase{grid-template-columns:minmax(220px,.34fr) minmax(0,1fr);min-height:0;align-items:stretch}
+main.home-page .sector-showcase{grid-template-columns:minmax(220px,.28fr) minmax(0,1fr);min-height:0;align-items:stretch}
 main.home-page .showcase-stage{display:flex;flex-direction:column;min-height:0;padding-top:40px}
-main.home-page .showcase-stage>img{position:relative;inset:auto;width:100%;height:260px;flex:none;object-fit:contain;padding:8px 20px}
+main.home-page .showcase-stage>img{position:relative;inset:auto;width:100%;height:clamp(260px,24vw,420px);flex:none;object-fit:contain;padding:8px 20px}
 main.home-page .stage-copy{position:relative;inset:auto;padding:24px 28px;background:#102027;flex:1}
 main.home-page .stage-copy h3{margin:12px 0}
 main.home-page .showcase-nav{min-width:0}
@@ -57,12 +70,12 @@ main.home-page .showcase-nav button{min-width:0;white-space:normal}
 main.home-page .stage-label{color:#d5dfe4;opacity:1}
 main.home-page :is(#apropos,#projets,#contact){scroll-margin-top:108px}
 /* Solid, legible form with the intro aligned to its first row, not its midpoint. */
-main.home-page>.quote-band{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:32px;min-height:0;padding:64px max(32px,calc((100vw - 1184px)/2));background:var(--home-panel);color:var(--home-text)}
+main.home-page>.quote-band{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:32px;min-height:0;padding:var(--home-space) var(--home-gutter);background:var(--home-panel);color:var(--home-text)}
 main.home-page .quote-band>div{min-width:0;max-width:760px;margin-inline:auto;text-align:center}
 main.home-page .quote-band>div>small{color:#b50018}
 main.home-page.dark .quote-band>div>small{color:#ff8292}
 main.home-page .quote-band>div>p{color:var(--home-muted);max-width:680px;margin-inline:auto}
-main.home-page .quote-band .smart-quote{width:100%;max-width:1000px;margin-inline:auto;min-width:0;padding:28px;border:1px solid var(--home-border);border-radius:12px;background:var(--home-surface);color:var(--home-text);box-shadow:0 12px 32px #00000008;gap:20px!important}
+main.home-page .quote-band .smart-quote{width:100%;max-width:none;margin-inline:0;min-width:0;padding:28px;border:1px solid var(--home-border);border-radius:12px;background:var(--home-surface);color:var(--home-text);box-shadow:0 12px 32px #00000008;gap:20px!important}
 main.home-page .quote-band .field{min-width:0}
 main.home-page .quote-band .field label,main.home-page .quote-band legend{font-size:1rem;line-height:1.6;color:var(--home-text)}
 main.home-page .quote-band :is(input,select,textarea){width:100%;max-width:100%;min-width:0;min-height:48px;padding:12px;border:1px solid #82969f!important;border-radius:6px;background:var(--home-surface)!important;color:var(--home-text)!important;font-size:1rem;line-height:1.6;outline:revert}
@@ -95,13 +108,13 @@ main.home-page .editorial-projects .project-no{display:none}
 main.home-page .projects-intro a{display:inline-block;min-height:44px;padding-block:10px;font-size:1rem;color:#b50018}
 main.home-page.dark .projects-intro a{color:#ff8292}
 /* A short review should not produce a giant empty red column. */
-main.home-page>.testimonial{width:calc(100% - 96px);max-width:1184px;min-height:0;margin:0 auto 48px;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:stretch;border-radius:12px}
+main.home-page>.testimonial{width:calc(100% - 2 * var(--home-gutter));max-width:none;min-height:0;margin:0 var(--home-gutter) var(--home-space);grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:stretch;border-radius:12px}
 main.home-page .testimonial-photo{position:relative;min-height:300px;height:auto}
 main.home-page .testimonial-photo img{position:absolute;inset:0;height:100%;width:100%;object-fit:cover}
 main.home-page .testimonial blockquote{display:flex;flex-direction:column;justify-content:center;min-width:0;padding:36px;min-height:0;background:#b50018}
 main.home-page .testimonial blockquote>p{font-size:clamp(1.25rem,2vw,1.625rem);line-height:1.8;margin:16px 0 24px}
 main.home-page .testimonial footer{font-size:1rem;line-height:1.7}
-main.home-page>.final-cta{padding:44px 24px}
+main.home-page>.final-cta{padding:var(--home-space) var(--home-gutter)}
 /* Complete the light palette for the intentionally dark legacy cards. */
 main.home-page:not(.dark) .featured-product>a,main.home-page:not(.dark) .sector-showcase,main.home-page:not(.dark) .stage-copy{background:var(--home-surface);color:var(--home-text)}
 main.home-page:not(.dark) .featured-product>a,main.home-page:not(.dark) .sector-showcase{border:1px solid var(--home-border)}
@@ -122,10 +135,16 @@ main.home-page .about>article>a span{color:#fff}
 main.home-page:not(.dark)>.footer{background:#edf2f4;color:var(--home-text);border-top:1px solid var(--home-border)}
 main.home-page:not(.dark) .footer :is(h4,p,a,span,small){color:var(--home-text);opacity:1}
 main.home-page:not(.dark) .footer .copyright{border-color:var(--home-border)}
-main.home-page>.footer{padding-block:36px;gap:28px}
+main.home-page>.footer{padding:36px var(--home-gutter);gap:28px;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)}
+main.home-page .footer>div{min-width:0}
+main.home-page .footer p{max-width:45ch}
+main.home-page .footer a{overflow-wrap:anywhere}
+main.home-page .footer a:is([href^="tel:"],[href^="mailto:"]){direction:ltr;unicode-bidi:isolate;align-self:flex-start}
+main.home-page.rtl .footer a:is([href^="tel:"],[href^="mailto:"]){align-self:flex-end}
 main.home-page .footer>div{gap:8px}
 main.home-page .footer .footer-navigation .footer-page-links{margin-top:12px;gap:4px}
 @media(max-width:900px){
+ main.home-page{--home-gutter:24px;--home-space:36px}
  main.home-page #accueil.premium-hero{grid-template-columns:minmax(0,1fr);gap:16px;padding:28px 24px!important}
  main.home-page #accueil .hero-copy{display:contents}
  main.home-page #accueil .premium-media{grid-column:1;grid-row:auto;order:4;height:280px;margin:0}
@@ -140,12 +159,14 @@ main.home-page .footer .footer-navigation .footer-page-links{margin-top:12px;gap
  main.home-page .showcase-nav{display:grid;grid-template-columns:1fr 1fr}
  main.home-page>.quote-band{grid-template-columns:1fr;gap:24px;padding:48px 24px}
  main.home-page .quote-band>div{padding-top:0}
- main.home-page>.testimonial{width:calc(100% - 48px);margin-bottom:52px;grid-template-columns:1fr}
+ main.home-page>.testimonial{grid-template-columns:1fr}
  main.home-page .testimonial-photo{min-height:260px}
 }
 @media(max-width:560px){
+ main.home-page{--home-gutter:20px;--home-space:32px}
  main.home-page #accueil.premium-hero{padding:24px 20px!important;gap:12px}
  main.home-page #accueil .hero-copy h1{font-size:2.125rem!important;line-height:1.3!important;margin:0!important}
+ main.home-page.rtl #accueil .hero-copy h1{line-height:1.5!important}
  main.home-page #accueil .hero-copy>p{font-size:1rem!important;line-height:1.75!important}
  main.home-page #accueil .hero-actions{grid-template-columns:minmax(0,1fr);gap:10px!important;margin-top:12px}
  main.home-page #accueil .hero-actions>a{padding:14px;min-height:0}
@@ -161,11 +182,10 @@ main.home-page .footer .footer-navigation .footer-page-links{margin-top:12px;gap
  main.home-page .showcase-nav{grid-template-columns:1fr}
  main.home-page .showcase-stage>img{height:210px;padding:12px}
  main.home-page .stage-copy{padding:24px}
- main.home-page>.quote-band{padding:44px 16px}
+ main.home-page>.quote-band{padding:32px var(--home-gutter)}
  main.home-page .quote-band .smart-quote{padding:20px;grid-template-columns:minmax(0,1fr)}
  main.home-page .quote-band .field{grid-column:1/-1}
  main.home-page .testimonial blockquote{padding:28px}
- main.home-page>.testimonial{width:calc(100% - 40px);margin-bottom:44px}
- main.home-page>.footer{padding:28px 20px;gap:22px}
+ main.home-page>.footer{padding:28px var(--home-gutter);gap:22px;grid-template-columns:1fr}
  main.home-page .footer h4{margin-bottom:4px}
 }

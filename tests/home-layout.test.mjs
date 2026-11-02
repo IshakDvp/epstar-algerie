@@ -19,7 +19,7 @@ test('home layout removes text-over-image, fixed review height, and four-slot lo
  assert.match(css,/article>div\{position:static/);
  assert.match(css,/\.testimonial\{[^}]*min-height:0/);
  assert.match(css,/\.quote-band\{[^}]*grid-template-columns:minmax\(0,1fr\)/);
- assert.ok(css.includes('max-width:1000px'));
+ assert.match(css,/\.smart-quote\{width:100%;max-width:none/);
  assert.ok(css.includes('@media(max-width:560px)'));
  assert.ok(!css.includes('url('));
 });
