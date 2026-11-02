@@ -5,13 +5,13 @@ import {navigationPages,pageHref} from "../page-registry";
 import type {ContentItem} from "../content-model";
 import type {Lang} from "../catalogue/data";
 import "./page-navigation.css";
-export default function PageNavigation({pages,placement,lang,pathname="",onNavigate}:{pages:ContentItem[];placement:"header"|"footer";lang:Lang;pathname?:string;onNavigate?:()=>void}){
+export default function PageNavigation({pages,placement,lang,pathname="",onNavigate,compact=false}:{pages:ContentItem[];placement:"header"|"footer";lang:Lang;pathname?:string;onNavigate?:()=>void;compact?:boolean}){
  const list=navigationPages(pages,placement),[openId,setOpenId]=useState<string|null>(null),prefix=useId();
  const [hash,setHash]=useState("");
  useEffect(()=>{const sync=()=>setHash(location.hash);sync();window.addEventListener("hashchange",sync);window.addEventListener("popstate",sync);window.addEventListener("epstar-anchor",sync);return()=>{window.removeEventListener("hashchange",sync);window.removeEventListener("popstate",sync);window.removeEventListener("epstar-anchor",sync);};},[pathname]);
  const link=(p:ContentItem,hasChildren=false)=>{
-  const href=pageHref(p),active=navigationActive(href,pathname,hash);
-  return <a href={href} className={active?"active":""} aria-current={active?(href.includes("#")?"location":"page"):undefined}
+  const href=pageHref(p),selfActive=navigationActive(href,pathname,hash),active=selfActive||list.some(c=>c.parentId===p.id&&navigationActive(pageHref(c),pathname,hash));
+  return <a href={href} className={active?"active":""} aria-current={selfActive?(href.includes("#")?"location":"page"):undefined}
    aria-expanded={hasChildren?openId===p.id:undefined} aria-controls={hasChildren?prefix+p.id:undefined}
    onClick={event=>{if(hasChildren&&window.matchMedia("(hover: none), (pointer: coarse)").matches&&openId!==p.id){event.preventDefault();setOpenId(p.id);return;}setOpenId(null);onNavigate?.();}}>
    {placement==="header"&&p.builtinId==="offers"&&<small className="nav-promo">{lang==="ar"?"جديد":lang==="fr"?"NOUVEAU":"NEW"}</small>}
@@ -19,7 +19,7 @@ export default function PageNavigation({pages,placement,lang,pathname="",onNavig
   </a>;
  };
  return <>{list.filter(p=>!p.parentId).map(p=>{
-  const children=list.filter(c=>c.parentId===p.id),expandable=placement==="header"&&children.length>0;
+  const children=list.filter(c=>c.parentId===p.id),expandable=placement==="header"&&children.length>0&&!compact;
   return <div className={`page-nav-group page-nav-${placement}`} key={p.id}
    onPointerEnter={event=>{if(expandable&&event.pointerType==="mouse")setOpenId(p.id);}}
    onPointerLeave={event=>{if(event.pointerType==="mouse")setOpenId(null);}}

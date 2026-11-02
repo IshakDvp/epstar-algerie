@@ -319,3 +319,14 @@ v11 final verification: npm run build and all 25 automated tests PASS after fina
 
 v12 final verification: npm run build and all 30 automated tests PASS after final dark-contrast/language changes. Public browser checks passed as described above; authenticated admin lifecycle pending user deployment. Preview stopped. ZIP contains source/tests/docs only; no secrets, runtime DB, or build artifacts.
 
+## 2026-11-02 — v30 approved two-path Solutions navigation
+
+- Header defaults: Home, Solutions, Offers, Projects, About. Solutions keeps native /#services anchor and has only Fit-out (/start-project) and Ready-made products (/catalogue). Initial labels AR منتجات جاهزة / FR Produits prêts / EN Ready-made products are editable through Pages; custom labels are preserved.
+- All four sector pages and their content remain. They are not header children; Home solutions links remain, and Fit-out now includes links to their detail pages. Original sector quote cards remain unchanged.
+- Read-only projection supports existing records immediately. Authenticated Pages bootstrap persists the one-time cms-meta:solutions-navigation-v2 migration using raw-value conditional updates; later team edits are not reset. Custom children of the two moved native pages are promoted to roots to avoid a third level; custom pages/content/footer flags are retained.
+- Compact header shows the two child links directly, parent anchor works directly, close icon is explicit, links have minimum44px targets, panel scrolling is bounded. Desktop parent highlights on either child route; aria-current remains for exact destination.
+- Verified: npm run build PASS; node --test tests/*.test.mjs77/77 PASS, zero failures/skips. Local desktop browser confirmed five roots and exactly two Solutions children using ArrowDown; Home sector detail link observed. Local preview reports missing client_logos table (fresh unseeded local D1), so populated visual/mobile/admin/end-to-end matrix NOT VERIFIED. No production DB changes, deployment, email sending or dependency upgrades performed.
+- v29 atomic magic-link claim, header dismissal, theme/language SSR and previous Home/footer fixes preserved. Full PEQG is NOT PASSED; previous launch blockers remain.
+- Delivery: overlay EPSTAR_solutions_two_paths_v30.zip on installed v29. Copy files, Commit/Push existing repo, then open Dashboard > Pages once to persist structure. Review custom root links if present. Test anchor, both destinations, sector access, renamed labels, mobile and AR/FR/EN light/dark.
+- Rollback: revert code commit; persisted menu changes require editing Pages structure or restoring an approved DB backup. Code rollback does not undo saved menu data. Do not delete pages or migration markers blindly.
+

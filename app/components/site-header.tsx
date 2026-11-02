@@ -34,8 +34,8 @@ export default function SiteHeader({ lang, setLang, theme, setTheme }: Props) {
       <a className="quote-link" href="/quote">{t.request} <b>({cart.length})</b></a>
       <button className="theme-toggle" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Theme">{theme === "dark" ? "☀" : "☾"}</button>
       <div className="lang-switch">{(["ar","fr","en"] as Lang[]).map(item => <button key={item} className={lang === item ? "active" : ""} onClick={() => choose(item)}>{item.toUpperCase()}</button>)}</div>
-      <button ref={toggle} className="mobile-menu-toggle" aria-label={t.menu} aria-expanded={open} aria-controls={menuId} onClick={() => setOpen(!open)}><i/><i/><i/></button>
+      <button ref={toggle} className="mobile-menu-toggle" aria-label={open?(lang==="ar"?"إغلاق القائمة":lang==="fr"?"Fermer le menu":"Close menu"):t.menu} aria-expanded={open} aria-controls={menuId} onClick={() => setOpen(!open)}>{open?<span aria-hidden="true" className="menu-close">×</span>:<><i/><i/><i/></>}</button>
     </div>
-    {open && <nav id={menuId} className="mobile-menu" aria-label={t.menu}><PageNavigation pages={pages} placement="header" lang={lang} pathname={pathname} onNavigate={()=>setOpen(false)}/><a className="mobile-quote" href="/quote" onClick={() => setOpen(false)}>{t.request} ({cart.length})</a></nav>}
+    {open && <nav id={menuId} className="mobile-menu" aria-label={t.menu}><PageNavigation compact pages={pages} placement="header" lang={lang} pathname={pathname} onNavigate={()=>setOpen(false)}/><a className="mobile-quote" href="/quote" onClick={() => setOpen(false)}>{t.request} ({cart.length})</a></nav>}
   </header>;
 }
