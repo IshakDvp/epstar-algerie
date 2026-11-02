@@ -1,5 +1,18 @@
 # EPSTAR Algeria — Project Roadmap
 
+## 2026-11-02 — v29 / Home PEQG stages A–B (not release approval)
+
+- Read PROJECT_ENGINEERING_QUALITY_STANDARD.md (Library libfile_e8fc552d2cb881919fd5633d51ce8c7e). Source recovery original + ordered v2–v28 verified; no repo recreation/native Sites deploy. Stage A inventory and prechange backup completed. Stage B two controlled fixes + regressions completed. See PEQG_HOME_STAGE1.md for full gates/findings/UX proposal.
+- Baseline npm run install:ci PASS, build PASS,73/73 tests PASS. New concurrent magic-link test FAILED on baseline (302/302). Fixed worker/index.ts by conditional token claim, single winner changes===1; after fix302/401, exactly1 session, replay401. No new privilege, migration or credential.
+- Shared mobile header now dismisses outside/focus-leave/Escape/desktop breakpoint; Escape returns focus. aria-controls linked to unique menu ID. Event listener cleanup regression passed after replacing boolean capture with shared options object. Old hover/touch submenu, SSR navigation, language/theme, CMS and v28 section order preserved.
+- Final build PASS;76/76 tests PASS. Added auth concurrency, header lifecycle and6 anonymous admin API cases. TypeScript check FAIL27 existing diagnostics; no claim of type clean. npm audit flags43 package entries (critical1/high18/moderate23/low1); runtime applicability NOT VERIFIED, no blind upgrades.
+- Local populated browser QA:4 synthetic products/3projects/2logos, no broken images. AR light desktop1348 no overflow; AR dark catalogue transition retains lang/theme. Phone375/tablet753 content widths no horizontal overflow. Phone four AR hero slides all930.796875px; FR1018.875px/EN973.390625px, no overflow. Outside/Escape closed mobile state and Escape focus returned. Full real-device/menu/landscape/6combination/admin E2E NOT VERIFIED; harness sequence navigation uncertainty explicitly retained.
+- Gate status: G3/G4 FAIL; G1/G2/G5/G6/G7/G8 NOT VERIFIED. No global PEQG PASS or production readiness. Open launch work: dependency reachability/upgrades, Resend non2xx/timeout/delivery visibility, quote idempotency/upload cleanup, backup restore drill, role/CSRF/throttle policy, production monitoring/rollback.
+- UX proposal only:5 header links(Home/Solutions/Products/Work/Offers), Fit-out under Solutions, About footer, quote action; shorter hub Home linking to existing detail/form pages. No menu/section records changed until user agrees.
+- Backup evidence/peqg-home-stage1/before-v29.zip sha256 a873cd869bbdcced949fd0073f85da9a5ac4840093b738a2ca66c17c4ae0638c. Raw commands/results in evidence/peqg-home-stage1; TEST_EVIDENCE.md updated. No production access, mail or source secrets used.
+- Deliver EPSTAR_PEQG_Home_Stage1_v29.zip overlay for v28, containing fixes/tests/docs/evidence. Do not treat as launch certificate. Existing GitHub Desktop/Cloudflare workflow only. Revert v29 code commit to rollback; old token race returns, so prefer forward fix. No DB schema/content writes by this patch.
+- Exact next step: triage critical dependency alerts and email failure handling with compatible pinned upgrade plan; obtain IA approval; complete remaining E2E/restore before launch and generalization to other pages.
+
 ## 2026-11-02 — v28 agreed Home order and aligned section editors
 
 - User approved proposed Home sequence. New defaults: hero,trust,services,products,projects,about,process,clients,testimonial,quote,cta; footer remains last and extra CMS blocks remain in their existing tail position.

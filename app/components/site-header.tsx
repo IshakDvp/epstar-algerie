@@ -2,7 +2,8 @@
 
 import {useContent} from "./use-content";
 import PageNavigation from "./page-navigation";
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import {attachHeaderDismissal} from "./header-dismissal";
 import { usePathname } from "next/navigation";
 import { useQuoteCart } from "./use-quote-cart";
 import type { Lang } from "../catalogue/data";
@@ -20,19 +21,21 @@ export default function SiteHeader({ lang, setLang, theme, setTheme }: Props) {
   const { cart } = useQuoteCart();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const header=useRef<HTMLElement>(null),toggle=useRef<HTMLButtonElement>(null),menuId=useId();
+  useEffect(()=>{if(!open||!header.current||!toggle.current)return;return attachHeaderDismissal(header.current,toggle.current,()=>setOpen(false),document,window.matchMedia("(min-width: 981px)"));},[open]);
   const t = copy[lang];
   const {pages}=useContent();
   const active = (href: string) => href === "/" ? pathname === "/" : pathname.startsWith(href);
   const choose = (next: Lang) => { setLang(next); };
-  return <header className="site-header unified-header" dir={lang === "ar" ? "rtl" : "ltr"}>
+  return <header ref={header} className="site-header unified-header" dir={lang === "ar" ? "rtl" : "ltr"}>
     <a className="logo" href="/" aria-label="EPSTAR"><img src="/epstar-logo.png" alt="EPSTAR Design"/></a>
     <nav className="desktop-navigation" aria-label="Navigation"><PageNavigation pages={pages} placement="header" lang={lang} pathname={pathname} onNavigate={()=>setOpen(false)}/></nav>
     <div className="header-tools">
       <a className="quote-link" href="/quote">{t.request} <b>({cart.length})</b></a>
       <button className="theme-toggle" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Theme">{theme === "dark" ? "☀" : "☾"}</button>
       <div className="lang-switch">{(["ar","fr","en"] as Lang[]).map(item => <button key={item} className={lang === item ? "active" : ""} onClick={() => choose(item)}>{item.toUpperCase()}</button>)}</div>
-      <button className="mobile-menu-toggle" aria-label={t.menu} aria-expanded={open} onClick={() => setOpen(!open)}><i/><i/><i/></button>
+      <button ref={toggle} className="mobile-menu-toggle" aria-label={t.menu} aria-expanded={open} aria-controls={menuId} onClick={() => setOpen(!open)}><i/><i/><i/></button>
     </div>
-    {open && <nav className="mobile-menu" aria-label={t.menu}><PageNavigation pages={pages} placement="header" lang={lang} pathname={pathname} onNavigate={()=>setOpen(false)}/><a className="mobile-quote" href="/quote" onClick={() => setOpen(false)}>{t.request} ({cart.length})</a></nav>}
+    {open && <nav id={menuId} className="mobile-menu" aria-label={t.menu}><PageNavigation pages={pages} placement="header" lang={lang} pathname={pathname} onNavigate={()=>setOpen(false)}/><a className="mobile-quote" href="/quote" onClick={() => setOpen(false)}>{t.request} ({cart.length})</a></nav>}
   </header>;
 }

@@ -69,7 +69,9 @@ async function verifyMagicLink(request: Request, env: Env) {
   const tokenHash = await hashToken(token), now = new Date().toISOString();
   const record = await env.DB.prepare("SELECT id, user_id FROM auth_tokens WHERE token_hash = ? AND used_at IS NULL AND expires_at > ?").bind(tokenHash, now).first<{ id:string; user_id:string }>();
   if (!record) return new Response("This sign-in link has expired or was already used.", { status:401 });
-  await env.DB.prepare("UPDATE auth_tokens SET used_at = ? WHERE id = ?").bind(now, record.id).run();
+  // Claim once atomically: two concurrent reads must not create two sessions.
+  const claimed = await env.DB.prepare("UPDATE auth_tokens SET used_at = ? WHERE id = ? AND used_at IS NULL AND expires_at > ?").bind(now, record.id, now).run();
+  if (claimed.meta.changes !== 1) return new Response("This sign-in link has expired or was already used.", {status:401});
   const session = randomToken(), sessionHash = await hashToken(session), expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
   await env.DB.prepare("INSERT INTO admin_sessions (id, user_id, token_hash, expires_at, created_at) VALUES (?, ?, ?, ?, ?)").bind(crypto.randomUUID(), record.user_id, sessionHash, expires, now).run();
   return new Response(null, { status:302, headers:{ location:"/admin", "set-cookie":`epstar_admin=${session}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800` } });

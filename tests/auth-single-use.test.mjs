@@ -1,0 +1,23 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {DatabaseSync} from 'node:sqlite';
+import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+test('two simultaneous magic-link verifications create exactly one session',async()=>{
+ const {default:worker}=await import('../dist/server/index.js');
+ const db=new DatabaseSync(':memory:');
+ for(const name of ['0000_unique_rawhide_kid.sql','0001_late_peter_quill.sql'])db.exec(readFileSync('drizzle/'+name,'utf8'));
+ const now=new Date().toISOString(),expires=new Date(Date.now()+60000).toISOString(),token='synthetic-test-token';
+ db.prepare("INSERT INTO users(id,email,name,role,active,created_at,updated_at) VALUES('qa','qa@example.test','QA','admin',1,?,?)").run(now,now);
+ db.prepare("INSERT INTO auth_tokens(id,user_id,token_hash,expires_at,created_at) VALUES('qa-token','qa',?,?,?)").run(createHash('sha256').update(token).digest('hex'),expires,now);
+ let reads=0,release;const barrier=new Promise(r=>release=r);
+ const env={DB:{prepare(sql){const stmt=db.prepare(sql);let values=[];const q={bind(...v){values=v;return q},async first(){const record=stmt.get(...values)||null;if(sql.startsWith('SELECT id, user_id FROM auth_tokens')){if(++reads===2)release();await barrier;}return record},async run(){return {meta:{changes:Number(stmt.run(...values).changes)}}}};return q}}};
+ const request=()=>new Request('https://example.test/api/admin/verify?token='+token);
+ const context={waitUntil(){},passThroughOnException(){}};
+ const results=await Promise.all([worker.fetch(request(),env,context),worker.fetch(request(),env,context)]);
+ assert.deepEqual(results.map(r=>r.status).sort(),[302,401]);
+ assert.equal(db.prepare('SELECT COUNT(*) AS n FROM admin_sessions').get().n,1);
+ assert.equal(results.filter(r=>r.headers.has('set-cookie')).length,1);
+ const retry=await worker.fetch(request(),env,context);assert.equal(retry.status,401);
+ db.close();
+});

@@ -1,0 +1,33 @@
+✖ two simultaneous magic-link verifications create exactly one session (29.986354ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 132.39393
+
+✖ failing tests:
+
+test at tests/auth-single-use.test.mjs:6:1
+✖ two simultaneous magic-link verifications create exactly one session (29.986354ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      302,
+  +   302
+  -   401
+    ]
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/b8c9077386e2/peqg-source/epstar-algerie-main/tests/auth-single-use.test.mjs:18:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 302, 302 ],
+    expected: [ 302, 401 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
